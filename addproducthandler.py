@@ -14,11 +14,15 @@ class AddProductHandler(webapp2.RequestHandler):
 	def process(self):
 		guid = self.request.get("guid");
 		barcode = self.request.get("barcode");
+		returnURL = self.request.get("returnURL");
 		logging.info('User ' + guid + ' scanned code ' + barcode)
 		action = Action(user_key(guid))
 		action.barcode = barcode
 		action.put()
-		self.response.out.write('Guid: ' + guid + '<br>')
-		self.response.out.write('Barcode: ' + barcode + '<br>')
+		if returnURL == '':
+			self.response.out.write('Guid: ' + guid + '<br>')
+			self.response.out.write('Barcode: ' + barcode + '<br>')
+		else:
+			self.redirect(returnURL)
 	
 
