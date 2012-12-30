@@ -5,10 +5,13 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /images
+  static_dir: images
+  
 - url: /.*
   script: main.app
   secure: optional
-  
+
 libraries:
 - name: django
   version: "1.2"
