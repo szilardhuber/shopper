@@ -11,6 +11,12 @@ indexes:
 # your application using appcfg.py.
 
 - kind: Action
+  properties:
+  - name: guid
+  - name: date
+    direction: desc
+
+- kind: Action
   ancestor: yes
   properties:
   - name: date

@@ -16,7 +16,8 @@ class AddProductHandler(webapp2.RequestHandler):
 		barcode = self.request.get("barcode");
 		returnURL = self.request.get("returnURL");
 		logging.info('User ' + guid + ' scanned code ' + barcode)
-		action = Action(user_key(guid))
+		action = Action()
+		action.guid = guid
 		action.barcode = barcode
 		action.put()
 		if returnURL == '':

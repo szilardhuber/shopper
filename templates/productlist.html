@@ -5,11 +5,13 @@
   	<tr>
   	<td>Date</td>
   	<td>Barcode</td>
+  	<td>Action</td>
   	</tr>
     {% for action in actions %}
     	<tr>
     	<td>{{ action.date|date:"Y/m/d H:i:s" }}</td>
     	<td>{{ action.barcode }}</td>
+    	<td><a href="DeleteProduct?guid={{ guid }}&barcode={{action.barcode}}">Delete</a></td>
         </tr>
     {% endfor %}
     	</table>

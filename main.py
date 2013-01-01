@@ -1,6 +1,7 @@
 # own files
 from addproducthandler import AddProductHandler
 from listproductshandler import ListProductsHandler
+from deleteproducthandler import DeleteProductHandler
 
 # libraries
 import webapp2
@@ -25,6 +26,8 @@ app = webapp2.WSGIApplication([('/', ScanHandler),
 				('/AddProduct', AddProductHandler),
 				('/ListProducts', ListProductsHandler),
 				('/listproducts', ListProductsHandler),
+				('/DeleteProduct', DeleteProductHandler),
+				('/deleteproduct', DeleteProductHandler)
 				],
                               debug=True)
 
