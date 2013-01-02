@@ -11,7 +11,7 @@ from google.appengine.ext.webapp import template
 class ListProductsHandler(webapp2.RequestHandler):
 	def get(self):
 		user_guid = self.request.get("guid");
-		logging.info('User listing items' + user_guid)
+		logging.info('User (' + user_guid + ') listing items')
 		actions = db.GqlQuery("SELECT * "
                             "FROM Action "
                             "WHERE guid = :1 "
