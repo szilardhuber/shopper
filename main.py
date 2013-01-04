@@ -5,7 +5,6 @@ from deleteproducthandler import DeleteProductHandler
 
 # libraries
 import webapp2
-
 import os
 from google.appengine.ext.webapp import template
 

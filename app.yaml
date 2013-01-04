@@ -1,5 +1,5 @@
 application: szilardhuber
-version: 1
+version: 1-01
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -16,6 +16,11 @@ handlers:
   static_files: robots.txt
   upload: robots.txt
   
+- url: /admin/.*
+  script: admin.app
+  secure: optional
+  login: admin
+
 - url: /.*
   script: main.app
   secure: optional

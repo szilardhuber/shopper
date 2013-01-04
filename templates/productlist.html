@@ -5,17 +5,25 @@
   	<tr>
   	<td>Date</td>
   	<td>Barcode</td>
+  	<td>Product name</td>
   	<td>Action</td>
   	</tr>
-    {% for action in actions %}
+     {% for action, productname in actionList.iteritems %}
     	<tr>
     	<td>{{ action.date|date:"Y/m/d H:i:s" }}</td>
     	<td>{{ action.barcode }}</td>
-    	<td><a href="DeleteProduct?guid={{ guid }}&barcode={{action.barcode}}">Delete</a></td>
+    	<td>{{ productname }}</td>
+    	<td><a href="DeleteProduct?guid={{ guid }}&barcode={{ action.barcode }}">Delete</a></td>
         </tr>
     {% endfor %}
     	</table>
     	<br>
-    	<a href="DeleteProduct?guid={{ guid }}">Order items</a>
+    {% if page > 0 %}
+    	<a href="ListProducts?guid={{ guid }}&page={{ page|add:"-1" }}">Previous page</a> 
+    {% endif %}
+    {% if page < lastPage %}
+    	<a href="ListProducts?guid={{ guid }}&page={{ page|add:"1" }}">Next page</a>
+    {% endif %}
+    <br><a href="DeleteProduct?guid={{ guid }}">Order items</a>
   </body>
 </html>                                          
