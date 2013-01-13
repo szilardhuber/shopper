@@ -1,5 +1,5 @@
 application: szilardhuber
-version: 1-01
+version: dev-1-02
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -20,6 +20,10 @@ handlers:
   script: admin.app
   secure: optional
   login: admin
+
+- url: /[uU]ser/.*
+  script: user.app
+  secure: always
 
 - url: /.*
   script: main.app
