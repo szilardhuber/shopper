@@ -34,6 +34,12 @@ class UserAPICases(unittest.TestCase):
 		response = self.testapp.post('/', params={'email' : 'admin1232431324324@domain1234533334.hu', 'password' : 'password'}, expect_errors=True)
 		self.assertEqual(response.status_int, 200, 'Wrong response with correct credentials.')
 		
+	def testRegisteringTwice(self):
+		response = self.testapp.post('/', params={'email' : 'james@bond.com', 'password' : 'password'}, expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Wrong response with correct credentials.')
+		response = self.testapp.post('/', params={'email' : 'james@bond.com', 'password' : 'password'}, expect_errors=True)
+		self.assertEqual(response.status_int, 400, 'Wrong response with correct credentials.')
+		
 class UserUnitTestCases(unittest.TestCase):
 	def testPasswordChecksum(self):
 		pass

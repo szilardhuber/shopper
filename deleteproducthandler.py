@@ -1,5 +1,5 @@
 # own files
-from action import *
+from model import Action
 
 # libraries
 from google.appengine.ext import db

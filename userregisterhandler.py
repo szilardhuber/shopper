@@ -1,17 +1,9 @@
 # own files
+from model import User
+from utilities import CryptoUtil
 
 # libraries
 import webapp2
-from django.core.validators import email_re
-
-def valid_password(password):
-	if password is None:
-		return False
-	if password == '':
-		return False
-	if len(password) < 8:
-		return False
-	return True
 
 class UserRegisterHandler(webapp2.RequestHandler):
 	def get(self):
@@ -20,27 +12,29 @@ class UserRegisterHandler(webapp2.RequestHandler):
 		self.process()
 		
 	def process(self):
-		# Get and validate incoming parameters
+		# Validate email
 		email = self.request.get('email')
-		
-		if not email_re.match(email):
-			self.response.out.write('Invalid email<br>')
+		if not User.isEmailValid(email):
 			self.error(400)
 			return
 			
+		# Validate password
 		password = self.request.get('password')
-		
-		if not valid_password(password):
+		if not User.isPasswordValid(password):
 			self.response.out.write('Invalid arguments<br>')
 			self.error(400)
 			return
 			
 		# Calculate password hash
+		r = CryptoUtil.getKeyAndSalt(password)
+		salt = r['salt']
+		key = r['key']
 		
 		# Create user object
+		user = User(key_name=email)
+		user.email = email
+		user.salt = salt
+		user.password = key
 		
 		# Store credentials
-		
-		# Return
-		self.response.out.write('Register request')
-                 
+		user.put()                 
