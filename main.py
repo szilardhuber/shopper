@@ -1,3 +1,6 @@
+# folder handling
+import fix_path
+
 # own files
 from addproducthandler import AddProductHandler
 from listproductshandler import ListProductsHandler
@@ -13,12 +16,12 @@ class ScanHandler(webapp2.RequestHandler):
 	def get(self):
 		targetURL = '/AddProduct'
 		user_guid = 123
-                template_values = {
-                	'guid' : user_guid,
-                	'targetURL' : targetURL
-                }
-                path = os.path.join(os.path.dirname(__file__), 'templates/scan.html')
-                self.response.out.write(template.render(path, template_values))
+		template_values = {
+			'guid' : user_guid,
+			'targetURL' : targetURL
+		}
+		path = os.path.join(os.path.dirname(__file__), 'templates/scan.html')
+		self.response.out.write(template.render(path, template_values))
 
 app = webapp2.WSGIApplication([('/', ScanHandler),
 				('/addproduct', AddProductHandler),
@@ -27,7 +30,6 @@ app = webapp2.WSGIApplication([('/', ScanHandler),
 				('/listproducts', ListProductsHandler),
 				('/DeleteProduct', DeleteProductHandler),
 				('/deleteproduct', DeleteProductHandler)
-				],
-                              debug=True)
+				],debug=True)
 
                                                                                             

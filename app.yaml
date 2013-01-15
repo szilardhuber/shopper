@@ -1,8 +1,8 @@
 application: szilardhuber
-version: dev-1-02
+version: dev-1-03
 runtime: python27
 api_version: 1
-threadsafe: true
+threadsafe: false
 
 handlers:
 - url: /images
@@ -25,6 +25,9 @@ handlers:
   script: user.app
   secure: always
 
+- url: /test.*
+  script: gaeunit.py
+  
 - url: /.*
   script: main.app
   secure: optional
@@ -32,3 +35,4 @@ handlers:
 libraries:
 - name: django
   version: "1.2"
+
