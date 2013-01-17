@@ -28,9 +28,9 @@ class User(db.Model):
 	def isPasswordValid(password):
 		if password is None:
 			return False
-		if password == '':
+		if password == '': #what if '    '? I suggest trim. What if password contains any other whitespace char? Use regex instead of.
 			return False
-		if len(password) < 8:
+		if len(password) < 8: # regex can check this as well.
 			return False
 		return True
 
