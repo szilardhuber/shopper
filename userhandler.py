@@ -10,7 +10,7 @@ def perform_login(handler, email):
         sessionData.put()
         session = get_current_session()
         session['id'] = sessionid
-        redirectURL = session.pop('url')
+        redirectURL = session.pop_quick('url')
         if redirectURL is not None:       
             handler.redirect(redirectURL)   
     

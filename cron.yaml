@@ -1,0 +1,4 @@
+cron:
+- description: session cleanup
+  url: /sessions
+  schedule: every 24 hours

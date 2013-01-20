@@ -6,6 +6,7 @@ from utilities import authenticate
 from addproducthandler import AddProductHandler
 from listproductshandler import ListProductsHandler
 from deleteproducthandler import DeleteProductHandler
+from sessioncleanuphandler import SessionCleanupHandler
 
 # libraries
 import webapp2
@@ -31,7 +32,8 @@ app = webapp2.WSGIApplication([('/', ScanHandler),
 				('/ListProducts', ListProductsHandler),
 				('/listproducts', ListProductsHandler),
 				('/DeleteProduct', DeleteProductHandler),
-				('/deleteproduct', DeleteProductHandler)
+				('/deleteproduct', DeleteProductHandler),
+				('/sessions', SessionCleanupHandler)
 				],debug=True)
 
                                                                                             
