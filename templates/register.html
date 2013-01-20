@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block login %}
+<h2> Register now</h2> 
+<form action="/User/Register" method="post" name="Register">
+	<input type="email" name="email" value="Your Name" size="12" onblur="if (value == '') {value = 'Your Name'}" onfocus="if (value == 'Your Name') {value =''}" />
+	<input type="password" name="password" value="password" size="12" onblur="if (value == '') {value = 'password'}" onfocus="if (value == 'password') {value =''}"  />
+	<label><a href="/User/Register">Login</a></label>
+	<input type="submit" name="submit" class="button" value="" />
+ </form>
+{% endblock %}

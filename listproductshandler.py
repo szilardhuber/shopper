@@ -1,5 +1,6 @@
 # own files
 from model import Action
+from utilities import authenticate
 
 # libraries
 from google.appengine.ext import db
@@ -12,6 +13,7 @@ from google.appengine.api import search
 class ListProductsHandler(webapp2.RequestHandler):
 	RESULTS_PER_PAGE = 10
 	
+	@authenticate
 	def get(self):
 		user_guid = self.request.get("guid");
 		page = self.request.get("page");

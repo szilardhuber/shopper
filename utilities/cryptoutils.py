@@ -9,6 +9,7 @@ if os.name != 'nt':
 class CryptoVariables:
 	HASH_FUNCTION = SHA256
 	SALT_SIZE = 8
+	SESSIONID_SIZE = 32
 	KEY_LENGTH = 64
 	ITERATIONS = 1000
 
@@ -27,4 +28,15 @@ class CryptoUtil():
 		#hexsalt = ''.join('%02x' % ord(byte) for byte in salt)
 		#hexkey = ''.join('%02x' % ord(byte) for byte in key)
 		return { 'salt' : salt, 'key' : key }
-                 
+	
+	@staticmethod
+	def getKey(password, salt):
+		key = PBKDF2(password, salt, CryptoVariables.KEY_LENGTH, CryptoVariables.ITERATIONS, pbkdf2_prf)
+		return key
+
+	@staticmethod
+	def getSessionId():
+		if os.name != 'nt': 
+			return Random.get_random_bytes(CryptoVariables.SESSIONID_SIZE)
+		else:
+			return os.urandom(CryptoVariables.SESSIONID_SIZE)		

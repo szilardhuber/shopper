@@ -1,20 +1,25 @@
 # own files
 from model import User
 from utilities import CryptoUtil
+from userhandler import perform_login
 
 # libraries
 import webapp2
+import os
+from google.appengine.ext.webapp import template
 
 class UserRegisterHandler(webapp2.RequestHandler):
 	def get(self):
-		self.process()
+		path = os.path.join(os.path.dirname(__file__), 'templates/register.html')
+		self.response.out.write(template.render(path, {}))
+
 	def post(self):
-		self.process()
+		self.doRegister()
 		
-	def process(self):
+	def doRegister(self):
 		# Validate email
 		email = self.request.get('email')
-		if not User.isEmailValid(email):
+		if not User.isEmailValid(email) or User.isAlreadyRegistered(email):
 			self.error(400)
 			return
 			
@@ -30,11 +35,12 @@ class UserRegisterHandler(webapp2.RequestHandler):
 		salt = r['salt']
 		key = r['key']
 		
-		# Create user object
+		# Create and store user object
 		user = User(key_name=email)
 		user.email = email
 		user.salt = salt
 		user.password = key
-		
-		# Store credentials
-		user.put()                 
+		user.put()
+
+		# Log in user
+		perform_login(self, user.email)

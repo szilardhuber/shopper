@@ -9,8 +9,12 @@ class User(db.Model):
 	registrationdate = db.DateTimeProperty(auto_now_add=True)
 	
 	@staticmethod
+	def getUser(email):
+		return User.get_by_key_name(email, read_policy=db.STRONG_CONSISTENCY)
+	
+	@staticmethod
 	def isAlreadyRegistered(email):
-		current = User.get_by_key_name(email, read_policy=db.STRONG_CONSISTENCY)
+		current = User.getUser(email)
 		if current is None:
 			return False
 		else:
@@ -19,8 +23,6 @@ class User(db.Model):
 	@staticmethod
 	def isEmailValid(email):
 		if not email_re.match(email):
-			return False
-		if User.isAlreadyRegistered(email):
 			return False
 		return True
 		

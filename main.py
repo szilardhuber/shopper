@@ -2,6 +2,7 @@
 import fix_path
 
 # own files
+from utilities import authenticate
 from addproducthandler import AddProductHandler
 from listproductshandler import ListProductsHandler
 from deleteproducthandler import DeleteProductHandler
@@ -13,6 +14,7 @@ from google.appengine.ext.webapp import template
 
 # this is only for temporary development purposes so that we can enter barcodes with iphone
 class ScanHandler(webapp2.RequestHandler):
+	@authenticate
 	def get(self):
 		targetURL = '/AddProduct'
 		user_guid = 123

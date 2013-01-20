@@ -1,0 +1,283 @@
+/* CSS Document */
+body{
+	padding:0; margin:0; font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:13px; color:#6B6854; background-color:#fff;
+	}
+div, p, ul, h1, h2, h3, h4, img, form, input{
+	padding:0; margin:0;
+	}
+ul{
+	list-style-type:none;
+	}
+.blank{
+	clear:both;
+	font-size:0;
+	line-height:0;
+	}
+/*----------------------------------upper table----------------------*/
+#upperpan{
+	width:100%;
+	background:url(/images/upper_pan_bg.gif) repeat-x #FDFEFF;
+	color:#6B6854;
+	}
+/*------------------header----------------*/
+#header{
+	width:778px; background:url(/images/header_bg.gif) repeat-x #FDFEFF;
+	position:relative; margin:0 auto 0 auto; height:145px; color:#515151; 
+	}
+#header img{
+	position:absolute;
+	top:37px; left:65px;
+	}
+#header ul{
+	width:468px; position:absolute; top:28px; left:265px;
+	}
+#header ul li{
+	float:left;	display:block;
+	}
+#header ul li a{
+	text-indent:-2000px; font-size:0px;  height:31px; text-decoration:none; display:block;
+	}
+#header ul li a.sol{
+	background:url(/images/solution.gif) no-repeat; width:156px;
+	}
+#header ul li a.sol:hover{
+	background:url(/images/solution_h.gif) no-repeat; width:156px;
+	}
+#header ul li a.ser{
+	background:url(/images/services.gif) no-repeat; width:156px;
+	}
+#header ul li a.ser:hover{
+	background:url(/images/services_h.gif) no-repeat; width:156px;
+	}
+#header ul li a.sup{
+	background:url(/images/support.gif) no-repeat; width:156px;
+	}
+#header ul li a.sup:hover{
+	background:url(/images/support_h.gif) no-repeat; width:156px;
+	}
+#header h1{
+	background:url(/images/slogan.gif) no-repeat; position:absolute; text-indent:-2000px;
+	top:66px; left:265px; width:434px; height:23px;
+	}
+#header ul.navi{
+	width:507px; position:absolute; top:118px; left:135px; display:block;
+	}
+#header ul.navi li{
+	float:left; padding:0 8px 0 8px; 
+	}
+#header ul.navi li a.na{
+	text-indent:0px; color:#515151; text-decoration:none; display:block; height:22px; float:left;
+	font-family:Arial, Helvetica, sans-serif; font-weight:bold; font-size:11px; line-height:22px;
+	padding:0px 3px 0px 3px; margin:2px 0 2px 0; background-color:#DCDCDC;
+	}
+#header ul.navi li a.na:hover{
+	background-color:#FDFEFF; color:#515151;
+	}
+/*-------------------------who we are--------------*/
+#who{
+	width:667px; margin:0 auto 0 auto;	background:url(/images/who_pic.jpg) no-repeat 0 22px #FDFEFF; color:#6B6854;
+	}
+#who h2{
+	width:119px; height:39px; text-indent:-2000px; background:url(/images/who.gif) no-repeat;
+	margin-left:178px; display:block;
+	}	
+#who p{
+	width:477px; 
+	margin:9px 0 0 178px; display:block; padding-bottom:1px; font-size:14px; 
+	}
+#who p strong{
+	color:#CC6500; background-color:#FDFEFF;
+	}
+#who p.line {
+	background:url(/images/line.gif) no-repeat left;  height:16px; display:block; width:469px;
+	margin-bottom:52px;	
+
+	}
+#who p.line a{
+	font:12px/16px Verdana, Arial, Helvetica, sans-serif; color:#467700; font-weight:bold;
+	text-decoration:none; 	height:16px; display:block; padding:0; float:right; background-color:#FDFEFF;
+	}
+#who p.line a:hover{
+	text-decoration:underline;
+	}
+/*------------------------middle table-------------------*/
+#middle100{
+	width:100%;
+	background:url(/images/middle_table_bg.gif) repeat-x #FDFEFF; float:left; color:#6B6854;
+	}
+/*--------------------------------------midle---------------------*/
+#middle{
+	width:679px; margin:0 auto;
+	}
+/*-----------------------------left pan----------*/
+#left{
+	width:206px; float:left; background-color:#FDFEFF; position:relative; color:#6B6854;
+	}
+#left h2{
+	background:url(/images/latest_events.gif) no-repeat ; margin:0 0 0 15px; display:block; text-indent:-2000px;
+	height:48px; 
+	}
+#left h3{
+	color:#DA6C00; font-family:Verdana, Arial, Helvetica, sans-serif; font-weight:bold; font-size:13px; 
+	 position:absolute; top:25px; left:15px; width:160px; background-color:#FDFEFF;
+	}
+#left p{
+	width:168px; padding:0px 0 15px 18px; display:block;
+	}
+#left img{
+	padding:0 0 19px 18px; display:block
+	}
+#left h4{
+	color:#6B6854; font-family:Verdana, Arial, Helvetica, sans-serif; font-weight:bold; font-size:14px; width:168px;
+	margin:0 0 15px 15px; display:block; background-color:#FDFEFF; 
+	 }
+#left p span{
+	color:#61A500; background-color:#FDFEFF;
+	}
+
+#left p.line {
+	background:url(/images/line_2.gif) no-repeat left #FDFEFF; height:16px; display:block; width:157px;
+	margin:0 0 69px 15px; color:#6B6854;
+
+	}
+#left p.line a{
+	font:12px/16px Verdana, Arial, Helvetica, sans-serif; color:#467700; font-weight:bold;
+	text-decoration:none; background-color:#FDFEFF;
+	height:16px; display:block; padding:5px 10px 0 0; float:right;
+	}
+#left p.line a:hover{
+	text-decoration:underline;
+	}
+/*----------------------------mid----------------*/
+#mid{
+	width:234px; 
+	border:#DCDBDB 1px solid; color:#6B6854;
+	float:left; background-color:#FDFEFF; padding:15px; font-family:Verdana, Arial, Helvetica, sans-serif;
+	}
+#mid  h2{
+	background:url(/images/login_icon.gif) no-repeat #EDEDED; color:#4F4F4F; width:234px; height:61px; padding-bottom:14px;  text-indent:-2000px;
+	}
+#mid form{
+	width:217px; background-color:#EDEDED; display:block; padding-left:17px; height:120px; color:#3B3B3B;
+	}
+#mid form input{
+	width:199px; height:17px; margin-bottom:16px;
+	}
+#mid form label{
+	width:125px; height:18px; background:url(/images/regi_arrow.gif) no-repeat 8px 5px #EDEDED; color:#373737; font-size:16px;
+	padding:0 0 0px 28px; display:block; font-weight:bold; line-height:17px; float:left; 
+	}
+#mid form label a {
+	color:#373737; text-decoration:none; background-color:#EDEDED;
+	}
+	#mid form label a:hover {
+		text-decoration:underline;
+		}
+#mid form input.button{
+	width:49px; height:18px; float:left; display:block;
+	background:url(/images/login_buttom.gif) 0 0 no-repeat #FEFEFE; color:#fff; font-size:0px;
+	font-weight:bold; line-height:18px; border:none;  cursor:pointer;
+	 }
+#mid h3{
+	width:234px; height:64px; background:url(/images/want.gif) no-repeat 0 0 #FDFEFF; text-indent:-2000px; margin-top:11px;
+	color:#999999;
+	}
+#mid ul{
+	width:231px; display:block; margin:27px 0 0 0 ;
+	}
+#mid ul li{
+	display:block; height:61px; font:14px/13px Verdana, Arial, Helvetica, sans-serif; color:#585858; font-weight:bold;
+	background-color:#FDFEFF; 
+	}
+#mid ul li a{
+	background:url(/images/mid_arrow.gif) no-repeat 0 5px #FDFEFF; padding-left:10px; margin-top:8px; display:block;
+	font:13px/13px Verdana, Arial, Helvetica, sans-serif; color:#585858; text-decoration:underline;
+	}
+#mid ul li a:hover{
+	text-decoration:none;
+	}
+ a.view{
+	background:url(/images/mid_morebg.gif) no-repeat #FFFFFF; width:92px; height:12px; display:block; font-weight:bold; 
+	font:12px/12px Verdana, Arial, Helvetica, sans-serif; color:#467700; text-decoration:none; padding:0 0 0 135px;
+	 margin:0 0 20px 0;
+	}
+a.view:hover{
+	color:#000000; background-color:#FDFEFF;
+	text-decoration:underline;
+	}
+/*---------------------right side----------------------*/
+#right{
+	width:190px; background-color:#FFFFFF; float:left; padding-left:17px;  color:#6B6854;
+	}
+#right h2{
+	 height:29px; background:url(/images/current_link.gif) ; display:block; text-indent:-2000px;
+	}
+#right ul{
+	width:188px; display:block; margin-top:7px; margin-bottom:46px;
+	}
+#right ul li{
+	background:url(/images/arrow.gif) no-repeat 0 8px; height:20px;  padding:0 0 0 17px;
+	}
+#right ul li a{
+	font:13px/20px Verdana, Arial, Helvetica, sans-serif; color:#6B6854; text-decoration:underline;
+	background-color:#FDFEFF; 
+	}
+#right ul li a:hover{
+	text-decoration:none;
+	}
+#right p{
+	width:190px; height:276px; background:url(/images/services_pic.gif) no-repeat #FFFFFF; color:#E4E4E4;
+	}
+/*---------------------------------footer-----------------*/
+#footer100{
+	width:100%; height:114px; 
+	border-top:#EDEDED 6px solid; float:left;
+	}
+#footer{
+	width:679px; position:relative; margin:0 auto 0 auto; height:114px; font-family:Arial, Helvetica, sans-serif;
+	}
+#footer ul{
+	width:520px; position:absolute; top:20px; left:88px;
+	}
+#footer ul li{
+	float:left; display:block; font:12px/36px Arial, Helvetica, sans-serif; color:#515151; background-color:#FDFEFF;
+	}
+#footer ul li a{
+	font:12px/36px Arial, Helvetica, sans-serif; color:#515151; background-color:#FDFEFF;
+	text-decoration:none; margin:0 11px 0 11px; 
+	}
+#footer ul li a:hover{
+	text-decoration:underline;
+	}
+#footer p{
+	color:#000000; font-size:12px; line-height:20px; position:absolute; top:50px; left:100px; background-color:#FDFEFF;
+	}
+#footer p a {
+	color:#000; background-color:#fff; text-decoration:underline; margin:0; padding:0;
+	}
+#footer p a:hover {	
+	color:#000;
+	background-color:#C6C6C6;
+	}
+#footer ul.link{
+	width:122px; position:absolute; top:49px; left:322px;
+	}
+#footer ul.link li{
+	float:left; display:block; font-size:0px; height:16px;
+	}
+#footer ul.link li a{
+	display:block; text-indent:-2000px;	height:16px; margin:10px 2px 0 0;	font-size:0px;
+	}
+#footer ul.link li a.html{
+	background:url(/images/html.gif) no-repeat; width:59px; height:16px;
+	}
+#footer ul.link li a.html:hover{
+	background:url(/images/html_h.gif) no-repeat; width:59px; height:16px;
+	}
+#footer ul.link li a.css{
+	background:url(/images/css.gif) no-repeat; width:59px; height:16px;
+	}
+#footer ul.link li a.css:hover{
+	background:url(/images/css_h.gif) no-repeat; width:59px; height:16px;
+	}
