@@ -1,11 +1,22 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block login %}
-<h2> Members login</h2> 
+<div class="row">
+<div class="span12">
 <form action="/User/Login" method="post" name="Login">
-	<input type="email" name="email" value="Your Name" size="12" onblur="if (value == '') {value = 'Your Name'}" onfocus="if (value == 'Your Name') {value =''}" />
-	<input type="password" name="password" value="password" size="12" onblur="if (value == '') {value = 'password'}" onfocus="if (value == 'password') {value =''}"  />
-	<label><a href="/User/Register">{% trans "register now" %}</a></label>
-	<input type="submit" name="submit" class="button" value="" />
- </form>
+	<legend>
+		Members login<br>
+		<label><a href="/User/Register">{% trans "Not a member? register now" %}</a></label>
+	</legend>
+	<label>Email</label>
+	<input type="email" name="email" value="Your Name"/>
+	<label>Password</label>
+	<input type="password" name="password" value="password"/>
+	<label class="checkbox">
+      <input type="checkbox"> Remember me
+    </label>
+	<input type="submit" name="submit" class="btn" value="Login" />
+</form>
+</div>
+</div>
 {% endblock %}
