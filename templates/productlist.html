@@ -1,5 +1,6 @@
-<html>
-  <body>
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
   	<h3>Items ordered by user with guid {{ guid }}</h3>
   	<table border=1>
   	<tr>
@@ -27,3 +28,4 @@
     <br><a href="DeleteProduct?guid={{ guid }}">Order items</a>
   </body>
 </html>                                          
+{% endblock %}

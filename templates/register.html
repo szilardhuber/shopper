@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block login %}
+{% block content %}
 <div class="row">
 <div class="span12">
 <form action="/User/Register" method="post" name="Login">
 	<legend>
-		Register now<br>
+		{% trans "Register now" %}<br>
 		<label><a href="/User/Login">{% trans "Already signed up? log in now" %}</a></label>
 	</legend>
-	<label>Email</label>
-	<input type="email" name="email" value="Your Name"/>
-	<label>Password</label>
-	<input type="password" name="password" value="password"/>
+	<label>{% trans "Email" %}</label>
+	<input type="email" name="email" value=""/>
+	<label>{% trans "Password" %}</label>
+	<input type="password" name="password" value=""/>
 	<label class="checkbox">
-      <input type="checkbox"> Remember me
+      <input type="checkbox">{% trans "Remember me" %}
     </label>
-	<input type="submit" name="submit" class="btn" value="Register" />
+	<input type="submit" name="submit" class="btn" value="{% trans "Register" %}" />
 </form>
 </div>
 </div>
