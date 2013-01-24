@@ -2,20 +2,34 @@
 {% block content %}
 <div class="row">
 <div class="span12">
-<form action="/User/Login" method="post" name="Login">
+<form action="/User/Login" id="Login-form" method="post" name="Login">
 	<legend>
 		{% trans %}Members login{% endtrans %}<br>
 		<label><a href="/User/Register">{% trans %}Not a member? register now{% endtrans %}</a></label>
 	</legend>
-	<label>{% trans%}Email{% endtrans %}</label>
-	<input type="email" name="email" value=""/>
-	<label>{% trans %}Password{% endtrans %}</label>
-	<input type="password" name="password" value=""/>
+	<div class="control-group">
+		<label class="control-label" for="email">{% trans%}Email{% endtrans %}</label>
+		<div class="controls">
+			<input type="email" name="email" id="email" value="" required/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="password">{% trans %}Password{% endtrans %}</label>
+		<div class="controls">
+			<input type="password" name="password" id="password" value="" required/>
+		</div>
+	</div>
 	<label class="checkbox">
       <input type="checkbox">{% trans %}Remember me{% endtrans %}
     </label>
-	<input type="submit" name="submit" class="btn" value="{% trans %}Login{% endtrans %}" />
+	<input type="submit" name="submit" class="btn" value="{% trans %}Login{% endtrans %}"/>
 </form>
 </div>
 </div>
+
+{% endblock %}
+{% block javascript %}
+    <script src="../stylesheets/bootstrap/js/dist/jquery.validate.min.js"></script>
+    <script src="../stylesheets/bootstrap/js/localization/{% trans %}messages js file{% endtrans %}"></script>
+    <script src="../stylesheets/bootstrap/js/validatelogin.js"></script>
 {% endblock %}

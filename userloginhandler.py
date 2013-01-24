@@ -43,5 +43,8 @@ class UserLoginHandler(BaseHandler):
 			return
 		
 		# Log in user
-		perform_login(self, user.email)
+		if user.verified:
+			perform_login(self, user.email)
+		else:
+			pass # navigate to send again URL
 

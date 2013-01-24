@@ -1,13 +1,15 @@
 # own files
 from model import User
 from utilities import CryptoUtil
+from utilities import constants
 from userhandler import perform_login
 
 # libraries
 import webapp2
 from gaesessions import get_current_session
-
+from google.appengine.api import mail
 from i18n_utils import BaseHandler
+from base64 import b64encode
 
 class UserRegisterHandler(BaseHandler):
 	def get(self):
@@ -45,7 +47,23 @@ class UserRegisterHandler(BaseHandler):
 		user.email = email
 		user.salt = salt
 		user.password = key
+		user.verified = False
+		user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
 		user.put()
+
+		# Send email for verification
+		template_values = {
+			'user_email' : self.user_email,
+			'code' : user.verificationCode,
+			'url' : constants.VERIFICATION_URL
+		}
+		template = self.jinja2_env.get_template('verificationemail.jinja')
+		message = mail.EmailMessage()
+		message.sender = constants.SENDER_ADDRESS
+		message.to = user.email
+		message.subject = 'Please verify your address'
+		message.body = template.render(template_values)
+		message.send()
 
 		# Log in user
 		perform_login(self, user.email)

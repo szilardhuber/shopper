@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-01-24 09:23+0100\n"
+"POT-Creation-Date: 2013-01-24 16:36+0100\n"
 "PO-Revision-Date: 2013-01-23 17:20+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en_US <LL@li.org>\n"
@@ -26,20 +26,24 @@ msgstr ""
 msgid "Not a member? register now"
 msgstr ""
 
-#: templates/login.html:10 templates/register.html:10
+#: templates/login.html:11 templates/register.html:10
 msgid "Email"
 msgstr ""
 
-#: templates/login.html:12 templates/register.html:12
+#: templates/login.html:17 templates/register.html:12
 msgid "Password"
 msgstr ""
 
-#: templates/login.html:15 templates/register.html:15
+#: templates/login.html:23 templates/register.html:15
 msgid "Remember me"
 msgstr ""
 
-#: templates/login.html:17
+#: templates/login.html:25
 msgid "Login"
+msgstr ""
+
+#: templates/login.html:33
+msgid "messages js file"
 msgstr ""
 
 #: templates/register.html:7

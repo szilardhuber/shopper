@@ -9,6 +9,7 @@ if os.name != 'nt':
 class CryptoVariables:
 	HASH_FUNCTION = SHA256
 	SALT_SIZE = 8
+	VERIFICATION_CODE_SIZE = 32
 	SESSIONID_SIZE = 32
 	KEY_LENGTH = 64
 	ITERATIONS = 1000
@@ -25,6 +26,14 @@ class CryptoUtil():
 			salt = os.urandom(CryptoVariables.SALT_SIZE)
 		key = PBKDF2(password, salt, CryptoVariables.KEY_LENGTH, CryptoVariables.ITERATIONS, pbkdf2_prf)
 		return { 'salt' : salt, 'key' : key }
+	
+	@staticmethod
+	def getVerificationCode():
+		if os.name != 'nt': 
+			code = Random.get_random_bytes(CryptoVariables.VERIFICATION_CODE_SIZE)
+		else:
+			code = os.urandom(CryptoVariables.VERIFICATION_CODE_SIZE)
+		return code
 	
 	@staticmethod
 	def getKey(password, salt):

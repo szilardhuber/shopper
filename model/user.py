@@ -7,6 +7,8 @@ class User(db.Model):
 	salt = db.ByteStringProperty()
 	password = db.ByteStringProperty()
 	registrationdate = db.DateTimeProperty(auto_now_add=True)
+	verified = db.BooleanProperty()
+	verificationCode = db.ByteStringProperty()
 	
 	@staticmethod
 	def getUser(email):
@@ -36,4 +38,16 @@ class User(db.Model):
 			return False
 		return True
 
+	@staticmethod
+	def verify(code):
+		q = db.Query(User)
+		q.filter('verificationCode =', code)
+		if q.count() == 1:
+			verifiedUser = q.get()
+			verifiedUser.verified = True
+			verifiedUser.verificationCode = None
+			verifiedUser.put()
+			return True
+		else:
+			return False
 
