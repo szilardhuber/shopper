@@ -40,11 +40,16 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Shopper</a>
+          <a class="brand" href="/">Shopper</a>
           <div class="nav-collapse collapse">
 	    <ul class="nav pull-right">
+	    {% if user_email is none or user_email is not defined%}
 		<li><a href="/User/Login" class="btn-link">Login</a></li>
 		<li><a href="/User/Register" class="btn-link">Register</a></li>
+		{% else %}
+		<li><a href='#' class="btn-link">{{user_email}}</a></li>
+		<li><a href="/User/Logout" class="btn-link">Logout</a></li>
+		{% endif %}
             </ul>
           </div><!--/.nav-collapse -->
         </div>

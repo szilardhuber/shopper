@@ -11,8 +11,12 @@ from i18n_utils import BaseHandler
 
 class UserRegisterHandler(BaseHandler):
 	def get(self):
-		template = self.jinja2_env.get_template('register.html')
-		self.response.out.write(template.render(()))
+		session = get_current_session()
+		if session.get('email') is not None:
+			perform_logout(self, session.get('email'))
+		else:
+			template = self.jinja2_env.get_template('register.html')
+			self.response.out.write(template.render())
 
 	def post(self):
 		self.doRegister()

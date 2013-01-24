@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% block content %}
   	<h3>Items ordered by user with guid {{ guid }}</h3>
   	<table border=1>
@@ -9,22 +8,6 @@
   	<td>Product name</td>
   	<td>Action</td>
   	</tr>
-     {% for action, productname in actionList.iteritems %}
-    	<tr>
-    	<td>{{ action.date|date:"Y/m/d H:i:s" }}</td>
-    	<td>{{ action.barcode }}</td>
-    	<td>{{ productname }}</td>
-    	<td><a href="DeleteProduct?guid={{ guid }}&barcode={{ action.barcode }}">Delete</a></td>
-        </tr>
-    {% endfor %}
-    	</table>
-    	<br>
-    {% if page > 0 %}
-    	<a href="ListProducts?guid={{ guid }}&page={{ page|add:"-1" }}">Previous page</a> 
-    {% endif %}
-    {% if page < lastPage %}
-    	<a href="ListProducts?guid={{ guid }}&page={{ page|add:"1" }}">Next page</a>
-    {% endif %}
     <br><a href="DeleteProduct?guid={{ guid }}">Order items</a>
   </body>
 </html>                                          

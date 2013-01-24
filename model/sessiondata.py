@@ -15,12 +15,21 @@ class SessionData(db.Model):
 		return ''.join('%02x' % ord(byte) for byte in CryptoUtil.getSessionId())
 
 	@staticmethod
+	def getSession(sessionid):
+		if sessionid is not None:
+			return SessionData.get_by_key_name(sessionid, read_policy=db.STRONG_CONSISTENCY)
+		else:
+			return None
+
+	@staticmethod
 	def isValidSession(sessionid):
-		return SessionData.get_by_key_name(sessionid, read_policy=db.STRONG_CONSISTENCY)
+		session = SessionData.getSession(sessionid)
+		return session is not None
 	
 	@staticmethod
 	def delete_expired_sessions():
 		q = db.Query(SessionData)
 		q.filter('startdate <', datetime.now() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES))
 		db.delete(q)
+		
 		

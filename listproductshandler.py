@@ -10,7 +10,9 @@ import os
 from google.appengine.ext.webapp import template
 from google.appengine.api import search
 
-class ListProductsHandler(webapp2.RequestHandler):
+from i18n_utils import BaseHandler
+
+class ListProductsHandler(BaseHandler):
 	RESULTS_PER_PAGE = 10
 	
 	@authenticate
@@ -41,12 +43,12 @@ class ListProductsHandler(webapp2.RequestHandler):
 		#	self.response.out.write(barcode + ' ' + productname + '<br>')
 			
 		template_values = {
+			'user_email' : self.user_email,
 			'guid' : user_guid,
 			'actions' : actions,
 			'actionList': actionList,
 			'page' : page,
 			'lastPage' : 10
 		}
-		path = os.path.join(os.path.dirname(__file__), 'templates/productlist.html')
-		self.response.out.write(template.render(path, template_values))
-                           
+		template = self.jinja2_env.get_template('productlist.html')
+		self.response.out.write(template.render(template_values))                           

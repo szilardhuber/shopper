@@ -77,6 +77,8 @@ def convert_translations_to_dict(js_translations):
 class BaseHandler(webapp2.RequestHandler):
     """A base handler for installing i18n-aware Jinja2 environment."""
 
+    user_email = ""
+
     @webapp2.cached_property
     def jinja2_env(self):
         """Cached property for a Jinja2 environment.
