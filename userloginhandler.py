@@ -5,13 +5,13 @@ from userhandler import perform_login
 
 # libraries
 import webapp2
-import os
-from google.appengine.ext.webapp import template
 
-class UserLoginHandler(webapp2.RequestHandler):
+from i18n_utils import BaseHandler
+
+class UserLoginHandler(BaseHandler):
 	def get(self):
-		path = os.path.join(os.path.dirname(__file__), 'templates/login.html')
-		self.response.out.write(template.render(path, {}))
+		template = self.jinja2_env.get_template('login.html')
+		self.response.out.write(template.render(()))
 
 	def post(self):
 		self.doLogin()

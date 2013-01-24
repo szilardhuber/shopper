@@ -7,11 +7,12 @@ from userhandler import perform_login
 import webapp2
 import os
 from google.appengine.ext.webapp import template
+from i18n_utils import BaseHandler
 
-class UserRegisterHandler(webapp2.RequestHandler):
+class UserRegisterHandler(BaseHandler):
 	def get(self):
-		path = os.path.join(os.path.dirname(__file__), 'templates/register.html')
-		self.response.out.write(template.render(path, {}))
+		template = self.jinja2_env.get_template('register.html')
+		self.response.out.write(template.render(()))
 
 	def post(self):
 		self.doRegister()

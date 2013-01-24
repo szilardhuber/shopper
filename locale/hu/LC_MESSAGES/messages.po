@@ -1,0 +1,56 @@
+# Hungarian translations for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-01-24 09:23+0100\n"
+"PO-Revision-Date: 2013-01-23 17:21+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: hu <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: templates/login.html:7
+msgid "Members login"
+msgstr "Bejelentkezés"
+
+#: templates/login.html:8
+msgid "Not a member? register now"
+msgstr "Még nem regisztrált? Tegye meg most"
+
+#: templates/login.html:10 templates/register.html:10
+msgid "Email"
+msgstr "Email-cím"
+
+#: templates/login.html:12 templates/register.html:12
+msgid "Password"
+msgstr "Jelszó"
+
+#: templates/login.html:15 templates/register.html:15
+msgid "Remember me"
+msgstr "Emlékezz rám"
+
+#: templates/login.html:17
+msgid "Login"
+msgstr "Bejelentkezés"
+
+#: templates/register.html:7
+msgid "Register now"
+msgstr "Regisztráció"
+
+#: templates/register.html:8
+msgid "Already signed up? log in now"
+msgstr "Már regisztrált? Jelentkezzen be!"
+
+#: templates/register.html:17
+msgid "Register"
+msgstr "Regisztráció"
+
