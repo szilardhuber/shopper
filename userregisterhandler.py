@@ -5,8 +5,8 @@ from userhandler import perform_login
 
 # libraries
 import webapp2
-import os
-from google.appengine.ext.webapp import template
+from gaesessions import get_current_session
+
 from i18n_utils import BaseHandler
 
 class UserRegisterHandler(BaseHandler):

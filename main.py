@@ -26,7 +26,7 @@ class ScanHandler(webapp2.RequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'templates/scan.html')
 		self.response.out.write(template.render(path, template_values))
 
-app = webapp2.WSGIApplication([('/', ScanHandler),
+app = webapp2.WSGIApplication([('/', ListProductsHandler),
 				('/addproduct', AddProductHandler),
 				('/AddProduct', AddProductHandler),
 				('/ListProducts', ListProductsHandler),
