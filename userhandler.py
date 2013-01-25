@@ -11,12 +11,12 @@ def perform_login(handler, email):
 	session = get_current_session()
 	session['id'] = sessionid
 	session['email'] = email
-	redirectURL = session.pop_quick('url')
-	if redirectURL is not None:       
-		handler.redirect(redirectURL)
-	else:
-		handler.redirect('/')
-		
+#	redirectURL = session.pop_quick('url')
+#	if redirectURL is not None:       
+#		handler.redirect(redirectURL)
+#	else:
+#		handler.redirect('/')
+
 def perform_logout(handler, email):
 	session = get_current_session()
 	sessionid = session.get('id')
@@ -25,4 +25,4 @@ def perform_logout(handler, email):
 		sessionData.delete()
 	session['id'] = None
 	session['email'] = None
-	handler.redirect('/')
+#	handler.redirect('/')

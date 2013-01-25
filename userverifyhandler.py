@@ -11,7 +11,7 @@ from i18n_utils import BaseHandler
 class UserVerifyHandler(BaseHandler):
 	def get(self):
 		code = self.request.get('code')
-		if code is None or code = '':
+		if code is None or code == '':
 			pass # Please check your emails
 		else:
 			success = User.verify(code)

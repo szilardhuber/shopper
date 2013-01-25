@@ -3,6 +3,7 @@ from model import User
 from utilities import CryptoUtil
 from utilities import constants
 from userhandler import perform_login
+from userhandler import perform_logout
 
 # libraries
 import webapp2

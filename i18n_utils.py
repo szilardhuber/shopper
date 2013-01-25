@@ -19,7 +19,7 @@
 The idea of this example, especially for how to translate strings in
 Javascript is originally from an implementation of Django i18n.
 """
-
+import logging
 
 import gettext
 import json
@@ -86,13 +86,22 @@ class BaseHandler(webapp2.RequestHandler):
         Returns:
             Jinja2 Environment object.
         """
-
         jinja2_env = jinja2.Environment(
               loader=jinja2.FileSystemLoader(
                     os.path.join(os.path.dirname(__file__), 'templates')),
               extensions=['jinja2.ext.i18n'])
-        jinja2_env.install_gettext_translations(
-              self.request.environ['i18n_utils.active_translation'])
+        accept_language = AcceptLanguage(
+              self.request.environ.get("HTTP_ACCEPT_LANGUAGE", 'en'))
+        preferred_languages = accept_language.best_matches()
+        if not 'en' in preferred_languages:
+            preferred_languages.append('en')
+        locale_path = os.path.join(
+              os.path.abspath(os.path.dirname(__file__)), 'locale')
+        translation = gettext.translation(
+              'messages', locale_path, fallback=True,
+              languages=preferred_languages, codeset='utf-8')
+        translation.install(unicode=True, names=['gettext', 'ngettext'])
+        jinja2_env.install_gettext_translations(translation)
         jinja2_env.globals['get_i18n_js_tag'] = self.get_i18n_js_tag
         return jinja2_env
 
