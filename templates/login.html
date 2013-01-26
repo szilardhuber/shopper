@@ -2,7 +2,7 @@
 {% block content %}
 <div class="row">
 <div class="span12">
-<form action="/User/Login" id="Login-form" method="post" name="Login">
+<form id="Login-form" method="post" name="Login">
 	<legend>
 		{% trans %}Members login{% endtrans %}<br>
 		<label><a href="/User/Register">{% trans %}Not a member? register now{% endtrans %}</a></label>
@@ -22,7 +22,9 @@
 	<label class="checkbox">
       <input type="checkbox">{% trans %}Remember me{% endtrans %}
     </label>
-	<input type="submit" name="submit" class="btn" value="{% trans %}Login{% endtrans %}"/>
+	<input type="submit" id="submit" name="submit" class="btn" value="{% trans %}Login{% endtrans %}"/>
+	<br><br>
+	<div id = "alert_placeholder"></div>
 </form>
 </div>
 </div>
@@ -31,5 +33,5 @@
 {% block javascript %}
     <script src="../stylesheets/bootstrap/js/dist/jquery.validate.min.js"></script>
     <script src="../stylesheets/bootstrap/js/localization/{% trans %}messages js file{% endtrans %}"></script>
-    <script src="../stylesheets/bootstrap/js/validatelogin.js"></script>
+    <script src="../js/login.js"></script>
 {% endblock %}
