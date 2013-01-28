@@ -34,6 +34,6 @@ app = webapp2.WSGIApplication([('/', ListProductsHandler),
 				('/DeleteProduct', DeleteProductHandler),
 				('/deleteproduct', DeleteProductHandler),
 				('/sessions', SessionCleanupHandler)
-				],debug=True)
+				],debug=False)
 
                                                                                             

@@ -7,17 +7,8 @@ bootstrap_alert.hide = function() {
 }
         
 $(document).ready(function(){
-
-		
-		// Call validate on submit and prevent navigation
-		$('#submit').click(function(e) {
-				e.preventDefault;
-				$('#Login-form').valid();
-		});
-
-
 		// Validate
-		$('#Login-form').validate({
+		$('#login-form').validate({
 			rules: {
 			  email: {
 				required: true,
@@ -35,24 +26,7 @@ $(document).ready(function(){
 			success: function(label) {
 				$(label).closest('.control-group').removeClass('error');
 				$(label).closest('.control-group').addClass('success');
-				bootstrap_alert.hide();
 			},
-			submitHandler: function(label) {
-				$.ajax({
-					url: '/User/Login',
-					type: 'POST',
-					data: {'email' : $('#email').val(), 'password' : $('#password').val() },
-					complete: function(e, xhr, settings){
-						if (e.status === 200) {
-							window.location.href = "/";
-						}
-						else if (e.status === 401) {
-								bootstrap_alert.warning("Login error. Please try again.");
-								$('#password').focus();	
-						}
-					}
-				});
-			}
 	    });
 	  
 }); // end document.ready

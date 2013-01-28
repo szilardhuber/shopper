@@ -2,20 +2,42 @@
 {% block content %}
 <div class="row">
 <div class="span12">
-<form action="/User/Register" method="post" name="Login">
+<form id="register-form" action="/User/Register" method="post" name="Login">
 	<legend>
 		{% trans %}Register now{% endtrans %}<br>
 		<label><a href="/User/Login">{% trans %}Already signed up? log in now{% endtrans %}</a></label>
 	</legend>
-	<label>{% trans %}Email{% endtrans %}</label>
-	<input type="email" name="email" value=""/>
-	<label>{% trans %}Password{% endtrans %}</label>
-	<input type="password" name="password" value=""/>
+	<div class="control-group">
+		<label class="control-label" for="email">{% trans%}Email{% endtrans %}</label>
+		<div class="controls">
+			<input type="email" name="email" id="email" value="" required/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="password">{% trans %}Password{% endtrans %}</label>
+		<div class="controls">
+			<input type="password" name="password" id="password" value="" required/>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="password2">{% trans %}Password again{% endtrans %}</label>
+		<div class="controls">
+			<input type="password" name="password2" id="password2" value="" required/>
+		</div>
+	</div>
 	<label class="checkbox">
       <input type="checkbox">{% trans %}Remember me{% endtrans %}
     </label>
-	<input type="submit" name="submit" class="btn" value="{% trans %}Register{% endtrans %}" />
+	<input type="submit" id="submit" name="submit" class="btn" value="{% trans %}Login{% endtrans %}"/>
+	<br><br>
+	<div id = "alert_placeholder"></div>
 </form>
 </div>
 </div>
+
+{% endblock %}
+{% block javascript %}
+    <script src="../stylesheets/bootstrap/js/dist/jquery.validate.min.js"></script>
+    <script src="../stylesheets/bootstrap/js/localization/{% trans %}messages js file{% endtrans %}"></script>
+    <script src="../js/register.js"></script>
 {% endblock %}

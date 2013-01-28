@@ -26,20 +26,20 @@ class UserLoginHandler(BaseHandler):
 		# Validate email and get user from db
 		email = self.request.get('email')
 		if not User.isEmailValid(email) or not User.isAlreadyRegistered(email):
-			self.error(401)
+			self.error(400)
 			return
 		user = User.getUser(email);
 
 		# Calculate password hash
 		password = self.request.get('password')
 		if not User.isPasswordValid(password):
-			self.error(401)
+			self.error(400)
 			return
 		key = CryptoUtil.getKey(password, user.salt)
 
 		# Validate password
 		if not user.password == key:
-			self.error(401)
+			self.error(400)
 			return
 		
 		# Log in user
