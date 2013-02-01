@@ -1,6 +1,7 @@
 # own files
 from model import Action
 from utilities import authenticate
+from utilities import viewneeded
 
 # libraries
 from google.appengine.ext import db
@@ -10,13 +11,14 @@ import os
 from google.appengine.ext.webapp import template
 from google.appengine.api import search
 
-from i18n_utils import BaseHandler
+from basehandler import BaseHandler
 
 class ListProductsHandler(BaseHandler):
 	RESULTS_PER_PAGE = 10
 	
+	@viewneeded
 	@authenticate
-	def get(self):
+	def get(self, api=None, keywordarg=456, optionalKeyArg=123):
 		user_guid = self.request.get("guid");
 		page = self.request.get("page");
 		if page == '':
