@@ -40,4 +40,9 @@
     <script src="../stylesheets/bootstrap/js/dist/jquery.validate.min.js"></script>
     <script src="../stylesheets/bootstrap/js/localization/{% trans %}messages js file{% endtrans %}"></script>
     <script src="../js/register.js"></script>
+    {% if errormessage %}
+	<script>
+    		bootstrap_alert.warning('{{errormessage}}');
+    </script>
+    {% endif %}
 {% endblock %}

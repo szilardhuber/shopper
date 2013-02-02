@@ -8,19 +8,11 @@ bootstrap_alert.hide = function() {
         
 $(document).ready(function(){
 		// Validate
-		$('#register-form').validate({
+		$('#resend-form').validate({
 			rules: {
 			  email: {
 				required: true,
 				email: true
-			  },
-			  password: {
-				minlength: 8,
-				required: true
-			  },
-			  password2: {
-				required: true,
-				equalTo: "#password"
 			  }
 			},
 			highlight: function(label) {

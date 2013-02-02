@@ -1,5 +1,6 @@
 from userhandler import UserHandler
 from listproductshandler import ListProductsHandler
+from utilities import constants
 
 from google.appengine.api import mail
 from google.appengine.ext import testbed
@@ -16,7 +17,7 @@ Tests needed:
 """
 
 class UserAPICases(unittest.TestCase):
-	verifyPrefix = 'https://szilardhuber.appengine.com/User/Verify?code='
+	verifyPrefix = 'https://szilardhuber.appspot.com/User/Verify?code='
 	loginURL = '/User/Login/API'
 	registerURL = '/User/Register/API'
 	verifyURL = '/User/Verify'
@@ -92,7 +93,7 @@ class UserAPICases(unittest.TestCase):
 		self.assertEqual(response.status_int, 200, 'Login failed with verified client: ' + str(response.status_int))
 		session = get_current_session()
 		self.assertEqual(session.get('email'), email, 'User email is not correct in session variable: ' + str(session.get('email')))
-		self.assertIsNotNone(session.get('id'), 'SessionId is none')
+		self.assertIsNotNone(session.get(constants.SESSION_ID), 'SessionId is none')
 		
 		# 7. Access test site
 		response = self.testapp.get('/api', expect_errors=True)

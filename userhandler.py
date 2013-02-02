@@ -52,19 +52,45 @@ class UserHandler(BaseHandler):
 		if command.lower() == 'register':
 			self.__register()
 			return
+		
+		if command.lower() == 'verify' and api == '':
+			email = self.request.get('email')
+			self.__send_verification(email)
+			return
 			
 		self.error(404)
 		return
+
+	def __send_verification(self, email):
+		user = User.getUser(email)
+		if user is None:
+			self.set_error(400, message = None, url="/")
+			return
+		user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
+		template_values = {
+			'user_email' : self.user_email,
+			'code' : user.verificationCode,
+			'url' : constants.VERIFICATION_URL
+		}
+		template = self.jinja2_env.get_template('verificationemail.jinja')
+		message = mail.EmailMessage()
+		message.sender = constants.SENDER_ADDRESS
+		message.to = user.email
+		message.subject = 'Please verify your address'
+		message.body = template.render(template_values)
+		message.send()
+		user.put()
+		self.ok('/')
 
 	def __logout(self):
 		session = get_current_session()
 		if session.get('email') is None:
 			return
-		sessionid = session.get('id')
+		sessionid = session.get(constants.SESSION_ID)
 		sessionData = SessionData.getSession(sessionid)
 		if sessionData is not None:
 			sessionData.delete()
-		session['id'] = None
+		session[constants.SESSION_ID] = None
 		session['email'] = None
 		self.ok('/')
 
@@ -72,43 +98,45 @@ class UserHandler(BaseHandler):
 		# Validate email and get user from db
 		email = self.request.get('email')
 		if not User.isEmailValid(email) or not User.isAlreadyRegistered(email):
-			self.set_error(400, gettext('Incorrect credentials'))
+			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
 			return
 		user = User.getUser(email);
 
 		# Calculate password hash
 		password = self.request.get('password')
 		if not User.isPasswordValid(password):
-			self.set_error(400, gettext('Incorrect credentials'))
+			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
 			return
 		key = CryptoUtil.getKey(password, user.salt)
 
 		# Validate password
 		if not user.password == key:
-			self.set_error(400, gettext('Incorrect credentials'))
+			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
 			return
 		
 		# Log in user
-		if user.verified:
+		if user.verified == True:
 			self.__perform_login(user.email)
 			session = get_current_session()
-			self.ok(session.pop('returnurl'))
+			url = session.pop('returnurl')
+			if url == None:
+				url = "/"
+			self.ok(url)
 		else:
-			self.set_error(403)
+			self.set_error(403, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url = self.request.url)
 			return
 		
 	def __register(self):
 		# Validate email
 		email = self.request.get('email')
 		if not User.isEmailValid(email) or User.isAlreadyRegistered(email):
-			self.error(400)
+			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
 			return
 			
 		# Validate password
 		password = self.request.get('password')
 		if not User.isPasswordValid(password):
-			self.response.out.write('Invalid arguments<br>')
-			self.error(400)
+			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
 			return
 			
 		# Calculate password hash
@@ -122,37 +150,33 @@ class UserHandler(BaseHandler):
 		user.salt = salt
 		user.password = key
 		user.verified = False
-		user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
 		user.put()
 
 		# Send email for verification
-		template_values = {
-			'user_email' : self.user_email,
-			'code' : user.verificationCode,
-			'url' : constants.VERIFICATION_URL
-		}
-		template = self.jinja2_env.get_template('verificationemail.jinja')
-		message = mail.EmailMessage()
-		message.sender = constants.SENDER_ADDRESS
-		message.to = user.email
-		message.subject = 'Please verify your address'
-		message.body = template.render(template_values)
-		message.send()
+		self.__send_verification(email)
 
-		self.response.out.write(user.verificationCode)
+		self.ok()
 		
 	
-	def __verify(self):	
+	def __verify(self):
+		send = False
+		error = False
 		code = self.request.get('code')
 		if code is None or code == '':
-			self.error(400)
+			send = True
 		else:
 			success = User.verify(code)
-			if success:
-				template = self.jinja2_env.get_template('verification.html')
-				self.response.out.write(template.render())
-			else:
-				self.error(400)	
+			if not success:
+				send = True
+				error = True
+		template_values = {
+			'user_email' : self.user_email,
+			'send' : send,
+			'error' : error
+		}
+		template = self.jinja2_env.get_template('verification.html')
+		self.response.out.write(template.render(template_values))
+	
 		
 	def __display_form(self, template):
 		session = get_current_session()
@@ -172,5 +196,5 @@ class UserHandler(BaseHandler):
 		sessionData.ip = self.request.remote_addr
 		sessionData.put()
 		session = get_current_session()
-		session['id'] = sessionid
+		session[constants.SESSION_ID] = sessionid
 		session['email'] = email

@@ -13,10 +13,10 @@ class APIView():
                 APIView.instance = APIView()
         return APIView.instance
     
-    def display_error(self, baseHandler, error, message = None):
+    def display_error(self, baseHandler, error, message=None, url=None):
         baseHandler.error(error)
         
-    def ok(self, baseHandler, url = None):
+    def ok(self, baseHandler, url=None):
         pass
 
 class WebView():
@@ -30,7 +30,7 @@ class WebView():
                 WebView.instance = WebView()
         return WebView.instance
     
-    def display_error(self, baseHandler, error, message = None):
+    def display_error(self, baseHandler, error, message=None, url=None):
         if error == 401:
             session = get_current_session()
             session['returnurl'] = baseHandler.request.url
@@ -39,9 +39,16 @@ class WebView():
             session = get_current_session()
             if message is not None:
                 session['errormessage'] = message
+            if url is not None:
+                baseHandler.redirect(url)
+        if error == 403:
+            session = get_current_session()
+            if message is not None:
+                session['errormessage'] = message
             baseHandler.redirect(baseHandler.request.url)
             
-    def ok(self, baseHandler, url = None):
+            
+    def ok(self, baseHandler, url=None):
         if url is not None:
             baseHandler.redirect(url)
             
@@ -50,8 +57,8 @@ class BaseHandler(LocalizedHandler):
     user_email = ""
     view = APIView()
     
-    def set_error(self, error, message = None):
-        self.view.display_error(self, error, message)
+    def set_error(self, error, message=None, url=None):
+        self.view.display_error(self, error, message, url)
         
-    def ok(self, url = None):
+    def ok(self, url=None):
         self.view.ok(self, url)

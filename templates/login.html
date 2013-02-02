@@ -19,9 +19,12 @@
 			<input type="password" name="password" id="password" value="" required/>
 		</div>
 	</div>
+	<div class="control-group">
 	<label class="checkbox">
       <input type="checkbox">{% trans %}Remember me{% endtrans %}
+      <label><a href="/User/Forgot">{% trans %}Forgot your password?{% endtrans %}</a></label>
     </label>
+    </div>
 	<input type="submit" id="submit" name="submit" class="btn" value="{% trans %}Login{% endtrans %}"/>
 	<br><br>
 	<div id = "alert_placeholder"></div>

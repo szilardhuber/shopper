@@ -3,6 +3,7 @@ from model.sessiondata import SessionData
 from basehandler import APIView
 from basehandler import WebView
 from i18n_utils import LocalizedHandler
+from utilities import constants
 
 def viewneeded(func):
 	def custom_call(*args, **kwargs):
@@ -23,7 +24,7 @@ def usercallable(func):
 def authenticate(func):
 	def authenticate_and_call(handler, *args):
 		session = get_current_session()
-		sessionid = session.get('id')
+		sessionid = session.get(constants.SESSION_ID)
 		if not sessionid or sessionid == '' or not SessionData.isValidSession(sessionid):
 			handler.set_error(401)
 			return
