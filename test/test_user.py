@@ -53,6 +53,21 @@ class UserAPICases(unittest.TestCase):
 		response = self.__register_user('james@bond.com')
 		self.assertEqual(response.status_int, 400, 'Code 400 should arrive when calling without password: ' + str(response.status_int))
 		
+	def testRegisterHandlerBadPassword(self):
+		email = 'james@aisoft.hu'
+		password = '"a"@a.hu'
+		response = self.__register_user(email, password)
+		self.assertEqual(response.status_int, 400, 'Code 400 should arrive when calling with invalid characters in password: ' + password + ' ' + str(response.status_int))
+		password = 	'"a;"@a.hu'
+		response = self.__register_user(email, password)
+		self.assertEqual(response.status_int, 400, 'Code 400 should arrive when calling with invalid characters in password: ' + password + ' ' + str(response.status_int))
+		password = "a'a@a.hu"	
+		response = self.__register_user(email, password)
+		self.assertEqual(response.status_int, 400, 'Code 400 should arrive when calling with invalid characters in password: ' + password + ' ' + str(response.status_int))
+		password = "a;a@a.hu"
+		response = self.__register_user(email, password)
+		self.assertEqual(response.status_int, 400, 'Code 400 should arrive when calling with invalid characters in password: ' + password + ' ' + str(response.status_int))
+	
 	def testRegisterHandlerOK(self):
 		response = self.__register_user('james@bond.com','password')
 		self.assertEqual(response.status_int, 200, 'Wrong response with correct credentials: ' + str(response.status_int))
@@ -128,6 +143,8 @@ class UserAPICases(unittest.TestCase):
 		# 3. Login with bad credentials
 		response = self.__login_user(email, 'password2')		
 		self.assertEqual(response.status_int, 400, 'Login succeeded with bad password.')
+		response = self.__login_user(email, '')		
+		self.assertEqual(response.status_int, 400, 'Login succeeded with empty password.')
 		response = self.__login_user('james2@bond.com', password)
 		self.assertEqual(response.status_int, 400, 'Login succeeded with bad email.')	
 		

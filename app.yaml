@@ -22,11 +22,6 @@ handlers:
   static_files: robots.txt
   upload: robots.txt
   
-- url: /admin/.*
-  script: admin.app
-  secure: optional
-  login: admin
-
 - url: /[uU]ser/.*
   script: user.app
   secure: always

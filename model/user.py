@@ -1,6 +1,7 @@
 # libraries
 from google.appengine.ext import db
 from django.core.validators import email_re
+import re
 
 class User(db.Model):
 	email = db.EmailProperty()
@@ -32,9 +33,7 @@ class User(db.Model):
 	def isPasswordValid(password):
 		if password is None:
 			return False
-		if password == '': #what if '    '? I suggest trim. What if password contains any other whitespace char? Use regex instead of.
-			return False
-		if len(password) < 8: # regex can check this as well.
+		if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', password):
 			return False
 		return True
 
