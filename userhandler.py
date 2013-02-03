@@ -63,7 +63,7 @@ class UserHandler(BaseHandler):
 
 	def __send_verification(self, email):
 		user = User.getUser(email)
-		if user is None:
+		if user is None or user.verified:
 			self.set_error(400, message = None, url="/")
 			return
 		user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
