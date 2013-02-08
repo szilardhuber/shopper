@@ -7,6 +7,7 @@ from i18n_utils import LocalizedHandler
 from utilities import constants
 
 import logging
+import copy
 from model.logintoken import LoginToken
 
 def viewneeded(func):
@@ -48,6 +49,7 @@ def authenticate(func):
 				token = LoginToken.get(token_data)
 				#	if persistent id is correct (email matches id following it): peform login 
 				if token is not None:
+					token.delete()
 					token.tokenid = LoginToken.generateId()
 					token.put()
 					cookie_value = token.get_cookie_value()
