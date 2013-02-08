@@ -3,9 +3,7 @@ import fix_path
 
 # own files
 from utilities import authenticate
-from addproducthandler import AddProductHandler
 from listproductshandler import ListProductsHandler
-from deleteproducthandler import DeleteProductHandler
 from sessioncleanuphandler import SessionCleanupHandler
 
 # libraries
@@ -26,14 +24,10 @@ class ScanHandler(webapp2.RequestHandler):
 		path = os.path.join(os.path.dirname(__file__), 'templates/scan.html')
 		self.response.out.write(template.render(path, template_values))
 
-app = webapp2.WSGIApplication([('/(.*)', ListProductsHandler),
-				('/addproduct', AddProductHandler),
-				('/AddProduct', AddProductHandler),
+app = webapp2.WSGIApplication([('/sessions', SessionCleanupHandler),
+				('/(.*)', ListProductsHandler),
 				('/ListProducts', ListProductsHandler),
-				('/listproducts', ListProductsHandler),
-				('/DeleteProduct', DeleteProductHandler),
-				('/deleteproduct', DeleteProductHandler),
-				('/sessions', SessionCleanupHandler)
+				('/listproducts', ListProductsHandler)
 				],debug=True)
 
                                                                                             

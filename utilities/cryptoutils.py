@@ -11,6 +11,7 @@ class CryptoVariables:
 	SALT_SIZE = 8
 	VERIFICATION_CODE_SIZE = 32
 	SESSIONID_SIZE = 32
+	PERSISTENT_TOKEN_SIZE = 32
 	KEY_LENGTH = 64
 	ITERATIONS = 1000
 
@@ -41,8 +42,17 @@ class CryptoUtil():
 		return key
 
 	@staticmethod
-	def getSessionId():
+	def __get_random_bytes(size):
 		if os.name != 'nt': 
-			return Random.get_random_bytes(CryptoVariables.SESSIONID_SIZE)
+			return Random.get_random_bytes(size)
 		else:
-			return os.urandom(CryptoVariables.SESSIONID_SIZE)		
+			return os.urandom(size)
+
+	@staticmethod
+	def getSessionId():
+		return CryptoUtil.__get_random_bytes(CryptoVariables.SESSIONID_SIZE)
+		
+	@staticmethod
+	def getPersistentId():
+		return CryptoUtil.__get_random_bytes(CryptoVariables.PERSISTENT_TOKEN_SIZE)
+		

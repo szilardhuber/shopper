@@ -1,3 +1,7 @@
+from sessiondata import SessionData
+from utilities import constants
+from gaesessions import get_current_session
+
 # libraries
 from google.appengine.ext import db
 from django.core.validators import email_re
@@ -50,3 +54,13 @@ class User(db.Model):
 		else:
 			return False
 
+	def	login(self, ip):
+		sessionid = SessionData.generateId()
+		sessionData = SessionData(key_name=sessionid)
+		sessionData.sessionid = sessionid
+		sessionData.email = self.email
+		sessionData.ip = ip
+		sessionData.put()
+		session = get_current_session()
+		session[constants.SESSION_ID] = sessionid
+		session['email'] = self.email

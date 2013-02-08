@@ -3,6 +3,7 @@ from google.appengine.ext import db
 from utilities import CryptoUtil
 from datetime import datetime, timedelta
 from utilities import constants
+import logging
 
 class SessionData(db.Model):
 	email = db.EmailProperty()
@@ -22,14 +23,14 @@ class SessionData(db.Model):
 			return None
 
 	@staticmethod
-	def isValidSession(sessionid):
-		session = SessionData.getSession(sessionid)
-		return session is not None
-	
-	@staticmethod
 	def delete_expired_sessions():
 		q = db.Query(SessionData)
 		q.filter('startdate <', datetime.now() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES))
 		db.delete(q)
 		
-		
+	def isValid(self):
+		return self.startdate > datetime.now() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES)
+	
+	def update_startdate(self):
+		self.startdate = datetime.now()
+		self.put()

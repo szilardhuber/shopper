@@ -146,8 +146,56 @@ class UserAPICases(unittest.TestCase):
 		response = self.__login_user(email, '')		
 		self.assertEqual(response.status_int, 400, 'Login succeeded with empty password.')
 		response = self.__login_user('james2@bond.com', password)
-		self.assertEqual(response.status_int, 400, 'Login succeeded with bad email.')	
+		self.assertEqual(response.status_int, 400, 'Login succeeded with bad email.')
 		
+	def testPersistentCookie(self):
+		email = 'jamesbond@aisoft.hu'
+		password = '12345678'
+		
+		# 1. Register client 
+		response = self.__register_user(email, password)
+		self.assertEqual(response.status_int, 200, 'Register failed with correct credentials: ' + str(response.status_int))
+		
+		# 2. Verify client
+		response = self.__verify_user(email)
+		self.assertEqual(response.status_int, 200, 'Verification failed: '+ str(response.status_int))
+		
+		# 3. Login with remember me turned off
+		response = self.__login_user(email, password)
+		self.assertEqual(response.status_int, 200, 'Login failed with verified client: ' + str(response.status_int))
+		
+		# 4. Acessing secure content (after login and after deleting session data)
+		response = self.testapp.get('/api', expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
+		session = get_current_session()
+		session.terminate()
+		response = self.testapp.get('/api', expect_errors=True)
+		self.assertEqual(response.status_int, 401, 'Users only page should not be served without providing session data: ' + str(response.status_int))
+		
+		# 5. Login with remember me turned on
+		response = self.__login_user(email, password, True)
+		self.assertEqual(response.status_int, 200, 'Login failed with verified client: ' + str(response.status_int))
+		
+		# 6. Acessing secure content (after login and after deleting session data)
+		response = self.testapp.get('/api', expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
+		session = get_current_session()
+		session.terminate()
+		response = self.testapp.get('/api', expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
+		
+		# Test next login
+		session = get_current_session()
+		session.terminate()
+		response = self.testapp.get('/api', expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
+
+		# 7. Try to access secure content with modified token
+		response = self.testapp.get('/api', expect_errors=True, headers=dict(Cookie='token='))
+		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
+		
+		
+
 	def __register_user(self, email = None, password = None):
 		params = {}
 		if email is not None:
@@ -166,11 +214,58 @@ class UserAPICases(unittest.TestCase):
 		response = self.testapp.get(self.verifyURL, params={'code' : code}, expect_errors=True)
 		return response
 	
-	def __login_user(self, email, password):
-		response = self.testapp.post(self.loginURL, params={'email' : email, 'password' : password}, expect_errors=True)
+	def __login_user(self, email, password, remember = False):
+		response = self.testapp.post(self.loginURL, params={'email' : email, 'password' : password, 'remember' : remember}, expect_errors=True)
 		return response
+
+from model import LoginToken
 		
 class UserUnitTestCases(unittest.TestCase):
+	def testLoginToken(self):
+		good_email = 'good@aisoft.hu'
+		bad_email = 'bad@aisoft.hu'
+		good_id = LoginToken.generateId()
+		good_token = LoginToken()
+		good_token.tokenid = good_id
+		good_token.ip = '127.0.0.1'
+		good_token.user = good_email
+		good_token.put()
+		bad_id = LoginToken.generateId()
+		bad_token = LoginToken()
+		bad_token.tokenid = bad_id
+		bad_token.ip = '192.168.10.1'
+		bad_token.user = bad_email
+		bad_token.put()
+		
+		# Test for invalid input
+		self.assertIsNone(LoginToken.get(''), 'We should not get a valid token for empty string')
+		self.assertIsNone(LoginToken.get('someemail@aisoft.hu;;sometoken'))
+		
+		# Test for valid query
+		cookie_value = good_email +';;' + str(good_id)
+		queried_token = LoginToken.get(cookie_value)
+		self.assertIsNotNone(queried_token, 'None returned for valid persistent token')
+		self.assertEqual(good_token.user, queried_token.user, 'Valid persistent token not found.')
+		self.assertEqual(good_token.tokenid, queried_token.tokenid, 'Valid persistent token not found.')
+		
+		# Test for hijacking
+		bad_cookie_value = bad_email + ';;' + str(bad_id)
+		queried_token = LoginToken.get(bad_cookie_value)
+		self.assertIsNotNone(queried_token, 'None returned for valid persistent token')
+		self.assertEqual(bad_token.user, queried_token.user, 'Valid persistent token not found.')
+		self.assertEqual(bad_token.tokenid, queried_token.tokenid, 'Valid persistent token not found.')
+
+		bad_cookie_value = bad_email + ';;' + str(good_id)
+		queried_token = LoginToken.get(bad_cookie_value)
+		self.assertIsNone(queried_token, 'Session hijacking danger')
+		
+		LoginToken.delete_user_tokens(bad_cookie_value)
+		bad_cookie_value = bad_email + ';;' + str(bad_id)
+		queried_token = LoginToken.get(bad_cookie_value)
+		self.assertIsNone(queried_token, 'Session hijacking danger')
+	
+		
+		
 	def testPasswordChecksum(self):
 		pass
 

@@ -1,9 +1,13 @@
 from gaesessions import get_current_session
 from model.sessiondata import SessionData
+from model import User
 from basehandler import APIView
 from basehandler import WebView
 from i18n_utils import LocalizedHandler
 from utilities import constants
+
+import logging
+from model.logintoken import LoginToken
 
 def viewneeded(func):
 	def custom_call(*args, **kwargs):
@@ -22,12 +26,43 @@ def usercallable(func):
 	return custom_call
 
 def authenticate(func):
+	def success(handler):
+		session = get_current_session()
+		sessionid = session.get(constants.SESSION_ID)
+		SessionData.getSession(sessionid).update_startdate()
+		handler.user_email = session.get('email')
+		
+	def error(handler):
+		session = get_current_session()
+		session.terminate()
+		handler.set_error(401)
+		
 	def authenticate_and_call(handler, *args):
 		session = get_current_session()
 		sessionid = session.get(constants.SESSION_ID)
-		if not sessionid or sessionid == '' or not SessionData.isValidSession(sessionid):
-			handler.set_error(401)
-			return
-		handler.user_email = session.get('email')
+		sessionData = SessionData.getSession(sessionid)
+		if not sessionData or not sessionData.isValid():
+			# if persistent id is given:
+			if 'token' in handler.request.cookies:
+				token_data = handler.request.cookies['token']
+				token = LoginToken.get(token_data)
+				#	if persistent id is correct (email matches id following it): peform login 
+				if token is not None:
+					token.tokenid = LoginToken.generateId()
+					token.put()
+					cookie_value = token.get_cookie_value()
+					handler.response.set_cookie('token', cookie_value)
+					user = User.getUser(token.user)
+					user.login(handler.request.remote_addr)
+					success(handler)
+				else:
+					LoginToken.delete_user_tokens(token_data)
+					error(handler)
+					return
+			else:			
+				error(handler)
+				return
+		else:
+			success(handler)
 		return func(handler, *args)
 	return authenticate_and_call

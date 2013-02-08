@@ -1,5 +1,6 @@
 from model.sessiondata import SessionData
 from model import User
+from model import LoginToken
 from utilities import CryptoUtil
 from utilities import constants
 from utilities import usercallable
@@ -10,12 +11,14 @@ from basehandler import BaseHandler
 from gaesessions import get_current_session
 from base64 import b64encode
 from google.appengine.api import mail
+import logging
+import datetime
 
 
 class UserHandler(BaseHandler):
 	@viewneeded
 	@usercallable
-	def get(self, command, api = ''):
+	def get(self, command, api=''):
 		if command.lower() == 'logout':
 			self.__logout()
 			return
@@ -40,7 +43,7 @@ class UserHandler(BaseHandler):
 		return
 
 	@viewneeded
-	def post(self, command, api = ''):
+	def post(self, command, api=''):
 		if api != '' and api.lower() != 'api':
 			self.error(404)
 			return
@@ -64,7 +67,7 @@ class UserHandler(BaseHandler):
 	def __send_verification(self, email):
 		user = User.getUser(email)
 		if user is None or user.verified:
-			self.set_error(400, message = None, url="/")
+			self.set_error(400, message=None, url="/")
 			return
 		user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
 		template_values = {
@@ -83,6 +86,7 @@ class UserHandler(BaseHandler):
 		self.ok('/')
 
 	def __logout(self):
+		self.response.delete_cookie('token', '/')
 		session = get_current_session()
 		if session.get('email') is None:
 			return
@@ -90,53 +94,66 @@ class UserHandler(BaseHandler):
 		sessionData = SessionData.getSession(sessionid)
 		if sessionData is not None:
 			sessionData.delete()
-		session[constants.SESSION_ID] = None
-		session['email'] = None
+		session.terminate()
 		self.ok('/')
 
 	def __login(self):
 		# Validate email and get user from db
 		email = self.request.get('email')
 		if not User.isEmailValid(email) or not User.isAlreadyRegistered(email):
-			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
+			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		user = User.getUser(email);
 
 		# Calculate password hash
 		password = self.request.get('password')
 		if not User.isPasswordValid(password):
-			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
+			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		key = CryptoUtil.getKey(password, user.salt)
 
+		# Check remember me
+		rememberString = self.request.get('remember').lower()
+		remember = rememberString != '' and rememberString != 'false'
+		if remember:
+			token_id = LoginToken.generateId()
+			token = LoginToken()
+			token.tokenid = token_id
+			token.ip = self.request.remote_addr
+			token.user = email
+			token.put()
+			cookie_value = token.get_cookie_value()
+			#self.response.set_cookie('token', cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", secure=True, httponly=True)
+			self.response.set_cookie('token', cookie_value)
+		
 		# Validate password
 		if not user.password == key:
-			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
+			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		
 		# Log in user
 		if user.verified == True:
-			self.__perform_login(user.email)
+			user.login(self.request.remote_addr)
 			session = get_current_session()
 			url = session.pop('returnurl')
 			if url == None:
 				url = "/"
 			self.ok(url)
 		else:
-			self.set_error(403, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url = self.request.url)
+			self.set_error(403, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url=self.request.url)
 			return
 		
 	def __register(self):
 		# Validate email
 		email = self.request.get('email')
 		if not User.isEmailValid(email) or User.isAlreadyRegistered(email):
-			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
+			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
 			return
 			
 		# Validate password
 		password = self.request.get('password')
 		if not User.isPasswordValid(password):
-			self.set_error(400, gettext('Incorrect credentials'), url = self.request.url)
+			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
 			return
 			
 		# Calculate password hash
@@ -187,14 +204,3 @@ class UserHandler(BaseHandler):
 		}
 		template = self.jinja2_env.get_template(template)
 		self.response.out.write(template.render(template_values))
-			
-	def __perform_login(self, email):
-		sessionid = SessionData.generateId()
-		sessionData = SessionData(key_name=sessionid)
-		sessionData.sessionid = sessionid
-		sessionData.email = email
-		sessionData.ip = self.request.remote_addr
-		sessionData.put()
-		session = get_current_session()
-		session[constants.SESSION_ID] = sessionid
-		session['email'] = email
