@@ -4,6 +4,7 @@ from utilities import CryptoUtil
 from datetime import datetime, timedelta
 from utilities import constants
 import logging
+from google.appengine.api import memcache
 
 class SessionData(db.Model):
 	email = db.EmailProperty()
@@ -17,10 +18,15 @@ class SessionData(db.Model):
 
 	@staticmethod
 	def getSession(sessionid):
-		if sessionid is not None:
-			return SessionData.get_by_key_name(sessionid, read_policy=db.STRONG_CONSISTENCY)
-		else:
+		if sessionid is None:
 			return None
+		session = memcache.get(sessionid, namespace='Session')
+		if session is not None:
+			return session
+		else:
+			session = SessionData.get_by_key_name(sessionid, read_policy=db.STRONG_CONSISTENCY)
+			memcache.add(sessionid, session, time=36000, namespace='Session')
+			return session
 
 	@staticmethod
 	def delete_expired_sessions():
@@ -33,4 +39,4 @@ class SessionData(db.Model):
 	
 	def update_startdate(self):
 		self.startdate = datetime.now()
-		self.put()
+		memcache.set(self.sessionid, self, time=36000, namespace='Session')
