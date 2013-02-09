@@ -8,6 +8,7 @@ from utilities import constants
 
 import logging
 import copy
+import datetime
 from model.logintoken import LoginToken
 
 def viewneeded(func):
@@ -53,7 +54,7 @@ def authenticate(func):
 					token.tokenid = LoginToken.generateId()
 					token.put()
 					cookie_value = token.get_cookie_value()
-					handler.response.set_cookie('token', cookie_value)
+					handler.response.set_cookie('token', cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
 					user = User.getUser(token.user)
 					user.login(handler.request.remote_addr)
 					success(handler)

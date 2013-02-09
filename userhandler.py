@@ -123,8 +123,7 @@ class UserHandler(BaseHandler):
 			token.user = email
 			token.put()
 			cookie_value = token.get_cookie_value()
-			#self.response.set_cookie('token', cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", secure=True, httponly=True)
-			self.response.set_cookie('token', cookie_value)
+			self.response.set_cookie('token', cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
 		
 		# Validate password
 		if not user.password == key:
