@@ -21,6 +21,7 @@ class UserAPICases(unittest.TestCase):
 	loginURL = '/User/Login/API'
 	registerURL = '/User/Register/API'
 	verifyURL = '/User/Verify'
+	logoutURL = '/User/Logout/api'
 	
 	def setUp(self):
 		self.testbed = testbed.Testbed()
@@ -112,6 +113,10 @@ class UserAPICases(unittest.TestCase):
 		response = self.testapp.get('/api', expect_errors=True)
 		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
 		
+		# 8. Logout
+		response = self.testapp.get(self.logoutURL, expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Logout failed: ' + str(response.status_int))
+		
 	def testLoginFailWithoutVerification(self):
 		email = 'james@bond.com'
 		password = 'password'
@@ -138,7 +143,11 @@ class UserAPICases(unittest.TestCase):
 		response = self.__verify_user(email)
 		self.assertEqual(response.status_int, 200, 'Verification failed: '+ str(response.status_int))
 
-		# 3. Login with bad credentials
+		# 3. Logout
+		response = self.testapp.get(self.logoutURL, expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Logout failed: ' + str(response.status_int))
+
+		# 4. Login with bad credentials
 		response = self.__login_user(email, 'password2')		
 		self.assertEqual(response.status_int, 400, 'Login succeeded with bad password.')
 		response = self.__login_user(email, '')		
@@ -192,7 +201,13 @@ class UserAPICases(unittest.TestCase):
 		response = self.testapp.get('/api', expect_errors=True, headers=dict(Cookie='token='))
 		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
 		
+		# 8. Logout
+		response = self.testapp.get(self.logoutURL, expect_errors=True)
+		self.assertEqual(response.status_int, 200, 'Logout failed: ' + str(response.status_int))
 		
+		# 9. Check logout
+		response = self.testapp.get('/api', expect_errors=True)
+		self.assertEqual(response.status_int, 401, 'Users only page should not be served after logout: ' + str(response.status_int))
 
 	def __register_user(self, email = None, password = None):
 		params = {}
@@ -217,6 +232,7 @@ class UserAPICases(unittest.TestCase):
 		return response
 
 from model import LoginToken
+from model import SessionData
 		
 class UserUnitTestCases(unittest.TestCase):
 	def testLoginToken(self):
@@ -262,7 +278,43 @@ class UserUnitTestCases(unittest.TestCase):
 		queried_token = LoginToken.get(bad_cookie_value)
 		self.assertIsNone(queried_token, 'Session hijacking danger')
 	
+	def testSessionData(self):
+		good_email = 'good@aisoft.hu'
+		bad_email = 'bad@aisoft.hu'
+		ip = '127.0.0.1'
+		sessionid = SessionData.generateId()
+		session = SessionData(key_name=sessionid)
+		session.sessionid = sessionid
+		session.email = good_email
+		session.ip = ip
+		otherid = SessionData.generateId()
+		self.assertNotEqual(session.sessionid, otherid, 'Two ids generated are the same.')
+		self.assertNotEqual('', session.sessionid, 'Empty id generated: ' + str(session.sessionid))
+		session.put()
+		start_date = session.startdate
 		
+		valid_session = SessionData.getSession(sessionid)
+		self.assertIsNotNone(valid_session, 'Stored session not found')
+		self.assertTrue(valid_session.isValid(), 'isValid returned False for a valid session')
+		self.assertEqual(good_email, valid_session.email, 'Email field is wrong for returned session')
+		self.assertEqual(ip, valid_session.ip, 'IP field is wrong for returned session.')
+		self.assertEqual(start_date, valid_session.startdate, 'Startdate field is wrong for returned session.')
+		
+		valid_session.update_startdate()
+		new_start_date = valid_session.startdate
+		self.assertNotEqual(start_date, valid_session.startdate, 'Startdate field is wrong after updating')
+		
+		valid_session = SessionData.getSession(sessionid)
+		self.assertNotEqual(start_date, valid_session.startdate, 'Startdate field is wrong after updating')
+		self.assertEqual(new_start_date, valid_session.startdate, 'Startdate field is wrong after updating')
+		
+		invalid_session = SessionData.getSession(otherid)
+		self.assertIsNone(invalid_session, 'Valid session found for invalid id')
+		
+		valid_session.delete()
+		valid_session = SessionData.getSession(sessionid)
+		self.assertIsNone(valid_session, 'Valid session found for deleted id')
+			
 		
 	def testPasswordChecksum(self):
 		pass

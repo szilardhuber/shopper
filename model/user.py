@@ -65,3 +65,13 @@ class User(db.Model):
 		session = get_current_session()
 		session[constants.SESSION_ID] = sessionid
 		session['email'] = self.email
+		
+	def logout(self):
+		session = get_current_session()
+		if session.get('email') is None:
+			return
+		sessionid = session.get(constants.SESSION_ID)
+		sessionData = SessionData.getSession(sessionid)
+		if sessionData is not None:
+			sessionData.delete()
+		session.terminate()

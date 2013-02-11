@@ -1,4 +1,4 @@
-# own files
+# own modules
 from utilities import CryptoUtil
 from utilities import constants
 
@@ -49,6 +49,8 @@ class LoginToken(db.Model):
         if both the user and the token data are correct.
         :param token: The string format token
         '''
+        if token is None:
+            return None
         parts = LoginToken.split_token_string(token)
         if parts[0] == token:
             return None
@@ -81,7 +83,7 @@ class LoginToken(db.Model):
         Serialize the current object in the format that is used for storing in the cookie.
         '''
         return self.user + ';;' + self.tokenid
-        
+    
     @staticmethod
     def __get_token(tokenid, email):
         '''

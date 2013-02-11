@@ -19,7 +19,9 @@ class UserHandler(BaseHandler):
 	@viewneeded
 	@usercallable
 	def get(self, command, api=''):
+		logging.info('Get request. Command: ' + command)
 		if command.lower() == 'logout':
+			logging.info('Logout command.')
 			self.__logout()
 			return
 		
@@ -85,18 +87,6 @@ class UserHandler(BaseHandler):
 		user.put()
 		self.ok('/')
 
-	def __logout(self):
-		self.response.delete_cookie('token', '/')
-		session = get_current_session()
-		if session.get('email') is None:
-			return
-		sessionid = session.get(constants.SESSION_ID)
-		sessionData = SessionData.getSession(sessionid)
-		if sessionData is not None:
-			sessionData.delete()
-		session.terminate()
-		self.ok('/')
-
 	def __login(self):
 		# Validate email and get user from db
 		email = self.request.get('email')
@@ -141,6 +131,17 @@ class UserHandler(BaseHandler):
 		else:
 			self.set_error(403, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url=self.request.url)
 			return
+	
+	def __logout(self):
+		if 'token' in self.request.cookies:
+			token = LoginToken.get(self.request.cookies['token'])
+			if token is not None:
+				token.delete()
+		self.response.delete_cookie('token', '/')
+		user = User.getUser(self.user_email)
+		if user is not None:
+			user.logout()
+		self.ok('/')
 		
 	def __register(self):
 		# Validate email
