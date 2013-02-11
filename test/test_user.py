@@ -99,13 +99,11 @@ class UserAPICases(unittest.TestCase):
 		response = self.__verify_user(email)
 		self.assertEqual(response.status_int, 200, 'Verification failed: '+ str(response.status_int))
 		
-		# 5. Access test site - error should arrive
+		# 5. Access test site should succeed after verification
 		response = self.testapp.get('/api', expect_errors=True)
-		self.assertEqual(response.status_int, 401, 'Users only page should be served after logging in: ' + str(response.status_int))
+		self.assertEqual(response.status_int, 200, 'Users only page should be served after logging in: ' + str(response.status_int))
 
-		# 6. Login
-		response = self.__login_user(email, password)
-		self.assertEqual(response.status_int, 200, 'Login failed with verified client: ' + str(response.status_int))
+		# 6. Check login
 		session = get_current_session()
 		self.assertEqual(session.get('email'), email, 'User email is not correct in session variable: ' + str(session.get('email')))
 		self.assertIsNotNone(session.get(constants.SESSION_ID), 'SessionId is none')

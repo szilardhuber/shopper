@@ -181,10 +181,13 @@ class UserHandler(BaseHandler):
 		if code is None or code == '':
 			send = True
 		else:
-			success = User.verify(code)
-			if not success:
+			email = User.verify(code, self.request.remote_addr)
+			if email is not None:
+				self.user_email = email
+			else:
 				send = True
 				error = True
+				
 		template_values = {
 			'user_email' : self.user_email,
 			'send' : send,

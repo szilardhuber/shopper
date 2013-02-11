@@ -42,7 +42,7 @@ class User(db.Model):
 		return True
 
 	@staticmethod
-	def verify(code):
+	def verify(code, ip):
 		q = db.Query(User)
 		q.filter('verificationCode =', code)
 		if q.count() == 1:
@@ -50,9 +50,10 @@ class User(db.Model):
 			verifiedUser.verified = True
 			verifiedUser.verificationCode = None
 			verifiedUser.put()
-			return True
+			verifiedUser.login(ip)
+			return verifiedUser.email
 		else:
-			return False
+			return None
 
 	def	login(self, ip):
 		sessionid = SessionData.generateId()
