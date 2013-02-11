@@ -13,6 +13,7 @@ from base64 import b64encode
 from google.appengine.api import mail
 import logging
 import datetime
+from google.appengine.api import memcache
 
 
 class UserHandler(BaseHandler):
@@ -30,11 +31,15 @@ class UserHandler(BaseHandler):
 			return
 		
 		if command.lower() in ['login', 'register']:
-			session = get_current_session()
-			if session.get('email') is not None:
-				self.__display_form('alreadyloggedin.html')
+			if self.user_email is not None:
+				self.__display_form('alreadyloggedin.html', self.user_email+'-loggedin')
 			else:
-				self.__display_form(command.lower() + '.html')
+				session = get_current_session()
+				error_message = session.pop_quick('errormessage')
+				key = command.lower()
+				if error_message is not None:
+					key += error_message
+				self.__display_form(command.lower() + '.html', key, error_message)
 			return
 		
 		if command.lower() == 'verify':
@@ -198,12 +203,14 @@ class UserHandler(BaseHandler):
 		self.response.out.write(template.render(template_values))
 	
 		
-	def __display_form(self, template):
-		session = get_current_session()
-		errorMessage = session.pop_quick('errormessage')
-		template_values = {
-			'user_email' : self.user_email,
-			'errormessage' : errorMessage
-		}
-		template = self.jinja2_env.get_template(template)
-		self.response.out.write(template.render(template_values))
+	def __display_form(self, template, key, error_message = None):
+		page = memcache.get(key, namespace='Pages')
+		if page is None:
+			template_values = {
+				'user_email' : self.user_email,
+				'errormessage' : error_message
+			}
+			template = self.jinja2_env.get_template(template)
+			page = template.render(template_values)
+			memcache.add(key, page, namespace='Pages')
+		self.response.out.write(page)
