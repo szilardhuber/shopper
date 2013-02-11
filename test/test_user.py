@@ -1,7 +1,9 @@
+# own modules
 from userhandler import UserHandler
 from listproductshandler import ListProductsHandler
 from utilities import constants
 
+# libraries, builtins
 from google.appengine.api import mail
 from google.appengine.ext import testbed
 import unittest
@@ -9,14 +11,7 @@ import webapp2
 import webtest
 from gaesessions import get_current_session
 
-"""
-Tests needed:
-
- Logout
- 
-"""
-
-class UserAPICases(unittest.TestCase):
+class WebTest_User(unittest.TestCase):
 	verifyPrefix = 'https://szilardhuber.appspot.com/User/Verify?code='
 	loginURL = '/User/Login/API'
 	registerURL = '/User/Register/API'
@@ -230,92 +225,4 @@ class UserAPICases(unittest.TestCase):
 	def __login_user(self, email, password, remember = False):
 		response = self.testapp.post(self.loginURL, params={'email' : email, 'password' : password, 'remember' : remember}, expect_errors=True)
 		return response
-
-from model import LoginToken
-from model import SessionData
-		
-class UserUnitTestCases(unittest.TestCase):
-	def testLoginToken(self):
-		good_email = 'good@aisoft.hu'
-		bad_email = 'bad@aisoft.hu'
-		good_id = LoginToken.generateId()
-		good_token = LoginToken()
-		good_token.tokenid = good_id
-		good_token.ip = '127.0.0.1'
-		good_token.user = good_email
-		good_token.put()
-		bad_id = LoginToken.generateId()
-		bad_token = LoginToken()
-		bad_token.tokenid = bad_id
-		bad_token.ip = '192.168.10.1'
-		bad_token.user = bad_email
-		bad_token.put()
-		
-		# Test for invalid input
-		self.assertIsNone(LoginToken.get(''), 'We should not get a valid token for empty string')
-		self.assertIsNone(LoginToken.get('someemail@aisoft.hu;;sometoken'))
-		
-		# Test for valid query
-		cookie_value = good_email +';;' + str(good_id)
-		queried_token = LoginToken.get(cookie_value)
-		self.assertIsNotNone(queried_token, 'None returned for valid persistent token')
-		self.assertEqual(good_token.user, queried_token.user, 'Valid persistent token not found.')
-		self.assertEqual(good_token.tokenid, queried_token.tokenid, 'Valid persistent token not found.')
-		
-		# Test for hijacking
-		bad_cookie_value = bad_email + ';;' + str(bad_id)
-		queried_token = LoginToken.get(bad_cookie_value)
-		self.assertIsNotNone(queried_token, 'None returned for valid persistent token')
-		self.assertEqual(bad_token.user, queried_token.user, 'Valid persistent token not found.')
-		self.assertEqual(bad_token.tokenid, queried_token.tokenid, 'Valid persistent token not found.')
-
-		bad_cookie_value = bad_email + ';;' + str(good_id)
-		queried_token = LoginToken.get(bad_cookie_value)
-		self.assertIsNone(queried_token, 'Session hijacking danger')
-		
-		LoginToken.delete_user_tokens(bad_cookie_value)
-		bad_cookie_value = bad_email + ';;' + str(bad_id)
-		queried_token = LoginToken.get(bad_cookie_value)
-		self.assertIsNone(queried_token, 'Session hijacking danger')
-	
-	def testSessionData(self):
-		good_email = 'good@aisoft.hu'
-		bad_email = 'bad@aisoft.hu'
-		ip = '127.0.0.1'
-		sessionid = SessionData.generateId()
-		session = SessionData(key_name=sessionid)
-		session.sessionid = sessionid
-		session.email = good_email
-		session.ip = ip
-		otherid = SessionData.generateId()
-		self.assertNotEqual(session.sessionid, otherid, 'Two ids generated are the same.')
-		self.assertNotEqual('', session.sessionid, 'Empty id generated: ' + str(session.sessionid))
-		session.put()
-		start_date = session.startdate
-		
-		valid_session = SessionData.getSession(sessionid)
-		self.assertIsNotNone(valid_session, 'Stored session not found')
-		self.assertTrue(valid_session.isValid(), 'isValid returned False for a valid session')
-		self.assertEqual(good_email, valid_session.email, 'Email field is wrong for returned session')
-		self.assertEqual(ip, valid_session.ip, 'IP field is wrong for returned session.')
-		self.assertEqual(start_date, valid_session.startdate, 'Startdate field is wrong for returned session.')
-		
-		valid_session.update_startdate()
-		new_start_date = valid_session.startdate
-		self.assertNotEqual(start_date, valid_session.startdate, 'Startdate field is wrong after updating')
-		
-		valid_session = SessionData.getSession(sessionid)
-		self.assertNotEqual(start_date, valid_session.startdate, 'Startdate field is wrong after updating')
-		self.assertEqual(new_start_date, valid_session.startdate, 'Startdate field is wrong after updating')
-		
-		invalid_session = SessionData.getSession(otherid)
-		self.assertIsNone(invalid_session, 'Valid session found for invalid id')
-		
-		valid_session.delete()
-		valid_session = SessionData.getSession(sessionid)
-		self.assertIsNone(valid_session, 'Valid session found for deleted id')
-			
-		
-	def testPasswordChecksum(self):
-		pass
 
