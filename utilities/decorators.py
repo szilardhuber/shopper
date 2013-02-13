@@ -1,13 +1,11 @@
 from gaesessions import get_current_session
 from model.sessiondata import SessionData
 from model import User
-from basehandler import APIView
-from basehandler import WebView
+from apiview import APIView
+from webview import WebView
 from i18n_utils import LocalizedHandler
 from utilities import constants
 
-import logging
-import copy
 import datetime
 from model.logintoken import LoginToken
 

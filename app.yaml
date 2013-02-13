@@ -19,14 +19,14 @@ handlers:
   upload: robots.txt
   
 - url: /[uU]ser/.*
-  script: user.app
+  script: userApp.app
   secure: always
 
 - url: /test.*
-  script: gaeunit.app
+  script: gaeunitApp.app
   
 - url: /.*
-  script: main.app
+  script: mainApp.app
   secure: optional
 
 libraries:
