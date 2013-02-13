@@ -86,7 +86,7 @@ class LocalizedHandler(webapp2.RequestHandler):
         """
         jinja2_env = jinja2.Environment(
               loader=jinja2.FileSystemLoader(
-                    os.path.join(os.path.dirname(__file__), 'templates')),
+                    os.path.join(os.path.dirname(__file__), 'static/templates')),
               extensions=['jinja2.ext.i18n'])
         accept_language = AcceptLanguage(
               self.request.environ.get("HTTP_ACCEPT_LANGUAGE", 'en'))
