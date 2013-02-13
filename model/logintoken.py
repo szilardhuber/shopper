@@ -12,6 +12,8 @@ class LoginToken(db.Model):
     Model object representing persistent login tokens. These tokens are used for the "remember me" functionality
     '''
     
+    SEPARATOR = ';;'
+    
     user = db.EmailProperty()
     tokenid = db.ByteStringProperty()
     startdate = db.DateTimeProperty(auto_now_add=True)
@@ -37,9 +39,9 @@ class LoginToken(db.Model):
     def split_token_string(token):
         '''
         Splits the token to email and value
-        :param token: The token string in the following: email;;token_hex_encoded
+        :param token: The token string in the following: email<LoginToken.SEPARATOR>token_hex_encoded
         '''
-        parts = token.partition(';;')
+        parts = token.partition(LoginToken.SEPARATOR)
         return parts[0],parts[2]
         
     @staticmethod
@@ -82,7 +84,7 @@ class LoginToken(db.Model):
         '''
         Serialize the current object in the format that is used for storing in the cookie.
         '''
-        return self.user + ';;' + self.tokenid
+        return self.user + LoginToken.SEPARATOR + self.tokenid
     
     @staticmethod
     def __get_token(tokenid, email):

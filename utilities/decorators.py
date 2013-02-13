@@ -23,7 +23,7 @@ def viewneeded(func):
 def usercallable(func):
 	def custom_call(*args, **kwargs):
 		session = get_current_session()
-		args[0].user_email = session.get('email')
+		args[0].user_email = session.get(constants.VAR_NAME_EMAIL)
 		return func(*args, **kwargs)
 	return custom_call
 
@@ -32,12 +32,12 @@ def authenticate(func):
 		session = get_current_session()
 		sessionid = session.get(constants.SESSION_ID)
 		SessionData.getSession(sessionid).update_startdate()
-		handler.user_email = session.get('email')
+		handler.user_email = session.get(constants.VAR_NAME_EMAIL)
 		
 	def error(handler):
 		session = get_current_session()
 		session.terminate()
-		handler.set_error(401)
+		handler.set_error(constants.STATUS_UNAUTHORIZED)
 		
 	def authenticate_and_call(handler, *args):
 		session = get_current_session()
@@ -45,8 +45,8 @@ def authenticate(func):
 		sessionData = SessionData.getSession(sessionid)
 		if not sessionData or not sessionData.isValid():
 			# if persistent id is given:
-			if 'token' in handler.request.cookies:
-				token_data = handler.request.cookies['token']
+			if constants.PERSISTENT_LOGIN_NAME in handler.request.cookies:
+				token_data = handler.request.cookies[constants.PERSISTENT_LOGIN_NAME]
 				token = LoginToken.get(token_data)
 				#	if persistent id is correct (email matches id following it): peform login 
 				if token is not None:
@@ -54,7 +54,7 @@ def authenticate(func):
 					token.tokenid = LoginToken.generateId()
 					token.put()
 					cookie_value = token.get_cookie_value()
-					handler.response.set_cookie('token', cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
+					handler.response.set_cookie(constants.PERSISTENT_LOGIN_NAME, cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
 					user = User.getUser(token.user)
 					user.login(handler.request.remote_addr)
 					success(handler)

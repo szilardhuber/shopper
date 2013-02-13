@@ -11,6 +11,9 @@ class SessionData(db.Model):
 	'''
 	Model object representing user sessions. The session is a limited time period until that we consider the user to be logged in.
 	'''
+	
+	NAMESPACE='Session'
+	
 	email = db.EmailProperty()
 	sessionid = db.ByteStringProperty()
 	startdate = db.DateTimeProperty(auto_now_add=True)
@@ -31,20 +34,20 @@ class SessionData(db.Model):
 		'''
 		if sessionid is None:
 			return None
-		session = memcache.get(sessionid, namespace='Session')
+		session = memcache.get(sessionid, namespace=SessionData.NAMESPACE)
 		if session is not None:
 			return session
 		else:
 			session = SessionData.get_by_key_name(sessionid, read_policy=db.STRONG_CONSISTENCY)
 			if session is not None:
-				memcache.add(sessionid, session, time=36000, namespace='Session')
+				memcache.add(sessionid, session, time=36000, namespace=SessionData.NAMESPACE)
 			return session
 
 	def delete(self):
 		'''
 		Override base function. Deletes value also from cache.
 		'''
-		memcache.delete(self.sessionid, namespace='Session')
+		memcache.delete(self.sessionid, namespace=SessionData.NAMESPACE)
 		db.Model.delete(self)
 
 	@staticmethod
@@ -67,4 +70,4 @@ class SessionData(db.Model):
 		We should update the startdate every time the user does something on the site
 		'''
 		self.startdate = datetime.now()
-		memcache.set(self.sessionid, self, time=36000, namespace='Session')
+		memcache.set(self.sessionid, self, time=36000, namespace=SessionData.NAMESPACE)

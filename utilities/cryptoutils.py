@@ -20,22 +20,18 @@ pbkdf2_prf = lambda p, s: HMAC.new(p, s, CryptoVariables.HASH_FUNCTION).digest()
 
 class CryptoUtil():
 	@staticmethod
-	def getKeyAndSalt(password):
+	def get_salt_and_key(password):
+		'''
+		Generates a random salt and a PBKDF2-based key for the given password and the random hash
+		:param password:
+		'''
 		if os.name != 'nt': 
 			salt = Random.get_random_bytes(CryptoVariables.SALT_SIZE)
 		else:
 			salt = os.urandom(CryptoVariables.SALT_SIZE)
 		key = PBKDF2(password, salt, CryptoVariables.KEY_LENGTH, CryptoVariables.ITERATIONS, pbkdf2_prf)
-		return { 'salt' : salt, 'key' : key }
-	
-	@staticmethod
-	def getVerificationCode():
-		if os.name != 'nt': 
-			code = Random.get_random_bytes(CryptoVariables.VERIFICATION_CODE_SIZE)
-		else:
-			code = os.urandom(CryptoVariables.VERIFICATION_CODE_SIZE)
-		return code
-	
+		return salt, key
+
 	@staticmethod
 	def getKey(password, salt):
 		key = PBKDF2(password, salt, CryptoVariables.KEY_LENGTH, CryptoVariables.ITERATIONS, pbkdf2_prf)
@@ -47,6 +43,10 @@ class CryptoUtil():
 			return Random.get_random_bytes(size)
 		else:
 			return os.urandom(size)
+
+	@staticmethod
+	def getVerificationCode():
+		return CryptoUtil.__get_random_bytes(CryptoVariables.VERIFICATION_CODE_SIZE)
 
 	@staticmethod
 	def getSessionId():

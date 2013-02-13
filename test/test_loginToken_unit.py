@@ -22,27 +22,27 @@ class UnitTests_LoginToken(unittest.TestCase):
         
         # Test for invalid input
         self.assertIsNone(LoginToken.get(''), 'We should not get a valid token for empty string')
-        self.assertIsNone(LoginToken.get('someemail@aisoft.hu;;sometoken'))
+        self.assertIsNone(LoginToken.get('someemail@aisoft.hu'+LoginToken.SEPARATOR+'sometoken'))
         
         # Test for valid query
-        cookie_value = good_email +';;' + str(good_id)
+        cookie_value = good_email + LoginToken.SEPARATOR + str(good_id)
         queried_token = LoginToken.get(cookie_value)
         self.assertIsNotNone(queried_token, 'None returned for valid persistent token')
         self.assertEqual(good_token.user, queried_token.user, 'Valid persistent token not found.')
         self.assertEqual(good_token.tokenid, queried_token.tokenid, 'Valid persistent token not found.')
         
         # Test for hijacking
-        bad_cookie_value = bad_email + ';;' + str(bad_id)
+        bad_cookie_value = bad_email + LoginToken.SEPARATOR + str(bad_id)
         queried_token = LoginToken.get(bad_cookie_value)
         self.assertIsNotNone(queried_token, 'None returned for valid persistent token')
         self.assertEqual(bad_token.user, queried_token.user, 'Valid persistent token not found.')
         self.assertEqual(bad_token.tokenid, queried_token.tokenid, 'Valid persistent token not found.')
 
-        bad_cookie_value = bad_email + ';;' + str(good_id)
+        bad_cookie_value = bad_email + LoginToken.SEPARATOR + str(good_id)
         queried_token = LoginToken.get(bad_cookie_value)
         self.assertIsNone(queried_token, 'Session hijacking danger')
         
         LoginToken.delete_user_tokens(bad_cookie_value)
-        bad_cookie_value = bad_email + ';;' + str(bad_id)
+        bad_cookie_value = bad_email + LoginToken.SEPARATOR + str(bad_id)
         queried_token = LoginToken.get(bad_cookie_value)
         self.assertIsNone(queried_token, 'Session hijacking danger')

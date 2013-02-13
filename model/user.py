@@ -37,14 +37,10 @@ class User(db.Model):
 		Emails containing potentialy dangerous characters are considered to be invalid
 		:param email:
 		'''
-		logging.info('Checking email: ' + email)
 		if not email_re.match(email):
-			logging.info('Email invalid (email_re): '+email)
 			return False
 		if re.search(r'[^a-zA-Z0-9@._%+-]', email) is not None:
-			logging.info('Email invalid (re): '+email)
 			return False
-		logging.info('Email valid: '+email)
 		return True
 		
 	@staticmethod
@@ -89,11 +85,11 @@ class User(db.Model):
 		sessionData.put()
 		session = get_current_session()
 		session[constants.SESSION_ID] = sessionid
-		session['email'] = self.email
+		session[constants.VAR_NAME_EMAIL] = self.email
 		
 	def logout(self):
 		session = get_current_session()
-		if session.get('email') is None:
+		if session.get(constants.VAR_NAME_EMAIL) is None:
 			return
 		sessionid = session.get(constants.SESSION_ID)
 		sessionData = SessionData.getSession(sessionid)

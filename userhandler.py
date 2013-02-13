@@ -20,14 +20,12 @@ class UserHandler(BaseHandler):
 	@viewneeded
 	@usercallable
 	def get(self, command, api=''):
-		logging.info('Get request. Command: ' + command)
 		if command.lower() == 'logout':
-			logging.info('Logout command.')
 			self.__logout()
 			return
 		
 		if api != '':
-			self.error(400)
+			self.error(constants.STATUS_BAD_REQUEST)
 			return
 		
 		if command.lower() in ['login', 'register']:
@@ -35,7 +33,7 @@ class UserHandler(BaseHandler):
 				self.__display_form('alreadyloggedin.html', self.user_email+'-loggedin')
 			else:
 				session = get_current_session()
-				error_message = session.pop_quick('errormessage')
+				error_message = session.pop_quick(constants.VAR_NAME_ERRORMESSAGE)
 				key = command.lower()
 				if error_message is not None:
 					key += error_message
@@ -64,7 +62,7 @@ class UserHandler(BaseHandler):
 			return
 		
 		if command.lower() == 'verify' and api == '':
-			email = self.request.get('email')
+			email = self.request.get(constants.VAR_NAME_EMAIL)
 			self.__send_verification(email)
 			return
 			
@@ -74,7 +72,7 @@ class UserHandler(BaseHandler):
 	def __send_verification(self, email):
 		user = User.getUser(email)
 		if user is None or user.verified:
-			self.set_error(400, message=None, url="/")
+			self.set_error(constants.STATUS_BAD_REQUEST, message=None, url="/")
 			return
 		user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
 		template_values = {
@@ -94,19 +92,24 @@ class UserHandler(BaseHandler):
 
 	def __login(self):
 		# Validate email and get user from db
-		email = self.request.get('email')
+		email = self.request.get(constants.VAR_NAME_EMAIL)
 		if not User.isEmailValid(email) or not User.isAlreadyRegistered(email):
-			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
+			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		user = User.getUser(email);
 
 		# Calculate password hash
-		password = self.request.get('password')
+		password = self.request.get(constants.VAR_NAME_PASSWORD)
 		if not User.isPasswordValid(password):
-			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
+			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		key = CryptoUtil.getKey(password, user.salt)
 
+		# Validate password
+		if not user.password == key:
+			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
+			return
+		
 		# Check remember me
 		rememberString = self.request.get('remember').lower()
 		remember = rememberString != '' and rememberString != 'false'
@@ -118,31 +121,26 @@ class UserHandler(BaseHandler):
 			token.user = email
 			token.put()
 			cookie_value = token.get_cookie_value()
-			self.response.set_cookie('token', cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
-		
-		# Validate password
-		if not user.password == key:
-			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
-			return
+			self.response.set_cookie(constants.PERSISTENT_LOGIN_NAME, cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
 		
 		# Log in user
 		if user.verified == True:
 			user.login(self.request.remote_addr)
 			session = get_current_session()
-			url = session.pop('returnurl')
+			url = session.pop(constants.VAR_NAME_REDIRECT)
 			if url == None:
 				url = "/"
 			self.ok(url)
 		else:
-			self.set_error(403, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url=self.request.url)
+			self.set_error(constants.STATUS_FORBIDDEN, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url=self.request.url)
 			return
 	
 	def __logout(self):
-		if 'token' in self.request.cookies:
-			token = LoginToken.get(self.request.cookies['token'])
+		if constants.PERSISTENT_LOGIN_NAME in self.request.cookies:
+			token = LoginToken.get(self.request.cookies[constants.PERSISTENT_LOGIN_NAME])
 			if token is not None:
 				token.delete()
-		self.response.delete_cookie('token', '/')
+		self.response.delete_cookie(constants.PERSISTENT_LOGIN_NAME, '/')
 		user = User.getUser(self.user_email)
 		if user is not None:
 			user.logout()
@@ -150,21 +148,21 @@ class UserHandler(BaseHandler):
 		
 	def __register(self):
 		# Validate email
-		email = self.request.get('email')
+		email = self.request.get(constants.VAR_NAME_EMAIL)
 		if not User.isEmailValid(email) or User.isAlreadyRegistered(email):
-			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
+			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 			
 		# Validate password
-		password = self.request.get('password')
+		password = self.request.get(constants.VAR_NAME_PASSWORD)
 		if not User.isPasswordValid(password):
-			self.set_error(400, gettext('Incorrect credentials'), url=self.request.url)
+			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 			
 		# Calculate password hash
-		r = CryptoUtil.getKeyAndSalt(password)
-		salt = r['salt']
-		key = r['key']
+		salt_and_key = CryptoUtil.get_salt_and_key(password)
+		salt = salt_and_key[0]
+		key = salt_and_key[1]
 		
 		# Create and store user object
 		user = User(key_name=email)
@@ -208,7 +206,7 @@ class UserHandler(BaseHandler):
 		if page is None:
 			template_values = {
 				'user_email' : self.user_email,
-				'errormessage' : error_message
+				constants.VAR_NAME_ERRORMESSAGE : error_message
 			}
 			template = self.jinja2_env.get_template(template)
 			page = template.render(template_values)
