@@ -75,6 +75,7 @@ class User(db.Model):
 			verifiedUser.verificationCode = None
 			verifiedUser.put()
 			verifiedUser.login(ip)
+			logging.info('User verified: ' + verifiedUser.email)
 			return verifiedUser.email
 		else:
 			return None
@@ -105,3 +106,4 @@ class User(db.Model):
 		if sessionData is not None:
 			sessionData.delete()
 		session.terminate()
+		logging.info('User logged out: ' + self.email)

@@ -93,7 +93,9 @@ class UserHandler(BaseHandler):
 	def __login(self):
 		# Validate email and get user from db
 		email = self.request.get(constants.VAR_NAME_EMAIL)
+		logging.info('User logging in: ' + str(email))
 		if not User.isEmailValid(email) or not User.isAlreadyRegistered(email):
+			logging.error('Email mismatched or not registered')
 			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		user = User.getUser(email);
@@ -101,12 +103,14 @@ class UserHandler(BaseHandler):
 		# Calculate password hash
 		password = self.request.get(constants.VAR_NAME_PASSWORD)
 		if not User.isPasswordValid(password):
+			logging.error('Invalid password')
 			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		key = CryptoUtil.getKey(password, user.salt)
 
 		# Validate password
 		if not user.password == key:
+			logging.error('Incorrect password for email')
 			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 		
@@ -132,6 +136,7 @@ class UserHandler(BaseHandler):
 				url = "/"
 			self.ok(url)
 		else:
+			logging.error('User unverified')
 			self.set_error(constants.STATUS_FORBIDDEN, gettext('You have not verified your account yet. Click <a href=\"/User/Verify">here</a> if you have not recieved our email.'), url=self.request.url)
 			return
 	
@@ -149,13 +154,16 @@ class UserHandler(BaseHandler):
 	def __register(self):
 		# Validate email
 		email = self.request.get(constants.VAR_NAME_EMAIL)
+		logging.info('User registering: ' + str(email))
 		if not User.isEmailValid(email) or User.isAlreadyRegistered(email):
+			logging.error('Email mismatched or already registered')
 			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 			
 		# Validate password
 		password = self.request.get(constants.VAR_NAME_PASSWORD)
 		if not User.isPasswordValid(password):
+			logging.error('Invalid password')
 			self.set_error(constants.STATUS_BAD_REQUEST, gettext('Incorrect credentials'), url=self.request.url)
 			return
 			
@@ -199,7 +207,6 @@ class UserHandler(BaseHandler):
 		}
 		template = self.jinja2_env.get_template('verification.html')
 		self.response.out.write(template.render(template_values))
-	
 		
 	def __display_form(self, template, key, error_message = None):
 		page = memcache.get(key, namespace='Pages')
