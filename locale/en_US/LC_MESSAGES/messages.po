@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-15 14:03+0100\n"
+"POT-Creation-Date: 2013-02-15 15:24+0100\n"
 "PO-Revision-Date: 2013-01-23 17:20+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en_US <LL@li.org>\n"
@@ -18,26 +18,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: handlers/userhandler.py:99 handlers/userhandler.py:107
-#: handlers/userhandler.py:114
+#: handlers/userhandler.py:97 handlers/userhandler.py:105
+#: handlers/userhandler.py:112
 msgid "LOGIN_ERROR"
 msgstr "Incorrect credentials"
 
-#: handlers/userhandler.py:140
+#: handlers/userhandler.py:138
 msgid "UNVERIFIED_PRE"
 msgstr "You have not verified your account yet. Click"
 
-#: handlers/userhandler.py:140
+#: handlers/userhandler.py:138
 msgid "UNVERIFIED_HERE"
 msgstr "here"
 
-#: handlers/userhandler.py:140
+#: handlers/userhandler.py:138
 msgid "UNVERIFIED_POST"
 msgstr "if you have not recieved our email."
 
-#: handlers/userhandler.py:160 handlers/userhandler.py:167
+#: handlers/userhandler.py:158 handlers/userhandler.py:165
 msgid "REGISTER_ERROR"
 msgstr "Incorrect credentials"
+
+#: handlers/userhandler.py:187
+msgid "PLEASE_CHECK_YOUR_EMAIL"
+msgstr "Successful registration. Please check your emails and click on the verification link we sent you."
+
+#: handlers/userhandler.py:217
+msgid "THANK_YOU"
+msgstr "Thank you!"
 
 #: static/templates/login.html:7
 msgid "LOGIN_TITLE"
@@ -48,7 +56,7 @@ msgid "LOGIN_TO_REGISTER_URL"
 msgstr "Not a member? register now"
 
 #: static/templates/login.html:11 static/templates/register.html:11
-#: static/templates/verification.html:16
+#: static/templates/verification.html:15
 msgid "EMAIL_EDIT_LABEL"
 msgstr "Email"
 
@@ -70,7 +78,7 @@ msgid "LOGIN_BUTTON"
 msgstr "Login"
 
 #: static/templates/login.html:38 static/templates/register.html:38
-#: static/templates/verification.html:35
+#: static/templates/verification.html:30
 msgid "MESSAGES_JS"
 msgstr ""
 
@@ -90,20 +98,16 @@ msgstr "Password again"
 msgid "REGISTER_BUTTON"
 msgstr "Register"
 
-#: static/templates/verification.html:9
+#: static/templates/verification.html:8
 #, fuzzy
 msgid "INVALID_VERIFICATION_CODE"
 msgstr "Invalid verification code."
 
-#: static/templates/verification.html:10 static/templates/verification.html:12
+#: static/templates/verification.html:9 static/templates/verification.html:11
 msgid "RESEND_EMAIL_LABEL"
 msgstr "Enter you email address to resend"
 
-#: static/templates/verification.html:21
+#: static/templates/verification.html:20
 msgid "SEND_BUTTON"
 msgstr "Send"
-
-#: static/templates/verification.html:27
-msgid "THANK_YOU"
-msgstr "Thank you!"
 

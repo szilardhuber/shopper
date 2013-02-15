@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-15 14:03+0100\n"
+"POT-Creation-Date: 2013-02-15 15:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,25 +17,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: handlers/userhandler.py:99 handlers/userhandler.py:107
-#: handlers/userhandler.py:114
+#: handlers/userhandler.py:97 handlers/userhandler.py:105
+#: handlers/userhandler.py:112
 msgid "LOGIN_ERROR"
 msgstr ""
 
-#: handlers/userhandler.py:140
+#: handlers/userhandler.py:138
 msgid "UNVERIFIED_PRE"
 msgstr ""
 
-#: handlers/userhandler.py:140
+#: handlers/userhandler.py:138
 msgid "UNVERIFIED_HERE"
 msgstr ""
 
-#: handlers/userhandler.py:140
+#: handlers/userhandler.py:138
 msgid "UNVERIFIED_POST"
 msgstr ""
 
-#: handlers/userhandler.py:160 handlers/userhandler.py:167
+#: handlers/userhandler.py:158 handlers/userhandler.py:165
 msgid "REGISTER_ERROR"
+msgstr ""
+
+#: handlers/userhandler.py:187
+msgid "PLEASE_CHECK_YOUR_EMAIL"
+msgstr ""
+
+#: handlers/userhandler.py:217
+msgid "THANK_YOU"
 msgstr ""
 
 #: static/templates/login.html:7
@@ -47,7 +55,7 @@ msgid "LOGIN_TO_REGISTER_URL"
 msgstr ""
 
 #: static/templates/login.html:11 static/templates/register.html:11
-#: static/templates/verification.html:16
+#: static/templates/verification.html:15
 msgid "EMAIL_EDIT_LABEL"
 msgstr ""
 
@@ -68,7 +76,7 @@ msgid "LOGIN_BUTTON"
 msgstr ""
 
 #: static/templates/login.html:38 static/templates/register.html:38
-#: static/templates/verification.html:35
+#: static/templates/verification.html:30
 msgid "MESSAGES_JS"
 msgstr ""
 
@@ -88,19 +96,15 @@ msgstr ""
 msgid "REGISTER_BUTTON"
 msgstr ""
 
-#: static/templates/verification.html:9
+#: static/templates/verification.html:8
 msgid "INVALID_VERIFICATION_CODE"
 msgstr ""
 
-#: static/templates/verification.html:10 static/templates/verification.html:12
+#: static/templates/verification.html:9 static/templates/verification.html:11
 msgid "RESEND_EMAIL_LABEL"
 msgstr ""
 
-#: static/templates/verification.html:21
+#: static/templates/verification.html:20
 msgid "SEND_BUTTON"
-msgstr ""
-
-#: static/templates/verification.html:27
-msgid "THANK_YOU"
 msgstr ""
 

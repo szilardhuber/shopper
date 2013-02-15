@@ -15,7 +15,6 @@ import logging
 import datetime
 from google.appengine.api import memcache
 
-
 class UserHandler(BaseHandler):
 	@viewneeded
 	@usercallable
@@ -88,7 +87,6 @@ class UserHandler(BaseHandler):
 		message.body = template.render(template_values)
 		message.send()
 		user.put()
-		self.ok('/')
 
 	def __login(self):
 		# Validate email and get user from db
@@ -182,30 +180,43 @@ class UserHandler(BaseHandler):
 
 		# Send email for verification
 		self.__send_verification(email)
+		
+		# Display message
+		template_values = {
+			'user_email' : self.user_email,
+			'message' : gettext('PLEASE_CHECK_YOUR_EMAIL')
+		}
+		template = self.jinja2_env.get_template('staticmessage.html')
+		self.response.out.write(template.render(template_values))
+		
 
 		self.ok()
 		
 	
 	def __verify(self):
-		send = False
-		error = False
 		code = self.request.get('code')
-		if code is None or code == '':
-			send = True
-		else:
+		email = None
+		error = False
+		# resend if code is not given or in case of some error
+		if code is not None and code != '':
 			email = User.verify(code, self.request.remote_addr)
-			if email is not None:
-				self.user_email = email
-			else:
-				send = True
+			if email is None:
 				error = True
-				
+			
+		if email is None:
+			template_values = {
+				'user_email' : self.user_email,
+				'error' : error
+			}
+			template = self.jinja2_env.get_template('verification.html')
+			self.response.out.write(template.render(template_values))
+			
+		# message
 		template_values = {
 			'user_email' : self.user_email,
-			'send' : send,
-			'error' : error
+			'message' : gettext('THANK_YOU')
 		}
-		template = self.jinja2_env.get_template('verification.html')
+		template = self.jinja2_env.get_template('staticmessage.html')
 		self.response.out.write(template.render(template_values))
 		
 	def __display_form(self, template, key, error_message = None):
