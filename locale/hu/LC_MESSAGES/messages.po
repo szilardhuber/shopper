@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-01-24 16:36+0100\n"
+"POT-Creation-Date: 2013-02-15 14:03+0100\n"
 "PO-Revision-Date: 2013-01-23 17:21+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: hu <LL@li.org>\n"
@@ -18,43 +18,96 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: templates/login.html:7
-msgid "Members login"
+#: handlers/userhandler.py:99 handlers/userhandler.py:107
+#: handlers/userhandler.py:114
+msgid "LOGIN_ERROR"
+msgstr "Hiba történt. Kérjük ellenőrizze a megadott adatokat és próbálja újra."
+
+#: handlers/userhandler.py:140
+msgid "UNVERIFIED_PRE"
+msgstr "Még erősítette meg az email címét. Kattintson"
+
+#: handlers/userhandler.py:140
+msgid "UNVERIFIED_HERE"
+msgstr "ide"
+
+#: handlers/userhandler.py:140
+msgid "UNVERIFIED_POST"
+msgstr "ha nem kapta meg a levelünket!"
+
+#: handlers/userhandler.py:160 handlers/userhandler.py:167
+#, fuzzy
+msgid "REGISTER_ERROR"
+msgstr "Regisztráció"
+
+#: static/templates/login.html:7
+msgid "LOGIN_TITLE"
 msgstr "Bejelentkezés"
 
-#: templates/login.html:8
-msgid "Not a member? register now"
-msgstr "Még nem regisztrált? Tegye meg most"
+#: static/templates/login.html:8
+msgid "LOGIN_TO_REGISTER_URL"
+msgstr "Még nem regisztrált? Tegye meg most!"
 
-#: templates/login.html:11 templates/register.html:10
-msgid "Email"
-msgstr "Email-cím"
+#: static/templates/login.html:11 static/templates/register.html:11
+#: static/templates/verification.html:16
+msgid "EMAIL_EDIT_LABEL"
+msgstr "Email cím"
 
-#: templates/login.html:17 templates/register.html:12
-msgid "Password"
+#: static/templates/login.html:17 static/templates/register.html:17
+msgid "PASSWORD_EDIT_LABEL"
 msgstr "Jelszó"
 
-#: templates/login.html:23 templates/register.html:15
-msgid "Remember me"
+#: static/templates/login.html:24
+#, fuzzy
+msgid "REMEMBERME_LABEL"
 msgstr "Emlékezz rám"
 
-#: templates/login.html:25
-msgid "Login"
+#: static/templates/login.html:25
+msgid "FORGOT_PASSWORD_URL"
+msgstr "Elfelejtette a jelszavát?"
+
+#: static/templates/login.html:28
+msgid "LOGIN_BUTTON"
 msgstr "Bejelentkezés"
 
-#: templates/login.html:33
-msgid "messages js file"
+#: static/templates/login.html:38 static/templates/register.html:38
+#: static/templates/verification.html:35
+#, fuzzy
+msgid "MESSAGES_JS"
 msgstr "messages_hu.js"
 
-#: templates/register.html:7
-msgid "Register now"
+#: static/templates/register.html:7
+#, fuzzy
+msgid "REGISTER_TITLE"
 msgstr "Regisztráció"
 
-#: templates/register.html:8
-msgid "Already signed up? log in now"
-msgstr "Már regisztrált? Jelentkezzen be!"
+#: static/templates/register.html:8
+msgid "REGISTER_TO_LOGIN_URL"
+msgstr "Már regisztrált? Lépjen be itt!"
 
-#: templates/register.html:17
-msgid "Register"
+#: static/templates/register.html:23
+#, fuzzy
+msgid "PASSWORD_AGAIN_EDIT_LABEL"
+msgstr "Jelszó"
+
+#: static/templates/register.html:28
+#, fuzzy
+msgid "REGISTER_BUTTON"
 msgstr "Regisztráció"
+
+#: static/templates/verification.html:9
+msgid "INVALID_VERIFICATION_CODE"
+msgstr "Hibás ellenőrzőkód."
+
+#: static/templates/verification.html:10 static/templates/verification.html:12
+msgid "RESEND_EMAIL_LABEL"
+msgstr "Megerősítő email újraküldése"
+
+#: static/templates/verification.html:21
+msgid "SEND_BUTTON"
+msgstr "Küldés"
+
+#: static/templates/verification.html:27
+msgid "THANK_YOU"
+msgstr "Köszönjük!"
 

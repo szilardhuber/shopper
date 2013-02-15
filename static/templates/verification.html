@@ -6,25 +6,25 @@
 <form id="resend-form" action="/User/Verify" method="post" name="Verfy">
 	<legend>
 		{% if error %}
-			{% trans %}Invalid verification code.{% endtrans %}
-			<label>{% trans %}Enter you email address to resend{% endtrans %}</label>
+			{% trans %}INVALID_VERIFICATION_CODE{% endtrans %}
+			<label>{% trans %}RESEND_EMAIL_LABEL{% endtrans %}</label>
 		{% else %}
-			{% trans %}Enter you email address to resend{% endtrans %}
+			{% trans %}RESEND_EMAIL_LABEL{% endtrans %}
 		{% endif %}
 	</legend>
 	<div class="control-group">
-		<label class="control-label" for="email">{% trans%}Email{% endtrans %}</label>
+		<label class="control-label" for="email">{% trans%}EMAIL_EDIT_LABEL{% endtrans %}</label>
 		<div class="controls">
 			<input type="email" name="email" id="email" value="" required/>
 		</div>
 	</div>
-	<input type="submit" id="submit" name="submit" class="btn" value="{% trans %}Send{% endtrans %}"/>
+	<input type="submit" id="submit" name="submit" class="btn" value="{% trans %}SEND_BUTTON{% endtrans %}"/>
 	<br><br>
 	<div id = "alert_placeholder"></div>
 </form>
 
 {% else %}
-<h2>{% trans %}Thank you!{% endtrans %}</h2>
+<h2>{% trans %}THANK_YOU{% endtrans %}</h2>
 {% endif %}
 </div>
 </div>
@@ -32,7 +32,7 @@
 
 {% block javascript %}
     <script src="/stylesheets/bootstrap/js/dist/jquery.validate.min.js"></script>
-    <script src="/stylesheets/bootstrap/js/localization/{% trans %}messages js file{% endtrans %}"></script>
+    <script src="/stylesheets/bootstrap/js/localization/{% trans %}MESSAGES_JS{% endtrans %}"></script>
     <script src="/js/verify.js"></script>
     {% if errormessage %}
 	<script>

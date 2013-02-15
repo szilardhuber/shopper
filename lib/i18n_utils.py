@@ -94,7 +94,7 @@ class LocalizedHandler(webapp2.RequestHandler):
         if not 'en' in preferred_languages:
             preferred_languages.append('en')
         locale_path = os.path.join(
-              os.path.abspath(os.path.dirname(__file__)), 'locale')
+              os.path.abspath(os.path.dirname(__file__)), '../locale')
         translation = gettext.translation(
               'messages', locale_path, fallback=True,
               languages=preferred_languages, codeset='utf-8')
@@ -169,7 +169,7 @@ class I18nMiddleware(object):
         self.app = app
         if locale_path is None:
             locale_path = os.path.join(
-                  os.path.abspath(os.path.dirname(__file__)), 'locale')
+                  os.path.abspath(os.path.dirname(__file__)), '../locale')
         self.locale_path = locale_path
         self.default_language = default_language
 
