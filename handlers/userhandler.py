@@ -43,13 +43,13 @@ class UserHandler(BaseHandler):
 			self.__verify()
 			return
 		
-		self.error(404)
+		self.error(constants.STATUS_NOT_FOUND)
 		return
 
 	@viewneeded
 	def post(self, command, api=''):
 		if api != '' and api.lower() != 'api':
-			self.error(404)
+			self.error(constants.STATUS_NOT_FOUND)
 			return
 		
 		if command.lower() == 'login':
@@ -57,7 +57,7 @@ class UserHandler(BaseHandler):
 			return
 			
 		if command.lower() == 'register':
-			self.__register()
+			self.__register(api)
 			return
 		
 		if command.lower() == 'verify' and api == '':
@@ -65,7 +65,7 @@ class UserHandler(BaseHandler):
 			self.__send_verification(email)
 			return
 			
-		self.error(404)
+		self.error(constants.STATUS_NOT_FOUND)
 		return
 
 	def __send_verification(self, email):
@@ -149,7 +149,7 @@ class UserHandler(BaseHandler):
 			user.logout()
 		self.ok('/')
 		
-	def __register(self):
+	def __register(self, api):
 		# Validate email
 		email = self.request.get(constants.VAR_NAME_EMAIL)
 		logging.info('User registering: ' + str(email))
@@ -181,15 +181,15 @@ class UserHandler(BaseHandler):
 		# Send email for verification
 		self.__send_verification(email)
 		
-		# Display message
-		template_values = {
-			'user_email' : self.user_email,
-			'message' : gettext('PLEASE_CHECK_YOUR_EMAIL')
-		}
-		template = self.jinja2_env.get_template('staticmessage.html')
-		self.response.out.write(template.render(template_values))
+		if api == '':
+			# Display message
+			template_values = {
+				'user_email' : self.user_email,
+				'message' : gettext('PLEASE_CHECK_YOUR_EMAIL')
+			}
+			template = self.jinja2_env.get_template('staticmessage.html')
+			self.response.out.write(template.render(template_values))
 		
-
 		self.ok()
 		
 	

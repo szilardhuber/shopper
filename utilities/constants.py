@@ -23,3 +23,4 @@ STATUS_OK = 200 # The request has succeeded.
 STATUS_BAD_REQUEST = 400 # The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
 STATUS_UNAUTHORIZED = 401 # The request requires user authentication.
 STATUS_FORBIDDEN = 403 # The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated
+STATUS_NOT_FOUND = 404 # The server has not found anything matching the Request-URI.
