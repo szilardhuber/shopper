@@ -186,7 +186,6 @@ class UserHandler(BaseHandler):
 		if api == '':
 			# Display message
 			template_values = {
-				'user_email' : self.user_email,
 				'message' : gettext('PLEASE_CHECK_YOUR_EMAIL')
 			}
 			template = self.jinja2_env.get_template('staticmessage.html')
