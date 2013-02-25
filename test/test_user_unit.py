@@ -28,6 +28,8 @@ class UnitTests_User(unittest.TestCase):
         self.assertFalse(User.isEmailValid(email), 'Misqualified invalid email: ' + email)
         email = 'asd'
         self.assertFalse(User.isEmailValid(email), 'Misqualified invalid email: ' + email)
+        email = "a'a@aisoft.hu"
+        self.assertFalse(User.isEmailValid(email), 'Misqualified invalid email: ' + email)
     
     def testPassword(self):
         # Valid passwords
