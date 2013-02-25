@@ -1,6 +1,7 @@
 # own files
 from gaesessions import delete_expired_sessions
 from model.sessiondata import SessionData
+from model import LoginToken
 
 # libraries
 from google.appengine.ext import db
@@ -13,4 +14,6 @@ class SessionCleanupHandler(webapp2.RequestHandler):
 		while not finished:
 			finished = delete_expired_sessions()
 		SessionData.delete_expired_sessions()
+		LoginToken.delete_expired_tokens()
+		
 		

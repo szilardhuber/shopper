@@ -6,6 +6,7 @@ from webview import WebView
 from i18n_utils import LocalizedHandler
 from utilities import constants
 
+import logging
 import datetime
 from model.logintoken import LoginToken
 
@@ -56,9 +57,11 @@ def authenticate(func):
 					user = User.getUser(token.user)
 					user.login(handler.request.remote_addr)
 					success(handler)
+					logging.info('User logging in (with persistent token): ' + str(user.email))
 				else:
 					LoginToken.delete_user_tokens(token_data)
 					error(handler)
+					logging.info('Someone tried to authenticate with invalid token - email pair.')
 					return
 			else:			
 				error(handler)
