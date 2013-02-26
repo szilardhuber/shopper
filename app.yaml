@@ -1,5 +1,5 @@
 application: szilardhuber
-version: dev-1-03
+version: dev-1-04
 runtime: python27
 api_version: 1
 threadsafe: true
