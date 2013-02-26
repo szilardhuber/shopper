@@ -74,7 +74,9 @@ class WebTest_User(unittest.TestCase):
 		response = self.__register_user('james@bond.com', 'password')
 		self.assertEqual(response.status_int, constants.STATUS_OK, 'Wrong response with correct credentials: ' + str(response.status_int))
 		response = self.__register_user('james@bond.com', 'password')
-		self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Wrong response with correct credentials: ' + str(response.status_int))
+		self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Wrong response for second registration: ' + str(response.status_int))
+		response = self.__register_user('jAmes@bond.com', 'password')
+		self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'System is case sensitive for emails: ' + str(response.status_int))
 		
 	def testLoginSuccess(self):
 		email = 'james@bond.com'

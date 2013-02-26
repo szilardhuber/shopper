@@ -71,7 +71,7 @@ class UserHandler(BaseHandler):
 		return
 
 	def __send_verification(self, email):
-		user = User.getUser(email)
+		user = User.getUser(email.lower())
 		if user is None or user.verified:
 			self.set_error(constants.STATUS_BAD_REQUEST, message=None, url="/")
 			return
@@ -98,7 +98,7 @@ class UserHandler(BaseHandler):
 			logging.error('Email mismatched or not registered')
 			self.set_error(constants.STATUS_BAD_REQUEST, gettext('LOGIN_ERROR'), url=self.request.url)
 			return
-		user = User.getUser(email);
+		user = User.getUser(email.lower());
 
 		# Calculate password hash
 		password = self.request.get(constants.VAR_NAME_PASSWORD)
@@ -146,7 +146,7 @@ class UserHandler(BaseHandler):
 			if token is not None:
 				token.delete()
 		self.response.delete_cookie(constants.PERSISTENT_LOGIN_NAME, '/')
-		user = User.getUser(self.user_email)
+		user = User.getUser(self.user_email.lower())
 		if user is not None:
 			user.logout()
 		self.ok('/')
@@ -174,7 +174,7 @@ class UserHandler(BaseHandler):
 		
 		# Create and store user object
 		user = User(key_name=email)
-		user.email = email
+		user.email = email.lower()
 		user.salt = salt
 		user.password = key
 		user.verified = False

@@ -28,7 +28,7 @@ class User(db.Model):
 	
 	@staticmethod
 	def isAlreadyRegistered(email):
-		current = User.getUser(email)
+		current = User.getUser(email.lower())
 		if current is None:
 			return False
 		else:
@@ -40,9 +40,10 @@ class User(db.Model):
 		Emails containing potentialy dangerous characters are considered to be invalid
 		:param email:
 		'''
-		if not email_re.match(email):
+		email_lower = email.lower()
+		if not email_re.match(email_lower):
 			return False
-		if re.search(r'[^a-zA-Z0-9@._%+-]', email) is not None:
+		if re.search(r'[^a-z0-9@._%+-]', email_lower) is not None:
 			return False
 		return True
 		
