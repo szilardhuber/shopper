@@ -114,6 +114,10 @@ class WebTest_User(unittest.TestCase):
 		response = self.testapp.get(self.logoutURL, expect_errors=True)
 		self.assertEqual(response.status_int, constants.STATUS_OK, 'Logout failed: ' + str(response.status_int))
 		
+		# 9. SH-26 regression
+		response = self.testapp.get(self.logoutURL, expect_errors=True)
+		self.assertEqual(response.status_int, constants.STATUS_OK, 'Logout failed: ' + str(response.status_int))
+		
 	def testLoginFailWithoutVerification(self):
 		email = 'james@bond.com'
 		password = 'password'

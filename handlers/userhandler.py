@@ -146,9 +146,10 @@ class UserHandler(BaseHandler):
 			if token is not None:
 				token.delete()
 		self.response.delete_cookie(constants.PERSISTENT_LOGIN_NAME, '/')
-		user = User.getUser(self.user_email.lower())
-		if user is not None:
-			user.logout()
+		if self.user_email is not None and self.user_email != '':
+			user = User.getUser(self.user_email.lower())
+			if user is not None:
+				user.logout()
 		self.ok('/')
 		
 	def __register(self, api):
