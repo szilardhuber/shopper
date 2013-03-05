@@ -22,6 +22,14 @@ handlers:
   script: userApp.app
   secure: always
 
+- url: /[lL]ists.*
+  script: listApp.app
+  secure: always
+
+- url: /api/v1/[lL]ists.*
+  script: listApp.app
+  secure: always
+
 - url: /test.*
   script: gaeunitApp.app
   
