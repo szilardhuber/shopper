@@ -22,11 +22,7 @@ handlers:
   script: userApp.app
   secure: always
 
-- url: /[lL]ists.*
-  script: listApp.app
-  secure: always
-
-- url: /api/v1/[lL]ists.*
+- url: .*/[lL]ists.*
   script: listApp.app
   secure: always
 
