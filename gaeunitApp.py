@@ -188,8 +188,10 @@ class MainTestPageHandler(webapp.RequestHandler):
             self.response.out.write(error)
         
     def _render_plain(self, package_name, test_name):
+        response = sys.stdout
         self.response.headers["Content-Type"] = "text/plain"
-        runner = unittest.TextTestRunner(self.response.out)
+        #runner = unittest.TextTestRunner(self.response.out)
+        runner = unittest.TextTestRunner(response, verbosity=2)
         suite, error = _create_suite(package_name, test_name, _LOCAL_TEST_DIR)
         if not error:
             self.response.out.write("====================\n" \
