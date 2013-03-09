@@ -8,8 +8,10 @@ class ListHandler(BaseHandler):
 			self.response.out.write('API!<br>')
 			
 		if list_id is None:
+			# List list of lists. :)
 			self.response.out.write("List the URIs and perhaps other details of the collection's members. (Build server works like charm!)")
 		else:
+			# Display given list
 			self.response.out.write('Retrieve a representation of the addressed member of the collection, expressed in an appropriate Internet media type. #'+list_id)
 			
 	def put(self, api=None, list_id=None):

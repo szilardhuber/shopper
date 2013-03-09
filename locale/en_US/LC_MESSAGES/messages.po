@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-15 15:24+0100\n"
+"POT-Creation-Date: 2013-03-09 16:25+0100\n"
 "PO-Revision-Date: 2013-01-23 17:20+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en_US <LL@li.org>\n"
@@ -18,34 +18,52 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: handlers/userhandler.py:97 handlers/userhandler.py:105
-#: handlers/userhandler.py:112
+#: handlers/userhandler.py:99 handlers/userhandler.py:107
+#: handlers/userhandler.py:114
 msgid "LOGIN_ERROR"
 msgstr "Incorrect credentials"
 
-#: handlers/userhandler.py:138
+#: handlers/userhandler.py:140
 msgid "UNVERIFIED_PRE"
 msgstr "You have not verified your account yet. Click"
 
-#: handlers/userhandler.py:138
+#: handlers/userhandler.py:140
 msgid "UNVERIFIED_HERE"
 msgstr "here"
 
-#: handlers/userhandler.py:138
+#: handlers/userhandler.py:140
 msgid "UNVERIFIED_POST"
 msgstr "if you have not recieved our email."
 
-#: handlers/userhandler.py:158 handlers/userhandler.py:165
+#: handlers/userhandler.py:161 handlers/userhandler.py:168
 msgid "REGISTER_ERROR"
 msgstr "Incorrect credentials"
 
-#: handlers/userhandler.py:187
+#: handlers/userhandler.py:190
 msgid "PLEASE_CHECK_YOUR_EMAIL"
-msgstr "Successful registration. Please check your emails and click on the verification link we sent you."
+msgstr ""
+"Successful registration. Please check your emails and click on the "
+"verification link we sent you."
 
-#: handlers/userhandler.py:217
+#: handlers/userhandler.py:219
 msgid "THANK_YOU"
 msgstr "Thank you!"
+
+#: static/templates/base.html:51
+msgid "LIST_MENU"
+msgstr "Shopping list"
+
+#: static/templates/base.html:56
+msgid "LOGIN_MENU"
+msgstr "Login"
+
+#: static/templates/base.html:57
+msgid "REGISTER_MENU"
+msgstr "Register"
+
+#: static/templates/base.html:60
+msgid "LOGOUT_MENU"
+msgstr "Logout"
 
 #: static/templates/login.html:7
 msgid "LOGIN_TITLE"

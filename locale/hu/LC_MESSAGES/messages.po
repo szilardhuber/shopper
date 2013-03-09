@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-15 15:24+0100\n"
+"POT-Creation-Date: 2013-03-09 16:25+0100\n"
 "PO-Revision-Date: 2013-01-23 17:21+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: hu <LL@li.org>\n"
@@ -18,35 +18,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: handlers/userhandler.py:97 handlers/userhandler.py:105
-#: handlers/userhandler.py:112
+#: handlers/userhandler.py:99 handlers/userhandler.py:107
+#: handlers/userhandler.py:114
 msgid "LOGIN_ERROR"
 msgstr "Hiba történt. Kérjük ellenőrizze a megadott adatokat és próbálja újra."
 
-#: handlers/userhandler.py:138
+#: handlers/userhandler.py:140
 msgid "UNVERIFIED_PRE"
 msgstr "Még erősítette meg az email címét. Kattintson"
 
-#: handlers/userhandler.py:138
+#: handlers/userhandler.py:140
 msgid "UNVERIFIED_HERE"
 msgstr "ide"
 
-#: handlers/userhandler.py:138
+#: handlers/userhandler.py:140
 msgid "UNVERIFIED_POST"
 msgstr "ha nem kapta meg a levelünket!"
 
-#: handlers/userhandler.py:158 handlers/userhandler.py:165
+#: handlers/userhandler.py:161 handlers/userhandler.py:168
 #, fuzzy
 msgid "REGISTER_ERROR"
 msgstr "Regisztráció"
 
-#: handlers/userhandler.py:187
+#: handlers/userhandler.py:190
 msgid "PLEASE_CHECK_YOUR_EMAIL"
-msgstr "Sikeres regisztráció. Kérjük ellenőrizze a leveleit és kattintson az ellenőrző linkre, amit küldtünk!"
+msgstr ""
+"Sikeres regisztráció. Kérjük ellenőrizze a leveleit és kattintson az "
+"ellenőrző linkre, amit küldtünk!"
 
-#: handlers/userhandler.py:217
+#: handlers/userhandler.py:219
 msgid "THANK_YOU"
 msgstr "Köszönjük!"
+
+#: static/templates/base.html:51
+msgid "LIST_MENU"
+msgstr "Bevásárlólista"
+
+#: static/templates/base.html:56
+msgid "LOGIN_MENU"
+msgstr "Bejelentkezés"
+
+#: static/templates/base.html:57
+msgid "REGISTER_MENU"
+msgstr "Regisztráció"
+
+#: static/templates/base.html:60
+msgid "LOGOUT_MENU"
+msgstr "Kijelentkezés"
 
 #: static/templates/login.html:7
 msgid "LOGIN_TITLE"

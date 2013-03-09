@@ -46,13 +46,18 @@
           </a>
           <a class="brand" href="/">Shopper</a>
           <div class="nav-collapse collapse">
+	    <ul class="nav pull-left">
+	    {% if user_email is not none and user_email is defined%}
+		<li><a href="/Lists" class="btn-link">{% trans %}LIST_MENU{% endtrans %}</a></li>
+		{% endif %}
+		</ul>
 	    <ul class="nav pull-right">
 	    {% if user_email is none or user_email is not defined%}
-		<li><a href="/User/Login" class="btn-link">Login</a></li>
-		<li><a href="/User/Register" class="btn-link">Register</a></li>
+		<li><a href="/User/Login" class="btn-link">{% trans %}LOGIN_MENU{% endtrans %}</a></li>
+		<li><a href="/User/Register" class="btn-link">{% trans %}REGISTER_MENU{% endtrans %}</a></li>
 		{% else %}
 		<li><a href='#' class="btn-link">{{user_email}}</a></li>
-		<li><a href="/User/Logout" class="btn-link">Logout</a></li>
+		<li><a href="/User/Logout" class="btn-link">{% trans %}LOGOUT_MENU{% endtrans %}</a></li>
 		{% endif %}
             </ul>
           </div><!--/.nav-collapse -->
