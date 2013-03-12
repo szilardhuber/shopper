@@ -16,6 +16,11 @@ VAR_NAME_ERRORMESSAGE = 'errormessage'
 LOGIN_PATH = '/User/Login'
 
 '''
+	Shopping lists
+'''
+MAX_LISTS_COUNT = 10
+
+'''
     Status codes
 '''
 

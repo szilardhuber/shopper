@@ -34,4 +34,4 @@ app = webapp2.WSGIApplication([
                               debug=True)
 
 app.error_handlers[404] = handle_404
-app.error_handlers[500] = handle_500
+#app.error_handlers[500] = handle_500

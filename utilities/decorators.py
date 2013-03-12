@@ -38,7 +38,7 @@ def authenticate(func):
 		session.terminate()
 		handler.set_error(constants.STATUS_UNAUTHORIZED)
 		
-	def authenticate_and_call(handler, *args):
+	def authenticate_and_call(handler, *args, **kwargs):
 		session = get_current_session()
 		sessionid = session.get(constants.SESSION_ID)
 		sessionData = SessionData.getSession(sessionid)
@@ -68,5 +68,6 @@ def authenticate(func):
 				return
 		else:
 			success(handler)
-		return func(handler, *args)
+			logging.info('User logging in: ' + str(handler.user_email))
+		return func(handler, *args, **kwargs)
 	return authenticate_and_call
