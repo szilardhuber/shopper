@@ -12,10 +12,13 @@ from model.logintoken import LoginToken
 
 def viewneeded(func):
 	def custom_call(*args, **kwargs):
-		if args[len(args)-1].lower() == 'api':
-			args[0].view = APIView.get_instance()
-		else:
-			args[0].view = WebView.get_instance()
+		args[0].view = WebView.get_instance()
+		if len(args) > 1:
+			if args[len(args)-1].lower() == 'api':
+				args[0].view = APIView.get_instance()
+		if len(kwargs) > 0:
+			if 'api' in kwargs:
+				args[0].view = APIView.get_instance()
 		return func(*args, **kwargs)
 	return custom_call
 

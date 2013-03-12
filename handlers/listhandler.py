@@ -10,6 +10,7 @@ from utilities import usercallable
 import json
 
 class ListHandler(BaseHandler):
+	@viewneeded
 	@authenticate
 	def get(self, api=None, list_id=None):
 		if api is not None:
@@ -27,7 +28,6 @@ class ListHandler(BaseHandler):
 					self.response.out.write(json.dumps(list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
 				return
 			else:
-				# for website just navigate to default list (and create it it not yet exist)
 				# get first list
 				first_list = q.get()
 				if first_list is None:
@@ -40,23 +40,26 @@ class ListHandler(BaseHandler):
 				newurl = '/Lists/' + str(first_list.key().id_or_name())
 				self.redirect(newurl)
 		else:
-			current_user = User.getUser(self.user_email)
-			list = List.get_by_id(int(list_id), current_user)
-			if list is None:
-				pass # return error
-			
-			if api is not None:
-				self.response.out.write(json.dumps(list.to_dict()))
-			else:
-				self.response.headers['Content-Type'] = 'application/json'
-				self.response.out.write(json.dumps(list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
+			try:
+				current_user = User.getUser(self.user_email)
+				current_list = List.get_by_id(int(list_id), current_user)
+				if current_list is None:
+					raise ValueError
+				
+				if api is not None:
+					self.response.out.write(json.dumps(current_list.to_dict()))
+				else:
+					self.response.headers['Content-Type'] = 'application/json'
+					self.response.out.write(json.dumps(current_list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
+			except (TypeError, ValueError): # filtering all non-integers in parameter
+				self.set_error(constants.STATUS_BAD_REQUEST)
 			
 	def put(self, api=None, list_id=None):
 		if api is not None:
 			self.response.out.write('API!<br>')
 			
 		if list_id is None:
-			self.response.out.write("Not supported here.")
+			self.set_error(constants.STATUS_BAD_REQUEST)
 			return
 		else:
 			self.response.out.write("Replace the addressed member of the collection, or if it doesn't exist, create it. #"+list_id)

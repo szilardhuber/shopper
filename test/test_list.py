@@ -44,6 +44,22 @@ class WebTest_List(unittest.TestCase):
 		self.assertEqual(response.status_int, constants.STATUS_UNAUTHORIZED, 'Shopping list queries should not be served without authenticating: ' + str(response.status_int))
 		
 	def testListOfListsWithLogin(self):
+		self.__login()
+		
+		response = self.testapp.get(self.listURL, expect_errors=True)
+		self.assertEqual(response.status_int, constants.STATUS_OK, 'Shopping list queries should be served after authentication: ' + str(response.status_int))
+
+		self.__logout()
+
+	def testNonIntegerListId(self):
+		self.__login()
+		
+		response = self.testapp.get(self.listURL+'/asd', expect_errors=True)
+		self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Shopping list queries should be served after authentication: ' + str(response.status_int))
+
+		self.__logout()
+	
+	def __login(self):
 		email = 'james@bond.com'
 		password = 'password'
 		# 1. Register client
@@ -54,11 +70,6 @@ class WebTest_List(unittest.TestCase):
 		response = UserUtil.verify_user(self.testapp, self.mail_stub, email)
 		self.assertEqual(response.status_int, constants.STATUS_OK, 'Verification failed: '+ str(response.status_int))
 
-		# Real tests come here
-		response = self.testapp.get(self.listURL, expect_errors=True)
-		self.assertEqual(response.status_int, constants.STATUS_OK, 'Shopping list queries should not be served without authenticating: ' + str(response.status_int))
-		
-		# 8. Logout
+	def __logout(self):
 		response = UserUtil.logout(self.testapp)
 		self.assertEqual(response.status_int, constants.STATUS_OK, 'Logout failed: ' + str(response.status_int))
-		
