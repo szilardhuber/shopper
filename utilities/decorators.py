@@ -1,5 +1,5 @@
 from gaesessions import get_current_session
-from model.sessiondata import SessionData
+from model import SessionData
 from model import User
 from apiview import APIView
 from webview import WebView
