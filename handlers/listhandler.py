@@ -1,7 +1,7 @@
 from utilities import usercallable
 from utilities import viewneeded
 from basehandler import BaseHandler
-from model import List
+from model import ShoppingList
 from model import User
 from utilities import constants
 from utilities import authenticate
@@ -19,20 +19,20 @@ class ListHandler(BaseHandler):
 		if list_id is None:
 			# get all the lists of current user
 			current_user = User.getUser(self.user_email)
-			q = List.all()
+			q = ShoppingList.all()
 			q.ancestor(current_user)
 
 			if api is not None:
 				all_lists = q.run()
-				for list in all_lists:
-					self.response.out.write(json.dumps(list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
+				for shopping_list in all_lists:
+					self.response.out.write(json.dumps(shopping_list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
 				return
 			else:
 				# get first list
 				first_list = q.get()
 				if first_list is None:
 					# if not found create it
-					first_list = List(parent=current_user)
+					first_list = ShoppingList(parent=current_user)
 					first_list.name = 'Shopping list'
 					first_list.put()
 
@@ -42,7 +42,7 @@ class ListHandler(BaseHandler):
 		else:
 			try:
 				current_user = User.getUser(self.user_email)
-				current_list = List.get_by_id(int(list_id), current_user)
+				current_list = ShoppingList.get_by_id(int(list_id), current_user)
 				if current_list is None:
 					raise ValueError
 				
