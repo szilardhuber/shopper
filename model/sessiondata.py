@@ -40,8 +40,14 @@ class SessionData(db.Model):
 		else:
 			session = SessionData.get_by_key_name(sessionid, read_policy=db.STRONG_CONSISTENCY)
 			if session is not None:
-				memcache.add(sessionid, session, time=36000, namespace=SessionData.NAMESPACE)
+				memcache.add(sessionid, session, time=constants.SESSION_LIFETIME_IN_MEMCACHE, namespace=SessionData.NAMESPACE)
 			return session
+
+	def store(self):
+		'''
+		Store session data in memcache
+		'''
+		memcache.add(self.sessionid, self, time=constants.SESSION_LIFETIME_IN_MEMCACHE, namespace=SessionData.NAMESPACE)
 
 	def delete(self):
 		'''

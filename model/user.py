@@ -87,7 +87,7 @@ class User(db.Model):
 		sessionData.sessionid = sessionid
 		sessionData.email = self.email
 		sessionData.ip = ip
-		sessionData.put()
+		sessionData.store()
 		session = get_current_session()
 		session[constants.SESSION_ID] = sessionid
 		session[constants.VAR_NAME_EMAIL] = self.email
