@@ -8,6 +8,7 @@ from utilities import authenticate
 from utilities import usercallable
 
 import json
+import logging
 
 class ListHandler(BaseHandler):
 	@viewneeded
@@ -52,7 +53,7 @@ class ListHandler(BaseHandler):
 					self.response.headers['Content-Type'] = 'application/json'
 					self.response.out.write(json.dumps(current_list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
 			except (TypeError, ValueError): # filtering all non-integers in parameter
-				self.set_error(constants.STATUS_BAD_REQUEST)
+				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
 			
 	def put(self, api=None, list_id=None):
 		if api is not None:
