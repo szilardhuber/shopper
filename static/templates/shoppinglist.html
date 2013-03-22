@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Modal list item -->
+<div id="modal-list-item" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Add item to list</h3>
+  </div>
+  <div class="modal-body">
+  	<form id="modal-form" class="form-horizontal" action="/Lists/{{ list_id }}" method="post">
+  		<fieldset>
+  		<div class="control-group">
+			<label class="control-label">Product</label>
+			<div class="controls">
+				<input type="text" name="Product" autofocus="autofocus">
+			</div>
+			<label class="control-label">Quantity</label>
+			<div class="controls">
+				<input type="text" name="Quantity" placeholder="1" value="1">
+			</div>
+  		</div>
+  		</fieldset>
+  	</form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <input type="submit" id="modal-form-submit" class="btn btn-primary" value="Add">
+  </div>
+</div>
+
+
+<!--  Page -->
+  	<div class="row">
+  		<div class="span3"><h3>{{ shopping_list.name }}</h3></div>
+  		<div class="span1">
+  			<a class="btn btn-primary" data-toggle="modal" data-target="#modal-list-item"><i class="icon-plus icon-white"></i> Add</a>
+  		</div>
+  	</div>
+	
+  	<table border=1>
+  	<tr>
+  	<td>Barcode</td>
+  	<td>Description</td>
+  	<td>Quantity</td>
+  	</tr>
+  	{% for item in list_items %}
+  		<tr>
+	  		<td>item.barcode</td>
+	  		<td>item.description</td>
+	  		<td>item.quantity</td>
+  		</tr>
+  	{% endfor %}
+  </body>
+</html>                                          
+{% endblock %}
+{% block javascript %}
+	<script>
+	  $('#modal-form-submit').on('click', function(e){
+	    // We don't want this to act as a link so cancel the link action
+	    e.preventDefault();
+	
+	    // Find form and submit it
+	    $('#modal-form').submit();
+	  });
+	</script>
+{% endblock %}
+	

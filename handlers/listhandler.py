@@ -3,6 +3,7 @@ from utilities import viewneeded
 from basehandler import BaseHandler
 from model import ShoppingList
 from model import User
+from model import ListItem
 from utilities import constants
 from utilities import authenticate
 from utilities import usercallable
@@ -50,8 +51,17 @@ class ListHandler(BaseHandler):
 				if api is not None:
 					self.response.out.write(json.dumps(current_list.to_dict()))
 				else:
-					self.response.headers['Content-Type'] = 'application/json'
-					self.response.out.write(json.dumps(current_list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
+					q = ListItem.all()
+					q.ancestor(current_list)
+					list_items = q.run() 					
+					template = self.jinja2_env.get_template('shoppinglist.html')
+					template_values = {
+						'user_email' : self.user_email,
+						'shopping_list' : current_list,
+						'list_id' : list_id,
+						'list_items' : list_items
+					}
+					self.response.out.write(template.render(template_values))
 			except (TypeError, ValueError): # filtering all non-integers in parameter
 				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
 			
