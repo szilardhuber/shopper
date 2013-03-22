@@ -12,11 +12,11 @@
   		<div class="control-group">
 			<label class="control-label">Product</label>
 			<div class="controls">
-				<input type="text" name="Product" autofocus="autofocus">
+				<input type="text" name="description" autofocus="autofocus">
 			</div>
 			<label class="control-label">Quantity</label>
 			<div class="controls">
-				<input type="text" name="Quantity" placeholder="1" value="1">
+				<input type="text" name="quantity" placeholder="1" value="1">
 			</div>
   		</div>
   		</fieldset>
@@ -39,15 +39,13 @@
 	
   	<table border=1>
   	<tr>
-  	<td>Barcode</td>
   	<td>Description</td>
   	<td>Quantity</td>
   	</tr>
   	{% for item in list_items %}
   		<tr>
-	  		<td>item.barcode</td>
-	  		<td>item.description</td>
-	  		<td>item.quantity</td>
+	  		<td>{{item.description}}</td>
+	  		<td>{{item.quantity}}</td>
   		</tr>
   	{% endfor %}
   </body>

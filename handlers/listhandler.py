@@ -75,6 +75,7 @@ class ListHandler(BaseHandler):
 		else:
 			self.response.out.write("Replace the addressed member of the collection, or if it doesn't exist, create it. #"+list_id)
 
+	@authenticate
 	def post(self, api=None, list_id=None):
 		if api is not None:
 			self.response.out.write('API!<br>')
@@ -83,7 +84,23 @@ class ListHandler(BaseHandler):
 			self.response.out.write("Create a new entry in the collection. The new entry's URI is assigned automatically and is usually returned by the operation.")
 			return
 		else:
-			self.response.out.write("Not supported here.")
+			# Add item to list
+			try:
+				current_user = User.getUser(self.user_email)
+				current_list = ShoppingList.get_by_id(int(list_id), current_user)
+				if current_list is None:
+					raise ValueError
+				
+				new_item = ListItem(parent=current_list)
+				new_item.description = self.request.get('description')
+				new_item.quantity = int(self.request.get('quantity', 1))
+				new_item.put()
+				
+				self.redirect('/Lists/'+str(list_id))
+
+			except (TypeError, ValueError): # filtering all non-integers in parameter
+				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
+
 
 	def delete(self, api=None, list_id=None):
 		if api is not None:
