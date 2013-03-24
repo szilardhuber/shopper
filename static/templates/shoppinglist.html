@@ -12,7 +12,7 @@
   		<div class="control-group">
 			<label class="control-label">Product</label>
 			<div class="controls">
-				<input type="text" name="description" autofocus="autofocus">
+				<input type="text" id="product-query" name="description" autofocus="autofocus" autocomplete="off" data-provide='typeahead'>
 			</div>
 			<label class="control-label">Quantity</label>
 			<div class="controls">
@@ -27,7 +27,6 @@
     <input type="submit" id="modal-form-submit" class="btn btn-primary" value="Add">
   </div>
 </div>
-
 
 <!--  Page -->
   	<div class="row">
@@ -53,13 +52,48 @@
 {% endblock %}
 {% block javascript %}
 	<script>
-	  $('#modal-form-submit').on('click', function(e){
-	    // We don't want this to act as a link so cancel the link action
-	    e.preventDefault();
-	
-	    // Find form and submit it
-	    $('#modal-form').submit();
-	  });
+		$(function() {
+			var modalShown = false;
+			$(document).ready(function() {
+				$(document).keypress(function(e){
+				 var e=window.event || e
+				 if (String.fromCharCode(e.charCode) == 'a') {
+				 	$('#modal-list-item').modal();
+				 }
+				 if (e.charCode == 13) {
+				 	if (modalShown) {
+				    	$('#modal-form').submit();
+					 	$('#modal-list-item').modal('hide');
+				    }
+				 }
+				})
+				$('#modal-list-item').on('shown', function () {
+					modalShown = true;
+				  $('#product-query').focus();
+				})				
+				$('#modal-list-item').on('hidden', function () {
+					modalShown = false;
+				  $('#product-query').val('');
+				})				
+				 $('#modal-form-submit').on('click', function(e){
+					    e.preventDefault();
+					    $('#modal-form').submit();
+				  });
+
+				  $("#product-query").typeahead({
+					      minLength: 1,
+					      source: function(query, process) {
+					          $.get('/Products', { q: query.toLowerCase() }, function(data) {
+									var newData = [];
+					    			$.each(data, function(){
+					        			newData.push(this.name);
+					    			});	                
+					    			process(newData);
+				          	  });
+				      	  }
+				    });
+			});
+		})
 	</script>
 {% endblock %}
 	

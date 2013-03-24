@@ -8,6 +8,8 @@ from utilities import constants
 from utilities import authenticate
 from utilities import usercallable
 
+from model import Product
+
 import json
 import logging
 
@@ -53,7 +55,16 @@ class ListHandler(BaseHandler):
 				else:
 					q = ListItem.all()
 					q.ancestor(current_list)
-					list_items = q.run() 					
+					list_items = q.run()
+					'''
+					TODO REMOVE THE FOLLOWING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					'''
+					if not Product.is_in_db():
+						Product.fill_sample_data()
+						Product.add_some_more_data()			
+					'''
+					TODO REMOVE UNTIL THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					'''
 					template = self.jinja2_env.get_template('shoppinglist.html')
 					template_values = {
 						'user_email' : self.user_email,
@@ -65,6 +76,7 @@ class ListHandler(BaseHandler):
 			except (TypeError, ValueError): # filtering all non-integers in parameter
 				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
 			
+	@authenticate
 	def put(self, api=None, list_id=None):
 		if api is not None:
 			self.response.out.write('API!<br>')
@@ -88,20 +100,19 @@ class ListHandler(BaseHandler):
 			try:
 				current_user = User.getUser(self.user_email)
 				current_list = ShoppingList.get_by_id(int(list_id), current_user)
+				logging.info('Current list: ' + str(current_list))
 				if current_list is None:
 					raise ValueError
 				
-				new_item = ListItem(parent=current_list)
-				new_item.description = self.request.get('description')
-				new_item.quantity = int(self.request.get('quantity', 1))
-				new_item.put()
+				current_list.add_item(self.request.get('description'), int(self.request.get('quantity', 1)))
 				
 				self.redirect('/Lists/'+str(list_id))
 
-			except (TypeError, ValueError): # filtering all non-integers in parameter
+			except (TypeError, ValueError) as e: # filtering all non-integers in parameter
+				logging.error('Exception: ' + str(e))
 				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
 
-
+	@authenticate
 	def delete(self, api=None, list_id=None):
 		if api is not None:
 			self.response.out.write('API!<br>')

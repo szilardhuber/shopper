@@ -26,6 +26,10 @@ handlers:
   script: listApp.app
   secure: always
 
+- url: .*/[pP]roducts.*
+  script: productsApp.app
+  secure: always
+
 - url: /test.*
   script: gaeunitApp.app
   
