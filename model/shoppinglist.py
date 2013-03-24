@@ -18,8 +18,10 @@ class ShoppingList(db.Model):
 		q.ancestor(self)
 		item = None
 		if product is not None:
-			q.filter('product = ', product.key().id_or_name())
+			q.filter('product = ', product)
 			item = q.get()
+			logging.info('Product: ' +str(product))
+			logging.info('Item: ' +str(item))
 		else:
 			q.filter('description = ', description)
 			item = q.get()
@@ -29,6 +31,9 @@ class ShoppingList(db.Model):
 			item.description = description
 			item.quantity = quantity
 			item.product = product
+			item.put()
+		else:
+			item.quantity += quantity
 			item.put()
 		
 
