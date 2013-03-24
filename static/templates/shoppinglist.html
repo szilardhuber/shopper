@@ -36,17 +36,11 @@
   		</div>
   	</div>
 	
-  	<table border=1>
-  	<tr>
-  	<td>Description</td>
-  	<td>Quantity</td>
-  	</tr>
+  	<ul id="sortable">
   	{% for item in list_items %}
-  		<tr>
-	  		<td>{{item.description}}</td>
-	  		<td>{{item.quantity}}</td>
-  		</tr>
+		<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{{item.description}} - {{item.quantity}}</li>  	
   	{% endfor %}
+  	</ul>
   </body>
 </html>                                          
 {% endblock %}
@@ -55,6 +49,10 @@
 		$(function() {
 			var modalShown = false;
 			$(document).ready(function() {
+				$(function() {
+				    $( "#sortable" ).sortable();
+				    $( "#sortable" ).disableSelection();
+				  });			
 				$(document).keypress(function(e){
 				 var e=window.event || e
 				 if (String.fromCharCode(e.charCode) == 'a') {
@@ -63,7 +61,7 @@
 				 if (e.charCode == 13) {
 				 	if (modalShown) {
 				    	$('#modal-form').submit();
-					 	$('#modal-list-item').modal('hide');
+							 	$('#modal-list-item').modal('hide');
 				    }
 				 }
 				})
