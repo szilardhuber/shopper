@@ -1,6 +1,7 @@
 # own files
 import fix_path
 from producthandler import ProductHandler
+from errorhandlers import set_handlers
 
 # libraries
 import webapp2
@@ -23,3 +24,4 @@ app = webapp2.WSGIApplication([
 				],
                               debug=True)
 
+set_handlers(app)

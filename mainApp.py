@@ -1,5 +1,6 @@
 # folder handling
 import fix_path
+from errorhandlers import set_handlers
 
 # own files
 from listproductshandler import ListProductsHandler
@@ -14,4 +15,4 @@ app = webapp2.WSGIApplication([('/sessions', SessionCleanupHandler),
 				('/listproducts', ListProductsHandler)
 				],debug=True)
 
-                                                                                            
+set_handlers(app)                                                                                            
