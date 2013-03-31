@@ -8,8 +8,8 @@ from utilities import constants
 from model import Product
 from utilities import authenticate
 from utilities import usercallable
+from utilities import to_JSON
 
-import json
 import logging
 
 class ProductHandler(BaseHandler):
@@ -27,17 +27,8 @@ class ProductHandler(BaseHandler):
 			if q != 'all':
 				product_list_query.filter('search_terms = ', q)
 			product_list = product_list_query.run()
-			self.response.out.write('[')
-			first = True 
-			for product in product_list:
-				if not first:
-					self.response.out.write(', ')
-				else:
-					first = False
-					
-#				self.response.out.write(json.dumps(product.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
-				self.response.out.write(json.dumps(product.to_dict()))
-			self.response.out.write(']')
+			json_reponse = to_JSON(product_list)
+			self.response.out.write(json_reponse)
 		else:
 			pass
 			

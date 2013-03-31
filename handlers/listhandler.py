@@ -9,6 +9,7 @@ from utilities import authenticate
 from utilities import usercallable
 
 from model import Product
+from utilities import to_JSON
 
 import json
 import logging
@@ -28,8 +29,8 @@ class ListHandler(BaseHandler):
 
 			if api is not None:
 				all_lists = q.run()
-				for shopping_list in all_lists:
-					self.response.out.write(json.dumps(shopping_list.to_dict(), sort_keys=True, indent=4, separators=(',', ': ')))
+				response_JSON = to_JSON(all_lists)
+				self.response.out.write(response_JSON)
 				return
 			else:
 				# get first list
