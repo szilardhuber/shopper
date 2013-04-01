@@ -35,7 +35,7 @@ handlers:
   
 - url: /.*
   script: mainApp.app
-  secure: optional
+  secure: always
 
 libraries:
 - name: jinja2
