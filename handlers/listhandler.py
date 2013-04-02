@@ -18,9 +18,6 @@ class ListHandler(BaseHandler):
 	@viewneeded
 	@authenticate
 	def get(self, api=None, list_id=None):
-		if api is not None:
-			self.response.headers['Content-Type'] = 'application/json'
-			
 		if list_id is None:
 			# get all the lists of current user
 			current_user = User.getUser(self.user_email)
@@ -28,6 +25,7 @@ class ListHandler(BaseHandler):
 			q.ancestor(current_user)
 
 			if api is not None:
+				self.response.headers['Content-Type'] = 'application/json'
 				all_lists = q.run()
 				response_JSON = to_JSON(all_lists)
 				self.response.out.write(response_JSON)
@@ -36,10 +34,7 @@ class ListHandler(BaseHandler):
 				# get first list
 				first_list = q.get()
 				if first_list is None:
-					# if not found create it
-					first_list = ShoppingList(parent=current_user)
-					first_list.name = 'Shopping list'
-					first_list.put()
+					first_list = self._create_list_('Shopping list')
 
 				# navigate to it			
 				newurl = '/Lists/' + str(first_list.key().id_or_name())
@@ -50,31 +45,13 @@ class ListHandler(BaseHandler):
 				current_list = ShoppingList.get_by_id(int(list_id), current_user)
 				if current_list is None:
 					raise ValueError
-				
+
 				if api is not None:
-					self.response.out.write(json.dumps(current_list.to_dict()))
+					self._api_display_list_(current_list)
 				else:
-					q = ListItem.all()
-					q.ancestor(current_list)
-					list_items = q.run()
-					'''
-					TODO REMOVE THE FOLLOWING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					'''
-					if not Product.is_in_db():
-						Product.fill_sample_data()
-						Product.add_some_more_data()			
-					'''
-					TODO REMOVE UNTIL THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					'''
-					template = self.jinja2_env.get_template('shoppinglist.html')
-					template_values = {
-						'user_email' : self.user_email,
-						'shopping_list' : current_list,
-						'list_id' : list_id,
-						'list_items' : list_items
-					}
-					self.response.out.write(template.render(template_values))
-			except (TypeError, ValueError): # filtering all non-integers in parameter
+					self._web_display_list_(current_list)
+			except (TypeError, ValueError) as e: # filtering all non-integers in parameter
+				logging.error(e)
 				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
 			
 	@authenticate
@@ -123,4 +100,31 @@ class ListHandler(BaseHandler):
 			return
 		else:
 			self.response.out.write("Delete the addressed member of the collection. #")
+			
+	def _create_list_(self, list_name):
+		current_user = User.getUser(self.user_email)
+		new_list = ShoppingList(parent=current_user)
+		new_list.name = 'Shopping list'
+		new_list.put()
+		return new_list
+		
+	def _api_display_list_(self, list_to_display):
+		self.response.headers['Content-Type'] = 'application/json'
+		response_JSON = to_JSON(list_to_display.get_items())
+		self.response.out.write(response_JSON)
+		
+	def _web_display_list_(self, list_to_display):
+		q = ListItem.all()
+		q.ancestor(list_to_display)
+		list_items = q.run()
+		list_id = list_to_display.key().id_or_name()
+		template = self.jinja2_env.get_template('shoppinglist.html')
+		template_values = {
+			'user_email' : self.user_email,
+			'shopping_list' : list_to_display,
+			'list_id' : list_id,
+			'list_items' : list_items
+		}
+		self.response.out.write(template.render(template_values))
+		
 		

@@ -16,7 +16,12 @@ class Product(db.Model):
 	search_terms = db.StringListProperty()
 	
 	def to_dict(self):
-		return dict([(p, unicode(getattr(self, p))) for p in self.properties() if not p == 'search_terms'])
+		ret = dict([(p, unicode(getattr(self, p))) for p in self.properties() if p not in ['search_terms', 'category', 'manufacturer']])
+		if self.category is not None:
+			ret['category'] = self.category.to_dict()
+		if self.manufacturer is not None:
+			ret['manufacturer'] = self.manufacturer.to_dict()
+		return ret
 	
 	def set_name(self, name):
 		search_terms = []

@@ -36,4 +36,9 @@ class ShoppingList(db.Model):
 			item.quantity += quantity
 			item.put()
 		
-
+	def get_items(self):
+		q = ListItem.all()
+		q.ancestor(self)
+		list_items = q.fetch(1000)
+		return list_items
+		
