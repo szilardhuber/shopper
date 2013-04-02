@@ -114,9 +114,7 @@ class ListHandler(BaseHandler):
 		self.response.out.write(response_JSON)
 		
 	def _web_display_list_(self, list_to_display):
-		q = ListItem.all()
-		q.ancestor(list_to_display)
-		list_items = q.run()
+		list_items = list_to_display.get_items()
 		list_id = list_to_display.key().id_or_name()
 		template = self.jinja2_env.get_template('shoppinglist.html')
 		template_values = {

@@ -1,13 +1,14 @@
 from sessiondata import SessionData
 from utilities import constants
+from logininfo import LoginInfo
 from gaesessions import get_current_session
 
 # libraries
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from django.core.validators import email_re
 import re
 import logging
-from datetime import datetime
 
 class User(db.Model):
 	'''
@@ -17,14 +18,19 @@ class User(db.Model):
 	salt = db.ByteStringProperty()
 	password = db.ByteStringProperty()
 	registrationdate = db.DateTimeProperty(auto_now_add=True)
-	lastlogindate = db.DateTimeProperty()
-	logincount = db.IntegerProperty(0)
 	verified = db.BooleanProperty()
 	verificationCode = db.ByteStringProperty()
 	
+	NAMESPACE = 'User'
+	
 	@staticmethod
 	def getUser(email):
-		return User.get_by_key_name(email, read_policy=db.STRONG_CONSISTENCY)
+		user = memcache.get(email, namespace=User.NAMESPACE)
+		if user is not None:
+			return user
+		user = User.get_by_key_name(email, read_policy=db.STRONG_CONSISTENCY)
+		memcache.add(email, user, namespace=User.NAMESPACE)
+		return user
 	
 	@staticmethod
 	def isAlreadyRegistered(email):
@@ -91,12 +97,7 @@ class User(db.Model):
 		session = get_current_session()
 		session[constants.SESSION_ID] = sessionid
 		session[constants.VAR_NAME_EMAIL] = self.email
-		self.lastlogindate = datetime.now()
-		if self.logincount is not None:
-			self.logincount += 1
-		else:
-			self.logincount = 1
-		self.put()
+		LoginInfo.update(self)
 		
 	def logout(self):
 		session = get_current_session()

@@ -23,10 +23,7 @@ class ProductHandler(BaseHandler):
 			
 		if product_id is None:
 			q = self.request.get('q', '')
-			product_list_query = Product.all()
-			if q != 'all':
-				product_list_query.filter('search_terms = ', q)
-			product_list = product_list_query.run()
+			product_list = Product.search(q)
 			json_reponse = to_JSON(product_list)
 			self.response.out.write(json_reponse)
 		else:

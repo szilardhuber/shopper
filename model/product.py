@@ -1,10 +1,14 @@
-# libraries
-from google.appengine.ext import db
-
+# own files
 from category import Category
 from manufacturer import Manufacturer
+from utilities import constants
 
+# libraries
+from google.appengine.ext import db
+from google.appengine.api import memcache
 import string
+import logging
+from argparse import Namespace
 
 class Product(db.Model):
 	barcode = db.StringProperty()
@@ -14,13 +18,32 @@ class Product(db.Model):
 	name = db.StringProperty()
 	non_allergic = db.StringListProperty()
 	search_terms = db.StringListProperty()
+
+	NAMESPACE='Product'
+	
+	@staticmethod
+	def search(term):
+		product_list = memcache.get(term, namespace=Product.NAMESPACE)
+		if product_list is not None:
+			return product_list
+		product_list_query = Product.all()
+		if term != 'all':
+			product_list_query.filter('search_terms = ', term)
+		product_list = product_list_query.fetch(1000)
+		memcache.add(term, product_list, namespace=Product.NAMESPACE)
+		return product_list
+		
 	
 	def to_dict(self):
+		ret = memcache.get(str(self.key().id_or_name()), namespace=Product.NAMESPACE)
+		if ret is not None:
+			return ret
 		ret = dict([(p, unicode(getattr(self, p))) for p in self.properties() if p not in ['search_terms', 'category', 'manufacturer']])
 		if self.category is not None:
 			ret['category'] = self.category.to_dict()
 		if self.manufacturer is not None:
 			ret['manufacturer'] = self.manufacturer.to_dict()
+		memcache.add(str(self.key().id_or_name()), ret, namespace=Product.NAMESPACE)
 		return ret
 	
 	def set_name(self, name):

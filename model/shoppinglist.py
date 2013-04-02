@@ -1,11 +1,16 @@
 from google.appengine.ext import db
+from google.appengine.api import memcache
+
 from listitem import ListItem
 from product import Product
+from utilities import constants
 
 import logging
 
 class ShoppingList(db.Model):
 	name = db.StringProperty()
+
+	NAMESPACE = 'ShoppingList'
 	
 	def to_dict(self):
 		return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
@@ -37,8 +42,12 @@ class ShoppingList(db.Model):
 			item.put()
 		
 	def get_items(self):
+		list_items = memcache.get(str(self.key().id_or_name()), namespace = ShoppingList.NAMESPACE)
+		if list_items is not None:
+			return list_items
 		q = ListItem.all()
 		q.ancestor(self)
 		list_items = q.fetch(1000)
+		memcache.add(str(self.key().id_or_name()), list_items, namespace=ShoppingList.NAMESPACE)
 		return list_items
 		
