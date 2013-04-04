@@ -51,20 +51,9 @@ class ListHandler(BaseHandler):
 				else:
 					self._web_display_list_(current_list)
 			except (TypeError, ValueError) as e: # filtering all non-integers in parameter
-				logging.error(e)
+				logging.error(str(e))
 				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
 			
-	@authenticate
-	def put(self, api=None, list_id=None):
-		if api is not None:
-			self.response.out.write('API!<br>')
-			
-		if list_id is None:
-			self.set_error(constants.STATUS_BAD_REQUEST)
-			return
-		else:
-			self.response.out.write("Replace the addressed member of the collection, or if it doesn't exist, create it. #"+list_id)
-
 	@authenticate
 	def post(self, api=None, list_id=None):
 		current_user = User.getUser(self.user_email)
@@ -87,8 +76,7 @@ class ListHandler(BaseHandler):
 					raise ValueError
 				
 				current_list.add_item(self.request.get('description'), int(self.request.get('quantity', 1)))
-				
-				self.redirect('/Lists/'+str(list_id))
+				self.ok('/Lists/'+str(list_id))
 
 			except (TypeError, ValueError) as e: # filtering all non-integers in parameter
 				logging.error('Exception: ' + str(e))
