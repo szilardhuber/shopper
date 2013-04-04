@@ -67,18 +67,22 @@ class ListHandler(BaseHandler):
 
 	@authenticate
 	def post(self, api=None, list_id=None):
+		current_user = User.getUser(self.user_email)
 		if api is not None:
-			self.response.out.write('API!<br>')
+			if list_id is None:
+				list_name = self.request.get('name', None)
+				if list_name is None:
+					self.error(constants.STATUS_BAD_REQUEST)
+					return
+				new_list = ShoppingList.create_list(current_user, list_name)
+				if new_list is None:
+					self.error(constants.STATUS_BAD_REQUEST)
+				self._api_display_list_(new_list)
 			
-		if list_id is None:
-			self.response.out.write("Create a new entry in the collection. The new entry's URI is assigned automatically and is usually returned by the operation.")
-			return
-		else:
+		if list_id is not None:
 			# Add item to list
 			try:
-				current_user = User.getUser(self.user_email)
 				current_list = ShoppingList.get_by_id(int(list_id), current_user)
-				logging.info('Current list: ' + str(current_list))
 				if current_list is None:
 					raise ValueError
 				

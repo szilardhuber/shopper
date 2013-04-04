@@ -51,3 +51,15 @@ class ShoppingList(db.Model):
 		memcache.add(str(self.key().id_or_name()), list_items, namespace=ShoppingList.NAMESPACE)
 		return list_items
 		
+	@staticmethod
+	def create_list(user, list_name):
+		q = ShoppingList.all()
+		q.ancestor(user)
+		q.filter('name = ', list_name)
+		count = q.count()
+		if count > 0:
+			return None
+		new_list = ShoppingList(parent=user)
+		new_list.name = list_name
+		new_list.put()
+		return new_list
