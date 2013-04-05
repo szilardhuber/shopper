@@ -40,6 +40,7 @@ class ShoppingList(db.Model):
 		else:
 			item.quantity += quantity
 			item.put()
+		memcache.delete(str(self.key().id_or_name()), namespace = ShoppingList.NAMESPACE)
 		
 	def get_items(self):
 		list_items = memcache.get(str(self.key().id_or_name()), namespace = ShoppingList.NAMESPACE)

@@ -53,7 +53,8 @@ class ListHandler(BaseHandler):
 			except (TypeError, ValueError) as e: # filtering all non-integers in parameter
 				logging.error(str(e))
 				self.set_error(constants.STATUS_BAD_REQUEST, message=gettext("There's not such list, sorry."), url="/")
-			
+		
+	@viewneeded	
 	@authenticate
 	def post(self, api=None, list_id=None):
 		current_user = User.getUser(self.user_email)
