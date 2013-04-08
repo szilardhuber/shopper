@@ -1,5 +1,5 @@
 from webapp2 import Route
-from userhandler import UserHandler
+from handlers	 import UserHandler
 from utilities import constants
 
 class UserUtil():

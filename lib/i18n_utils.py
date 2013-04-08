@@ -90,7 +90,11 @@ class LocalizedHandler(webapp2.RequestHandler):
               extensions=['jinja2.ext.i18n'])
         accept_language = AcceptLanguage(
               self.request.environ.get("HTTP_ACCEPT_LANGUAGE", 'en'))
-        preferred_languages = accept_language.best_matches()
+        preferred_languages = []
+        try:
+            preferred_languages = accept_language.best_matches()
+        except AttributeError:
+            pass
         if not 'en' in preferred_languages:
             preferred_languages.append('en')
         locale_path = os.path.join(

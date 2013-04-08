@@ -33,7 +33,7 @@ def authenticate(func):
 	def success(handler):
 		session = get_current_session()
 		sessionid = session.get(constants.SESSION_ID)
-		SessionData.getSession(sessionid).update_startdate()
+		SessionData.get_session(sessionid).update_startdate()
 		handler.user_email = session.get(constants.VAR_NAME_EMAIL)
 		
 	def error(handler):
@@ -44,16 +44,16 @@ def authenticate(func):
 	def authenticate_and_call(handler, *args, **kwargs):
 		session = get_current_session()
 		sessionid = session.get(constants.SESSION_ID)
-		sessionData = SessionData.getSession(sessionid)
-		if not sessionData or not sessionData.isValid():
+		sessionData = SessionData.get_session(sessionid)
+		if not sessionData or not sessionData.is_valid():
 			# if persistent id is given:
 			if constants.PERSISTENT_LOGIN_NAME in handler.request.cookies:
 				token_data = handler.request.cookies[constants.PERSISTENT_LOGIN_NAME]
-				token = LoginToken.get(token_data)
+				token = LoginToken.get_token_data(token_data)
 				#	if persistent id is correct (email matches id following it): peform login 
 				if token is not None:
 					token.delete()
-					token.tokenid = LoginToken.generateId()
+					token.tokenid = LoginToken.generate_id()
 					token.put()
 					cookie_value = token.get_cookie_value()
 					handler.response.set_cookie(constants.PERSISTENT_LOGIN_NAME, cookie_value, expires=datetime.datetime.now() + datetime.timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)

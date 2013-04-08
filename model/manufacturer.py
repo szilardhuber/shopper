@@ -1,12 +1,12 @@
-# libraries
+""" Contains Manufacturer class """
 from google.appengine.ext import db
 
+
 class Manufacturer(db.Model):
-	name = db.StringProperty()
+    """ Model class for Manufacturer """
+    name = db.StringProperty()
 
-	def to_dict(self):
-		ret = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
-		return ret
-	
-	
-
+    def to_dict(self):
+        """ For JSON serialization """
+        ret = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+        return ret

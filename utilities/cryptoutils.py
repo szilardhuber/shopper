@@ -49,7 +49,7 @@ class CryptoUtil():
 		return CryptoUtil.__get_random_bytes(CryptoVariables.VERIFICATION_CODE_SIZE)
 
 	@staticmethod
-	def getSessionId():
+	def get_sessionId():
 		return CryptoUtil.__get_random_bytes(CryptoVariables.SESSIONID_SIZE)
 		
 	@staticmethod

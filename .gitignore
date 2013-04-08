@@ -5,3 +5,4 @@
 .settings*
 babel.cfg
 .DS_Store
+.coverage
