@@ -1,11 +1,12 @@
 """ Contains ListHandler Class """
 import logging
 
-from basehandler import BaseHandler
+from handlers.basehandler import BaseHandler
 from model import ShoppingList, User
 from utilities import constants, to_JSON
-from decorators import authenticate, viewneeded
-
+from handlers.decorators import authenticate, viewneeded
+from google.net.proto.ProtocolBuffer import ProtocolBufferEncodeError
+from google.appengine.api.datastore_errors import BadKeyError
 
 class ListHandler(BaseHandler):
     """ Handling requests for dealing with shopping lists """
@@ -27,12 +28,13 @@ class ListHandler(BaseHandler):
         if api is not None:
             if list_id is None:
                 list_name = self.request.get('name', None)
-                if list_name is None:
+                if list_name is None or list_name == '':
                     self.set_error(constants.STATUS_BAD_REQUEST)
                     return
                 new_list = ShoppingList.create_list(current_user, list_name)
                 if new_list is None:
                     self.set_error(constants.STATUS_BAD_REQUEST)
+                    return
                 self._api_display_list_(new_list)
 
         if list_id is not None:
@@ -43,26 +45,12 @@ class ListHandler(BaseHandler):
                 if current_list is None:
                     raise ValueError
 
-                current_list.add_item(self.request.get(
-                    'description'), int(self.request.get('quantity', 1)))
+                current_list.add_item(self.request.get('description'), int(self.request.get('quantity', 1)))
                 self.ok('/Lists/'+str(list_id))
 
-            except (TypeError, ValueError) as exc:
+            except (TypeError, ValueError, BadKeyError) as exc:
                 logging.error('Exception: ' + str(exc))
                 self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such list, sorry."), url="/")
-
-    @authenticate
-    def delete(self, api=None, list_id=None):
-        """ DELETE request handler """
-        if api is not None:
-            self.response.out.write('API!<br>')
-
-        if list_id is None:
-            self.response.out.write("Not supported here.")
-            return
-        else:
-            self.response.out.write(
-                "Delete the addressed member of the collection. #")
 
 #Private methods
     def _create_list_(self, list_name):
@@ -110,7 +98,7 @@ class ListHandler(BaseHandler):
                 self._api_display_list_(current_list)
             else:
                 self._web_display_list_(current_list)
-        except (TypeError, ValueError) as exc:  # filtering all non-integers in parameter
+        except (TypeError, ValueError, ProtocolBufferEncodeError) as exc:  # filtering all non-integers in parameter
             logging.error(str(exc))
             self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such list, sorry."), url="/")
 
