@@ -22,6 +22,8 @@ class ShoppingList(db.Model):
 
     def add_item(self, description, quantity):
         """ Add an item to the list """
+        if description is None or description == '':
+            raise ValueError(" description not set")
         query = Product.all()
         query.filter('name = ', description)
         product = query.get()

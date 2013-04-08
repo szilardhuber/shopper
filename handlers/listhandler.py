@@ -7,6 +7,7 @@ from utilities import constants, to_JSON
 from handlers.decorators import authenticate, viewneeded
 from google.net.proto.ProtocolBuffer import ProtocolBufferEncodeError
 from google.appengine.api.datastore_errors import BadKeyError
+from google.appengine.ext.db import BadValueError
 
 class ListHandler(BaseHandler):
     """ Handling requests for dealing with shopping lists """
@@ -45,10 +46,10 @@ class ListHandler(BaseHandler):
                 if current_list is None:
                     raise ValueError
 
-                current_list.add_item(self.request.get('description'), int(self.request.get('quantity', 1)))
+                current_list.add_item(self.request.get('description', None), int(self.request.get('quantity', 1)))
                 self.ok('/Lists/'+str(list_id))
 
-            except (TypeError, ValueError, BadKeyError) as exc:
+            except (TypeError, ValueError, BadKeyError, BadValueError) as exc:
                 logging.error('Exception: ' + str(exc))
                 self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such list, sorry."), url="/")
 

@@ -137,6 +137,10 @@ class WebTest_List(unittest.TestCase):
         # Existing lists bad items
         response = self.testapp.post(self.listURL+'/'+first_id, {'description': first_desc, 'quantity': 'asd'}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
+        response = self.testapp.post(self.listURL+'/'+first_id, {'description': first_desc, 'quantity': '959894846485555648468'}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
+        response = self.testapp.post(self.listURL+'/'+first_id, {'quantity': '2'}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
 
         # Check if shopping list contains added item(s)
         response = self.testapp.get(self.listURL+'/'+first_id, expect_errors=True)
