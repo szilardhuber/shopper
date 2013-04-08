@@ -29,36 +29,38 @@ function transform(deleteBtn, style) {
 
 $(function() {
     $( "#sortable" ).sortable({
-    	tolerance: 'pointer',
-    	handle: '.icon-align-justify',
+		tolerance: 'pointer',
+		handle: '.icon-align-justify',
 			axis: 'y',
 			delay: 100,
 			distance: 10
     });
     $( "#sortable" ).disableSelection();
-});			
+});
+
+function swipeRight(e) {
+	var currentDiv = e.target;
+	if (currentDiv.localName != "div") {
+		currentDiv = e.target.firstChild;
+	}
+	var button = $(".delete-btn");
+	if (button.length === 0) {
+		showDeleteButton(currentDiv);
+	} else {
+		var buttonDiv = button[0].parentNode;
+		hideDeleteButton(buttonDiv);
+		if (buttonDiv != currentDiv) {
+			showDeleteButton(currentDiv);
+		}
+	}
+}
 
 $(document).ready(function() {
-	var listItems = document.getElementById('sortable').getElementsByTagName('li')
+	var listItems = document.getElementById('sortable').getElementsByTagName('li');
 	for (var i = 0; i < listItems.length; ++i) {
 		Hammer(listItems[i], {
 			swipe_velocity : 0.2
-		}).on("swiperight", function(e) {
-			var currentDiv = e.target;
-			if (currentDiv.localName != "div") {
-				currentDiv = e.target.firstChild;
-			}
-			var button = $(".delete-btn");
-			if (button.length == 0) {
-				showDeleteButton(currentDiv);
-			} else {
-				var buttonDiv = button[0].parentNode;
-				hideDeleteButton(buttonDiv);
-				if (buttonDiv != currentDiv) {
-					showDeleteButton(currentDiv);
-				}
-			}
-		});
+		}).on("swiperight", swipeRight);
 	}
 });
 
@@ -68,18 +70,18 @@ $(function() {
 	$('#modal-list-item').on('shown', function () {
 		modalShown = true;
 		$('#product-query').focus();
-	})				
+	});
 	$('#modal-list-item').on('hidden', function () {
 		modalShown = false;
 		$('#product-query').val('');
-	})	
+	});
 	$('#modal-form').on('submit', function(e) {
 		$.ajax({
 			url: '/Lists/{{ list_id }}',
 			type: 'POST',
-			data: {description: $('#product-query').val(), quantity: $('#quantity').val()},
+			data: {description: $('#product-query').val(), quantity: $('#quantity').val()}
 		});
-	})		
+	});
 	$('#modal-form-submit').on('click', function(e){
 		e.preventDefault();
 		$('#modal-form').submit();
@@ -92,22 +94,22 @@ $(function() {
 				var newData = [];
 				$.each(data, function(){
 					newData.push(this.name);
-				});	                
+				});
 				process(newData);
 			});
 		}
 	});
 
 	$(document).keypress(function(e){
-		var e=window.event || e
-	 	if (String.fromCharCode(e.charCode) == 'a') {
-	 		$('#modal-list-item').modal();
-	 	}
-	 	if (e.charCode == 13) {
-	 		if (modalShown) {
-	    		$('#modal-form').submit();
+		e = window.event || e;
+		if (String.fromCharCode(e.charCode) == 'a') {
+			$('#modal-list-item').modal();
+		}
+		if (e.charCode == 13) {
+			if (modalShown) {
+				$('#modal-form').submit();
 				$('#modal-list-item').modal('hide');
-	    	}
-	 	}
-	})
-})
+			}
+		}
+	});
+});
