@@ -72,7 +72,6 @@ class Product(db.Model):
 
         self.search_terms = search_terms
         self.name = name
-        self.put()
 
     @staticmethod
     def is_in_db():
