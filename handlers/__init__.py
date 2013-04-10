@@ -2,3 +2,5 @@ from listhandler import ListHandler
 from userhandler import UserHandler
 from basehandler import BaseHandler
 from producthandler import ProductHandler
+from adminhandler import AdminHandler
+from adminhandler import AdminWorkerHandler

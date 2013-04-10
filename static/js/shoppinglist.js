@@ -88,7 +88,8 @@ $(function() {
 	});
 
 	$("#product-query").typeahead({
-		minLength: 1,
+		minLength: 3,
+		items: 20,
 		source: function(query, process) {
 			$.get('/Products', { q: query.toLowerCase() }, function(data) {
 				var newData = [];
@@ -97,6 +98,26 @@ $(function() {
 				});
 				process(newData);
 			});
+		},
+		matcher: function(item) {
+			return true;
+		},
+		highlighter: function (item) {
+			var terms = this.query.split(' ');
+			var regexp_string = '';
+			var replace_string = "<strong>";
+			for (var i = 0; i < terms.length; ++i) {
+				if (i !== 0)
+				{
+					regexp_string += '|';
+				}
+				regexp_string += '(' + terms[i] + ')';
+				replace_string += "$" + (i+1);
+			}
+			replace_string += "</strong>";
+			var regex = new RegExp( regexp_string, 'gi' );
+			item = item.replace( regex, replace_string );
+			return item;
 		}
 	});
 

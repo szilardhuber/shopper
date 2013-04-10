@@ -5,7 +5,7 @@ from model.manufacturer import Manufacturer
 # libraries
 from google.appengine.ext import db
 from google.appengine.api import memcache
-
+import logging
 
 class Product(db.Model):
     """ Model class for products """
@@ -15,6 +15,7 @@ class Product(db.Model):
     manufacturer = db.ReferenceProperty(Manufacturer)
     name = db.StringProperty()
     non_allergic = db.StringListProperty()
+    outer_id = db.StringProperty()
     search_terms = db.StringListProperty()
 
     NAMESPACE = 'Product'
@@ -23,12 +24,22 @@ class Product(db.Model):
     def search(term):
         """ Return list of products that contain the given term in their name """
         product_list = memcache.get(term, namespace=Product.NAMESPACE)
+        product_list = None
         if product_list is not None:
             return product_list
         product_list_query = Product.all()
+        terms = None
         if term != 'all':
-            product_list_query.filter('search_terms = ', term)
+            terms = term.split(' ')
+            logging.info('Search terms: ' + str(terms))
+            logging.info('DB term: ' + terms[0])
+            product_list_query.filter('search_terms =', terms[0])
         product_list = product_list_query.fetch(1000)
+        logging.info('Results count: ' + str(len(product_list)))
+        if len(terms) > 1:
+            for term in terms:
+                if term != terms[0]:
+                    product_list = [i for i in product_list if term in i.search_terms]
         memcache.add(term, product_list, namespace=Product.NAMESPACE)
         return product_list
 

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+	<div class="span12">
+        <form action="/admin" enctype="multipart/form-data" method="post">
+         <div><input type="file" name="productlist"/></div>
+         <input type="submit" value="upload">    
+         </form>
+		<h4>{{ message }}</h4>
+	</div>
+</div>
+{% endblock %}

@@ -10,14 +10,14 @@ handlers:
 
 - url: /stylesheets
   static_dir: static/stylesheets
-  
+
 - url: /js
   static_dir: static/js
-  
+
 - url: /robots.txt
   static_files: robots.txt
   upload: robots.txt
-  
+
 - url: /[uU]ser/.*
   script: userApp.app
   secure: always
@@ -30,9 +30,17 @@ handlers:
   script: productsApp.app
   secure: always
 
+- url: /admin
+  script: adminApp.app
+  login: admin
+
+- url: /admin/worker
+  script: adminApp.app
+  login: admin
+
 - url: /test.*
   script: gaeunitApp.app
-  
+
 - url: /.*
   script: mainApp.app
   secure: always
