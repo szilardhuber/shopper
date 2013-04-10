@@ -64,7 +64,7 @@ class AdminWorkerHandler(BaseHandler):
     @staticmethod
     def create_product(name, outer_id, barcode, category):
         query = Product.all()
-        query.filter('name=', name)
+        query.filter('name =', name)
         ret = query.get()
         if ret is None:
             ret = Product()
