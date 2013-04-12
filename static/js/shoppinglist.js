@@ -67,6 +67,7 @@ $(document).ready(function() {
 // Form handling
 $(function() {
 	var modalShown = false;
+	var results = {};
 	$('#modal-list-item').on('shown', function () {
 		modalShown = true;
 		$('#product-query').focus();
@@ -76,10 +77,11 @@ $(function() {
 		$('#product-query').val('');
 	});
 	$('#modal-form').on('submit', function(e) {
+		var name = $('#product-query').val();
 		$.ajax({
-			url: '/Lists/{{ list_id }}',
+			url: '/Lists/'+list_id,
 			type: 'POST',
-			data: {description: $('#product-query').val(), quantity: $('#quantity').val()}
+			data: {'description': name, 'quantity': $('#quantity').val(), 'key': results[name]}
 		});
 	});
 	$('#modal-form-submit').on('click', function(e){
@@ -91,10 +93,12 @@ $(function() {
 		minLength: 3,
 		items: 20,
 		source: function(query, process) {
+			results = {};
 			$.get('/Products', { q: query.toLowerCase() }, function(data) {
 				var newData = [];
 				$.each(data, function(){
 					newData.push(this.name);
+					results[this.name] = this.id;
 				});
 				process(newData);
 			});

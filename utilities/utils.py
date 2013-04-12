@@ -9,6 +9,9 @@ def to_JSON(vect):
 			ret += ', '
 		else:
 			first = False
-		ret += json.dumps(item.to_dict())
+		try:
+			ret += json.dumps(item.to_dict())
+		except AttributeError:
+			ret += json.dumps(item)
 	ret += ']'
 	return ret

@@ -20,13 +20,13 @@ class ShoppingList(db.Model):
         ret['id'] = self.key().id_or_name()
         return ret
 
-    def add_item(self, description, quantity):
+    def add_item(self, description, key, quantity):
         """ Add an item to the list """
         if description is None or description == '':
             raise ValueError(" description not set")
-        query = Product.all()
-        query.filter('name = ', description)
-        product = query.get()
+        product = None
+        if key is not None:
+            product = Product.get_by_id(int(key))
         query = ListItem.all()
         query.ancestor(self)
         item = None

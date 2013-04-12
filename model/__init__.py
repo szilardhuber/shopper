@@ -1,5 +1,6 @@
 """ Model package """
 from model.product import Product
+from model.product import SearchHelper
 from model.listitem import ListItem
 from model.shoppinglist import ShoppingList
 from model.sessiondata import SessionData

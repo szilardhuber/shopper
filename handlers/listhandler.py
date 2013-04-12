@@ -46,7 +46,7 @@ class ListHandler(BaseHandler):
                 if current_list is None:
                     raise ValueError
 
-                current_list.add_item(self.request.get('description', None), int(self.request.get('quantity', 1)))
+                current_list.add_item(self.request.get('description', None), self.request.get('key', None), int(self.request.get('quantity', 1)))
                 self.ok('/Lists/'+str(list_id))
 
             except (TypeError, ValueError, BadKeyError, BadValueError) as exc:

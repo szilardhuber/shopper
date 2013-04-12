@@ -21,7 +21,7 @@ class ProductHandler(BaseHandler):
         if product_id is None:
             query = self.request.get('q', '')
             product_list = Product.search(query)
-            json_reponse = to_JSON(product_list)
-            self.response.out.write(json_reponse)
+            #json_reponse = to_JSON(product_list)
+            self.response.out.write(product_list)
         else:
             pass

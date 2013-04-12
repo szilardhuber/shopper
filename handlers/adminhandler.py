@@ -2,10 +2,12 @@
 from basehandler import BaseHandler
 from utilities import constants
 from model import Product
+from model import SearchHelper
 from utilities import to_JSON
 from google.appengine.api import taskqueue
-
 from model import Category
+import json
+import unicodedata
 
 class AdminHandler(BaseHandler):
 
@@ -24,6 +26,8 @@ class AdminHandler(BaseHandler):
         raw_data_string = unicode(product_raw_data, 'iso-8859-1')
         rows = raw_data_string.split("\n")
 
+        queue = taskqueue.Queue()
+        tasks = []
         for row in rows:
             try:
                 count += 1
@@ -33,11 +37,18 @@ class AdminHandler(BaseHandler):
                 barcode = items[2]
                 category_name = items[3]
 
-                taskqueue.add(url='/admin/worker', params={'outer_id': outer_id, 'name': name, 'barcode': barcode, 'category_name':category_name})
+                task = taskqueue.Task(url='/admin/worker', params={'outer_id': outer_id, 'name': name, 'barcode': barcode, 'category_name': category_name})
+                tasks.append(task)
+                if len(tasks) > 99:
+                    queue.add(tasks)
+                    tasks = []
+
                 #if count > 15:
                 #    break
             except IndexError:
                 pass
+        if len(tasks) > 0:
+            queue.add(tasks)
         self.response.out.write(count)
 
 
@@ -47,8 +58,8 @@ class AdminWorkerHandler(BaseHandler):
         name = self.request.get('name')
         barcode = self.request.get('barcode')
         category_name = self.request.get('category_name')
-        category = AdminWorkerHandler.create_category(category_name)
-        AdminWorkerHandler.create_product(name, outer_id, barcode, category)
+        #category = AdminWorkerHandler.create_category(category_name)
+        AdminWorkerHandler.create_product(name, outer_id, barcode, category_name)
 
     @staticmethod
     def create_category(category_name):
@@ -64,15 +75,33 @@ class AdminWorkerHandler(BaseHandler):
     @staticmethod
     def create_product(name, outer_id, barcode, category):
         query = Product.all()
-        query.filter('name =', name)
+        query.filter('barcode =', barcode)
         ret = query.get()
         if ret is None:
             ret = Product()
             ret.barcode = barcode
             ret.set_name(name)
             ret.category = category
-            ret.outer_id = outer_id
             ret.put()
+            AdminWorkerHandler.update_search_table(ret)
         return ret
 
-
+    @staticmethod
+    def update_search_table(product):
+        for word in product.name.lower().split(' '):
+            #word = unicodedata.normalize('NFKD', unicode(word, 'utf-8')).encode('ASCII', 'ignore')
+            word = unicodedata.normalize('NFKD', word).encode('ASCII', 'ignore')
+            term = ''
+            for char in word:
+                term = term + char
+                if len(term) < 3:
+                    continue
+                helper = SearchHelper.get_by_key_name(term)
+                ret = []
+                if helper is not None:
+                    ret = json.loads(helper.items)
+                else:
+                    helper = SearchHelper(key_name=term)
+                ret.append({'id': product.key().id_or_name(), 'name': product.name})
+                helper.items = json.dumps(ret)
+                helper.put()
