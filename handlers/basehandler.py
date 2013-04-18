@@ -2,6 +2,7 @@
     of separate display to web and api """
 from apiview import APIView
 from i18n_utils import LocalizedHandler
+from gettext import gettext
 
 
 class BaseHandler(LocalizedHandler):
