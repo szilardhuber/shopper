@@ -36,3 +36,4 @@ omit =
     *Cookie*
     *BaseHTTPServer*
     *appengine_config*
+    *myenv*
