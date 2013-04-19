@@ -33,6 +33,8 @@ class WebTest_List(unittest.TestCase):
             Route('/<api:api>/v1/lists', handler=ListHandler),
             Route('/<api:api>/v1/Lists/<list_id>', handler=ListHandler),
             Route('/<api:api>/v1/Lists/<list_id>', handler=ListHandler),
+            Route('/<api:api>/v1/Lists/<list_id>/<item_id>', handler=ListHandler, methods='DELETE'),
+            Route('/<api:api>/v1/lists/<list_id>/<item_id>', handler=ListHandler, methods='DELETE'),
             Route('/Lists/', handler=ListHandler),
             Route('/lists/', handler=ListHandler),
             Route('/Lists', handler=ListHandler),
@@ -107,10 +109,10 @@ class WebTest_List(unittest.TestCase):
                          'Creating shopping list failed: ' + str(response.status_int))
         self.assertEqual(response.json[1]['name'], list_name_second,
                          'Creating shopping list failed: ' + str(response.status_int))
-        first_id = str(response.json[0]['id'])
+        first_list_id = str(response.json[0]['id'])
 
         # Check if shopping list is empty
-        response = self.testapp.get(self.listURL+'/'+first_id, expect_errors=True)
+        response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Getting shopping list items failed: '+str(response.status_int))
         self.assertEqual(len(response.json), 0, 'Shopping list is not empty: ' + str(response.json))
 
@@ -118,12 +120,12 @@ class WebTest_List(unittest.TestCase):
 
         # Add some items
         first_desc = 'Tej'
-        response = self.testapp.post(self.listURL+'/'+first_id, {'description': first_desc}, expect_errors=True)
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': first_desc}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
-        response = self.testapp.post(self.listURL+'/'+first_id, {'description': first_desc}, expect_errors=True)
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': first_desc}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
         second_desc = 'Kenyer'
-        response = self.testapp.post(self.listURL+'/'+first_id, {'description': second_desc, 'quantity': 3}, expect_errors=True)
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': second_desc, 'quantity': 3}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
 
         # Adding to non-existing lists
@@ -133,23 +135,52 @@ class WebTest_List(unittest.TestCase):
         wrong_id = 'asd'
         response = self.testapp.post(self.listURL+'/'+wrong_id, {'description': first_desc}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
+        wrong_id = '959894846485555648468'
+        response = self.testapp.post(self.listURL+'/'+wrong_id, {'description': first_desc}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
 
         # Existing lists bad items
-        response = self.testapp.post(self.listURL+'/'+first_id, {'description': first_desc, 'quantity': 'asd'}, expect_errors=True)
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': first_desc, 'quantity': 'asd'}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
-        response = self.testapp.post(self.listURL+'/'+first_id, {'description': first_desc, 'quantity': '959894846485555648468'}, expect_errors=True)
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': first_desc, 'quantity': '959894846485555648468'}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
-        response = self.testapp.post(self.listURL+'/'+first_id, {'quantity': '2'}, expect_errors=True)
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'quantity': '2'}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Adding items failed: '+str(response.status_int))
 
         # Check if shopping list contains added item(s)
-        response = self.testapp.get(self.listURL+'/'+first_id, expect_errors=True)
+        response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Getting shopping list items failed: '+str(response.status_int))
         self.assertEqual(len(response.json), 2, 'Shopping list should contain added item: ' + str(response.json))
         self.assertEqual(response.json[0]['description'], first_desc, 'Description of added item does not match: ' + str(response.json[0]['description']))
         self.assertEqual(int(response.json[0]['quantity']), 2, 'Quantity of added item does not match: ' + str(response.json[0]['quantity']))
         self.assertEqual(response.json[1]['description'], second_desc, 'Description of added item does not match: ' + str(response.json[1]['description']))
         self.assertEqual(int(response.json[1]['quantity']), 3, 'Quantity of added item does not match: ' + str(response.json[1]['quantity']))
+        first_item_id = str(response.json[0]['id'])
+        second_item_id = str(response.json[1]['id'])
+
+        # Delete an existing item
+        response = self.testapp.delete(self.listURL+'/'+first_list_id+'/'+second_item_id)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Deleting existing item failed: '+str(response.status_int))
+        response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Getting shopping list items failed: '+str(response.status_int))
+        self.assertEqual(len(response.json), 1, 'Shopping list should contain added item: ' + str(response.json))
+        self.assertEqual(response.json[0]['description'], first_desc, 'Description of added item does not match: ' + str(response.json[0]['description']))
+        self.assertEqual(int(response.json[0]['quantity']), 2, 'Quantity of added item does not match: ' + str(response.json[0]['quantity']))
+        self.assertEqual(str(response.json[0]['id']), first_item_id, 'Id of item does not match: ' + str(response.json[0]['quantity']))
+
+        # Try to delete non-existing items
+        wrong_id = '0'
+        response = self.testapp.delete(self.listURL+'/'+first_list_id+'/'+wrong_id, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Deleting non-existing item should fail with BAD_REQUEST: '+str(response.status_int))
+        wrong_id = 'asd'
+        response = self.testapp.delete(self.listURL+'/'+first_list_id+'/'+wrong_id, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Deleting non-existing item should fail with BAD_REQUEST: '+str(response.status_int))
+        wrong_id = '959894846485555648468'
+        response = self.testapp.delete(self.listURL+'/'+first_list_id+'/'+wrong_id, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Deleting non-existing item should fail with BAD_REQUEST: '+str(response.status_int))
+        wrong_id = '15.25'
+        response = self.testapp.delete(self.listURL+'/'+first_list_id+'/'+wrong_id, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST, 'Deleting non-existing item should fail with BAD_REQUEST: '+str(response.status_int))
 
         self.__logout__()
 

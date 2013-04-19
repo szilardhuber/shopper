@@ -1,4 +1,16 @@
 // List handling
+function deleteItem(e) {
+	var currentDiv = e.target.parentNode;
+	var name = currentDiv.id;
+	$.ajax({
+		url: '/api/v1/Lists/'+list_id+'/'+name,
+		type: 'DELETE',
+		success: function() { 
+			currentDiv.parentNode.parentNode.removeChild(currentDiv.parentNode); 
+		}
+	});
+}
+
 function showDeleteButton(currentDiv)
 {
 	var deleteBtn = document.createElement("button");
@@ -10,6 +22,7 @@ function showDeleteButton(currentDiv)
 	currentDiv.appendChild(deleteBtn);
 	deleteBtn.style.top = (currentDiv.clientHeight - deleteBtn.clientHeight) / 2 + "px";
 	deleteBtn.style.opacity = 1;
+	deleteBtn.onclick = deleteItem;
 }
 
 function hideDeleteButton(currentDiv)
@@ -46,6 +59,7 @@ function swipeRight(e) {
 	var button = $(".delete-btn");
 	if (button.length === 0) {
 		showDeleteButton(currentDiv);
+		button.on("click", function () { alert('deleted internally') });
 	} else {
 		var buttonDiv = button[0].parentNode;
 		hideDeleteButton(buttonDiv);
@@ -79,10 +93,12 @@ $(function() {
 	$('#modal-form').on('submit', function(e) {
 		var name = $('#product-query').val();
 		$.ajax({
-			url: '/Lists/'+list_id,
+			url: '/api/v1/Lists/'+list_id,
 			type: 'POST',
-			data: {'description': name, 'quantity': $('#quantity').val(), 'key': results[name]}
+			data: {'description': name, 'quantity': $('#quantity').val(), 'key': results[name]},
+			success: function() { window.location.reload(true); }
 		});
+		return false;
 	});
 	$('#modal-form-submit').on('click', function(e){
 		e.preventDefault();

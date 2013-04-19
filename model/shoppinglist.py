@@ -61,6 +61,13 @@ class ShoppingList(db.Model):
         memcache.add(str(self.key().id_or_name()), list_items, namespace=ShoppingList.NAMESPACE)
         return list_items
 
+    def delete_item(self, item_id):
+        """ Delete given item """
+        item = ListItem.get_by_id(int(item_id), self)
+        item.delete()
+        memcache.delete(str(self.key().id_or_name()), namespace=ShoppingList.NAMESPACE)
+
+
     @staticmethod
     def create_list(user, list_name):
         """ Create a new list """

@@ -41,17 +41,29 @@ class ListHandler(BaseHandler):
         if list_id is not None:
             # Add item to list
             try:
-                current_list = ShoppingList.get_by_id(
-                    int(list_id), current_user)
+                current_list = ShoppingList.get_by_id(int(list_id), current_user)
                 if current_list is None:
                     raise ValueError
 
                 current_list.add_item(self.request.get('description', None), self.request.get('key', None), int(self.request.get('quantity', 1)))
                 self.ok('/Lists/'+str(list_id))
 
-            except (TypeError, ValueError, BadKeyError, BadValueError) as exc:
+            except (TypeError, ValueError, BadKeyError, BadValueError, ProtocolBufferEncodeError) as exc:
                 logging.error('Exception: ' + str(exc))
                 self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such list, sorry."), url="/")
+
+    @viewneeded
+    @authenticate
+    def delete(self, api=None, list_id=None, item_id=None):
+        """ DELETE request handler """
+        if api is not None and list_id is not None and item_id is not None:
+            try:
+                current_user = User.getUser(self.user_email)
+                current_list = ShoppingList.get_by_id(int(list_id), current_user)
+                current_list.delete_item(item_id)
+            except (TypeError, ValueError, BadKeyError, BadValueError, ProtocolBufferEncodeError) as exc:
+                logging.error('Exception: ' + str(exc))
+                self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such item, sorry."), url="/")
 
 #Private methods
     def _create_list_(self, list_name):

@@ -14,4 +14,5 @@ class ListItem(db.Model):
         ret = dict([(p, unicode(getattr(self, p))) for p in self.properties() if p != 'product'])
         if self.product is not None:
             ret['product'] = self.product.to_dict()
+        ret['id'] = self.key().id_or_name()
         return ret

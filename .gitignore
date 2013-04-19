@@ -6,3 +6,4 @@
 babel.cfg
 .DS_Store
 .coverage
+pylint.out
