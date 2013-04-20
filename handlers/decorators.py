@@ -1,9 +1,9 @@
+""" Contains all decorator classes / functions """
 from gaesessions import get_current_session
 from model import SessionData
 from model import User
-from apiview import APIView
-from webview import WebView
-from i18n_utils import LocalizedHandler
+from handlers.apiview import APIView
+from handlers.webview import WebView
 from utilities import constants
 
 import logging
@@ -11,6 +11,7 @@ import datetime
 from model.logintoken import LoginToken
 
 def viewneeded(func):
+    """ Sets view member of the handler class to generate output """
 	def custom_call(*args, **kwargs):
 		args[0].view = WebView.get_instance()
 		if len(args) > 1:
