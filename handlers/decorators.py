@@ -12,16 +12,16 @@ from model.logintoken import LoginToken
 
 def viewneeded(func):
     """ Sets view member of the handler class to generate output """
-	def custom_call(*args, **kwargs):
-		args[0].view = WebView.get_instance()
-		if len(args) > 1:
-			if args[len(args)-1].lower() == 'api':
-				args[0].view = APIView.get_instance()
-		if len(kwargs) > 0:
-			if 'api' in kwargs:
-				args[0].view = APIView.get_instance()
-		return func(*args, **kwargs)
-	return custom_call
+    def custom_call(*args, **kwargs):
+        args[0].view = WebView.get_instance()
+        if len(args) > 1:
+            if args[len(args)-1].lower() == 'api':
+                args[0].view = APIView.get_instance()
+        if len(kwargs) > 0:
+            if 'api' in kwargs:
+                args[0].view = APIView.get_instance()
+        return func(*args, **kwargs)
+    return custom_call
 
 def usercallable(func):
 	def custom_call(*args, **kwargs):
