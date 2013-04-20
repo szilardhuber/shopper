@@ -3,7 +3,6 @@ from basehandler import BaseHandler
 from utilities import constants
 from model import Product
 from model import SearchHelper
-from utilities import to_JSON
 from google.appengine.api import taskqueue
 from model import Category
 import json
@@ -19,6 +18,7 @@ class AdminHandler(BaseHandler):
         self.response.out.write(template.render({}))
 
     def post(self):
+        """ POST request handler """
         product_raw_data = self.request.get('productlist')
         if product_raw_data is None:
             return
@@ -32,12 +32,12 @@ class AdminHandler(BaseHandler):
             try:
                 count += 1
                 items = row.split("|")
-                outer_id = items[0]
                 name = items[1]
                 barcode = items[2]
                 category_name = items[3]
 
-                task = taskqueue.Task(url='/admin/worker', params={'outer_id': outer_id, 'name': name, 'barcode': barcode, 'category_name': category_name})
+                task = taskqueue.Task(url='/admin/worker',
+                                  params={'name': name, 'barcode': barcode, 'category_name': category_name})
                 tasks.append(task)
                 if len(tasks) > 99:
                     queue.add(tasks)
@@ -53,16 +53,18 @@ class AdminHandler(BaseHandler):
 
 
 class AdminWorkerHandler(BaseHandler):
+    """ Processor for product task queue """
     def post(self):
-        outer_id = self.request.get('outer_id')
+        """ POST request handler """
         name = self.request.get('name')
         barcode = self.request.get('barcode')
         category_name = self.request.get('category_name')
         #category = AdminWorkerHandler.create_category(category_name)
-        AdminWorkerHandler.create_product(name, outer_id, barcode, category_name)
+        AdminWorkerHandler.create_product(name, barcode, category_name)
 
     @staticmethod
     def create_category(category_name):
+        """ Create a category in datastore """
         query = Category.all()
         query.filter('description =', category_name)
         ret = query.get()
@@ -73,7 +75,8 @@ class AdminWorkerHandler(BaseHandler):
         return ret
 
     @staticmethod
-    def create_product(name, outer_id, barcode, category):
+    def create_product(name, barcode, category):
+        """ Create a product in datastore """
         query = Product.all()
         query.filter('barcode =', barcode)
         ret = query.get()
