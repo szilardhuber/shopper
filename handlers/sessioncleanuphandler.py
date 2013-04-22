@@ -9,12 +9,14 @@ import webapp2
 
 
 class SessionCleanupHandler(webapp2.RequestHandler):
-    """ Cleans up expired sessions and persistent tokens from memcache and datastore """
+    """ Cleans up expired sessions and persistent tokens
+        from memcache and datastore """
 
     def get(self):
         """ GET request handler """
         finished = False
-        # while is needed as this geasessions function only deletes 500 sessions at a time
+        # while is needed as this geasessions function only
+        # deletes 500 sessions at a time
         while not finished:
             finished = delete_expired_sessions()
         SessionData.delete_expired_sessions()

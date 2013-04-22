@@ -15,11 +15,13 @@ class APIView():
                 APIView.instance = APIView()
         return APIView.instance
 
-    def display_error(self, base_handler, error, message=None, url=None):
+    @classmethod
+    def display_error(cls, base_handler, error, message=None, url=None):
         """ Display an error to the handled output """
         base_handler.error(error)
 
-    def ok(self, base_handler, url=None):
+    @classmethod
+    def ok(cls, base_handler, url=None):
         """ Nothing to do here """
         import logging
         logging.info('APIView ok called')

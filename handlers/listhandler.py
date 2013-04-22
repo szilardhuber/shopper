@@ -9,6 +9,7 @@ from google.net.proto.ProtocolBuffer import ProtocolBufferEncodeError
 from google.appengine.api.datastore_errors import BadKeyError
 from google.appengine.ext.db import BadValueError
 
+
 class ListHandler(BaseHandler):
     """ Handling requests for dealing with shopping lists """
 #Public methods
@@ -41,16 +42,26 @@ class ListHandler(BaseHandler):
         if list_id is not None:
             # Add item to list
             try:
-                current_list = ShoppingList.get_by_id(int(list_id), current_user)
+                current_list = ShoppingList.get_by_id(int(list_id),
+                                                      current_user)
                 if current_list is None:
                     raise ValueError
 
-                current_list.add_item(self.request.get('description', None), self.request.get('key', None), int(self.request.get('quantity', 1)))
+                current_list.add_item(self.request.get('description', None),
+                                      self.request.get('key', None),
+                                      int(self.request.get('quantity', 1)))
                 self.ok('/Lists/'+str(list_id))
 
-            except (TypeError, ValueError, BadKeyError, BadValueError, ProtocolBufferEncodeError) as exc:
+            except (TypeError,
+                    ValueError,
+                    BadKeyError,
+                    BadValueError,
+                    ProtocolBufferEncodeError) as exc:
                 logging.error('Exception: ' + str(exc))
-                self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such list, sorry."), url="/")
+                error_message = self.gettext("There's not such list, sorry.")
+                self.set_error(constants.STATUS_BAD_REQUEST,
+                               message=error_message,
+                               url="/")
 
     @viewneeded
     @authenticate
@@ -59,11 +70,19 @@ class ListHandler(BaseHandler):
         if api is not None and list_id is not None and item_id is not None:
             try:
                 current_user = User.getUser(self.user_email)
-                current_list = ShoppingList.get_by_id(int(list_id), current_user)
+                current_list = ShoppingList.get_by_id(int(list_id),
+                                                      current_user)
                 current_list.delete_item(item_id)
-            except (TypeError, ValueError, BadKeyError, BadValueError, ProtocolBufferEncodeError) as exc:
+            except (TypeError,
+                    ValueError,
+                    BadKeyError,
+                    BadValueError,
+                    ProtocolBufferEncodeError) as exc:
                 logging.error('Exception: ' + str(exc))
-                self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such item, sorry."), url="/")
+                error_message = self.gettext("There's not such item, sorry.")
+                self.set_error(constants.STATUS_BAD_REQUEST,
+                               message=error_message,
+                               url="/")
 
 #Private methods
     def _create_list_(self, list_name):
@@ -100,7 +119,8 @@ class ListHandler(BaseHandler):
         self.response.out.write(response_json)
 
     def _display_list(self, list_id, api):
-        """ Displays the list with the given id if it belongs to the current user """
+        """ Displays the list with the given id
+            if it belongs to the current user """
         try:
             current_user = User.getUser(self.user_email)
             current_list = ShoppingList.get_by_id(int(list_id), current_user)
@@ -111,9 +131,11 @@ class ListHandler(BaseHandler):
                 self._api_display_list_(current_list)
             else:
                 self._web_display_list_(current_list)
-        except (TypeError, ValueError, ProtocolBufferEncodeError) as exc:  # filtering all non-integers in parameter
+        except (TypeError, ValueError, ProtocolBufferEncodeError) as exc:
             logging.error(str(exc))
-            self.set_error(constants.STATUS_BAD_REQUEST, message=self.gettext("There's not such list, sorry."), url="/")
+            error_message = self.gettext("There's not such list, sorry.")
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                           message=error_message, url="/")
 
     def _api_display_list_(self, list_to_display):
         """ Displays list with the given id in JSON format """
@@ -122,7 +144,8 @@ class ListHandler(BaseHandler):
         self.response.out.write(response_json)
 
     def _web_display_list_(self, list_to_display):
-        """ Renders the website containing the list items of the list with the given id """
+        """ Renders the website containing the list items
+            of the list with the given id """
         list_items = list_to_display.get_items()
         list_id = list_to_display.key().id_or_name()
         template = self.jinja2_env.get_template('shoppinglist.html')

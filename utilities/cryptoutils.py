@@ -45,7 +45,7 @@ class CryptoUtil():
 			return os.urandom(size)
 
 	@staticmethod
-	def getVerificationCode():
+	def get_verify_code():
 		return CryptoUtil.__get_random_bytes(CryptoVariables.VERIFICATION_CODE_SIZE)
 
 	@staticmethod

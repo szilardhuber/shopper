@@ -1,6 +1,6 @@
 """ Base class for all handlers for making easier
     of separate display to web and api """
-from apiview import APIView
+from handlers.apiview import APIView
 from i18n_utils import LocalizedHandler
 from gettext import gettext
 
@@ -18,6 +18,7 @@ class BaseHandler(LocalizedHandler):
         """ Everything was ok, either redirect or do nothing """
         self.view.ok(self, url)
 
-    def gettext(self, param):
+    @classmethod
+    def gettext(cls, param):
         """ Dirty trick for fixing pylint report """
         return gettext(param)

@@ -1,12 +1,12 @@
 """ Contains AdminHandler class """
-from basehandler import BaseHandler
-from utilities import constants
+from handlers.basehandler import BaseHandler
 from model import Product
 from model import SearchHelper
 from google.appengine.api import taskqueue
 from model import Category
 import json
 import unicodedata
+
 
 class AdminHandler(BaseHandler):
 
@@ -37,7 +37,9 @@ class AdminHandler(BaseHandler):
                 category_name = items[3]
 
                 task = taskqueue.Task(url='/admin/worker',
-                                  params={'name': name, 'barcode': barcode, 'category_name': category_name})
+                                      params={'name': name,
+                                              'barcode': barcode,
+                                              'category_name': category_name})
                 tasks.append(task)
                 if len(tasks) > 99:
                     queue.add(tasks)
@@ -91,8 +93,10 @@ class AdminWorkerHandler(BaseHandler):
 
     @staticmethod
     def update_search_table(product):
+        """ Split the product to words and for the all prefix substring for
+            all words add the product id and description to the list of
+            search results """
         for word in product.name.lower().split(' '):
-            #word = unicodedata.normalize('NFKD', unicode(word, 'utf-8')).encode('ASCII', 'ignore')
             word = unicodedata.normalize('NFKD', word).encode('ASCII', 'ignore')
             term = ''
             for char in word:
@@ -105,6 +109,7 @@ class AdminWorkerHandler(BaseHandler):
                     ret = json.loads(helper.items)
                 else:
                     helper = SearchHelper(key_name=term)
-                ret.append({'id': product.key().id_or_name(), 'name': product.name})
+                ret.append({'id': product.key().id_or_name(),
+                            'name': product.name})
                 helper.items = json.dumps(ret)
                 helper.put()

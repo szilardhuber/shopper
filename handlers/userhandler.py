@@ -1,8 +1,8 @@
 """ Contains UserHandler class """
 from model import User, LoginToken
 from utilities import CryptoUtil, constants
-from decorators import usercallable, viewneeded
-from basehandler import BaseHandler
+from handlers.decorators import usercallable, viewneeded
+from handlers.basehandler import BaseHandler
 
 # another round with you track integration 14
 
@@ -11,7 +11,8 @@ from gaesessions import get_current_session
 from base64 import b64encode
 from google.appengine.api import mail
 import logging
-import datetime
+from datetime import datetime
+from datetime import timedelta
 
 
 class UserHandler(BaseHandler):
@@ -36,8 +37,8 @@ class UserHandler(BaseHandler):
                 self.__display_form('alreadyloggedin.html')
             else:
                 session = get_current_session()
-                error_message = session.pop_quick(constants.VAR_NAME_ERRORMESSAGE)
-                self.__display_form(command.lower() + '.html', error_message)
+                message = session.pop_quick(constants.VAR_NAME_ERRORMESSAGE)
+                self.__display_form(command.lower() + '.html', message)
             return
 
         if command.lower() == 'verify':
@@ -77,7 +78,7 @@ class UserHandler(BaseHandler):
         if user is None or user.verified:
             self.set_error(constants.STATUS_BAD_REQUEST, message=None, url="/")
             return
-        user.verificationCode = b64encode(CryptoUtil.getVerificationCode(), "*$")
+        user.verificationCode = b64encode(CryptoUtil.get_verify_code(), "*$")
         template_values = {
             'user_email': self.user_email,
             'code': user.verificationCode,
@@ -99,7 +100,8 @@ class UserHandler(BaseHandler):
         logging.info('User logging in: ' + str(email))
         if not User.isEmailValid(email) or not User.isAlreadyRegistered(email):
             logging.error('Email mismatched or not registered')
-            self.set_error(constants.STATUS_BAD_REQUEST, self.gettext('LOGIN_ERROR'), url=self.request.url)
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                           self.gettext('LOGIN_ERROR'), url=self.request.url)
             return
         user = User.getUser(email.lower())
 
@@ -107,14 +109,16 @@ class UserHandler(BaseHandler):
         password = self.request.get(constants.VAR_NAME_PASSWORD)
         if not User.isPasswordValid(password):
             logging.error('Invalid password')
-            self.set_error(constants.STATUS_BAD_REQUEST, self.gettext('LOGIN_ERROR'), url=self.request.url)
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                           self.gettext('LOGIN_ERROR'), url=self.request.url)
             return
         key = CryptoUtil.getKey(password, user.salt)
 
         # Validate password
         if not user.password == key:
             logging.error('Incorrect password for email')
-            self.set_error(constants.STATUS_BAD_REQUEST, self.gettext('LOGIN_ERROR'), url=self.request.url)
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                           self.gettext('LOGIN_ERROR'), url=self.request.url)
             return
 
         # Check remember me
@@ -128,8 +132,11 @@ class UserHandler(BaseHandler):
             token.user = email
             token.put()
             cookie_value = token.get_cookie_value()
-            self.response.set_cookie(constants.PERSISTENT_LOGIN_NAME, cookie_value, expires=datetime.datetime.now() + datetime.timedelta(
-                days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS), path="/", httponly=True, secure=True)
+            delta = timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS)
+            self.response.set_cookie(constants.PERSISTENT_LOGIN_NAME,
+                                     cookie_value,
+                                     expires=datetime.now() + delta,
+                                     path="/", httponly=True, secure=True)
 
         # Log in user
         if user.verified:
@@ -141,14 +148,20 @@ class UserHandler(BaseHandler):
             self.ok(url)
         else:
             logging.error('User unverified')
-            self.set_error(constants.STATUS_FORBIDDEN, self.gettext('UNVERIFIED_PRE') + ' <a href=\"/User/Verify">' + self.gettext(
-                'UNVERIFIED_HERE') + '</a> ' + self.gettext('UNVERIFIED_POST'), url=self.request.url)
+            self.set_error(constants.STATUS_FORBIDDEN,
+                           self.gettext('UNVERIFIED_PRE') +
+                           ' <a href=\"/User/Verify">' +
+                           self.gettext('UNVERIFIED_HERE') +
+                           '</a> ' +
+                           self.gettext('UNVERIFIED_POST'),
+                           url=self.request.url)
             return
 
     def __logout(self):
         """ Do logout """
         if constants.PERSISTENT_LOGIN_NAME in self.request.cookies:
-            token = LoginToken.get_token_data(self.request.cookies[constants.PERSISTENT_LOGIN_NAME])
+            token_cookie = self.request.cookies[constants.PERSISTENT_LOGIN_NAME]
+            token = LoginToken.get_token_data(token_cookie)
             if token is not None:
                 token.delete()
         self.response.delete_cookie(constants.PERSISTENT_LOGIN_NAME, '/')
@@ -165,14 +178,18 @@ class UserHandler(BaseHandler):
         logging.info('User registering: ' + str(email))
         if not User.isEmailValid(email) or User.isAlreadyRegistered(email):
             logging.error('Email mismatched or already registered')
-            self.set_error(constants.STATUS_BAD_REQUEST, self.gettext('REGISTER_ERROR'), url=self.request.url)
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                           self.gettext('REGISTER_ERROR'),
+                           url=self.request.url)
             return
 
         # Validate password
         password = self.request.get(constants.VAR_NAME_PASSWORD)
         if not User.isPasswordValid(password):
             logging.error('Invalid password')
-            self.set_error(constants.STATUS_BAD_REQUEST, self.gettext('REGISTER_ERROR'), url=self.request.url)
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                           self.gettext('REGISTER_ERROR'),
+                           url=self.request.url)
             return
 
         # Calculate password hash
@@ -228,13 +245,13 @@ class UserHandler(BaseHandler):
         template = self.jinja2_env.get_template('staticmessage.html')
         self.response.out.write(template.render(template_values))
 
-    def __display_form(self, template, error_message=None):
+    def __display_form(self, template, message=None):
         """ Display a the template """
         # page = memcache.get(str(language_code) + key, namespace='Pages')
         # if page is None:
         template_values = {
             'user_email': self.user_email,
-            constants.VAR_NAME_ERRORMESSAGE: error_message
+            constants.VAR_NAME_ERRORMESSAGE: message
         }
         template = self.jinja2_env.get_template(template)
         page = template.render(template_values)

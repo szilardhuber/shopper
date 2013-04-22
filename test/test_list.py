@@ -190,15 +190,15 @@ class WebTest_List(unittest.TestCase):
 
         response = self.testapp.get(self.listURL+'/asd', expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
-                         'Shopping list queries should be served after authentication: ' + str(response.status_int))
+                         'Bad request response should arrive with invalid list id: ' + str(response.status_int))
 
         response = self.testapp.get(self.listURL+'/959894846485555648468', expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
-                         'Shopping list queries should be served after authentication: ' + str(response.status_int))
+                         'Bad request response should arrive with invalid list id: ' + str(response.status_int))
 
         response = self.testapp.get(self.listURL+'/15.25', expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
-                         'Shopping list queries should be served after authentication: ' + str(response.status_int))
+                         'Bad request response should arrive with invalid list id: ' + str(response.status_int))
 
         self.__logout__()
 
