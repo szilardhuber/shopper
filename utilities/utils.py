@@ -6,7 +6,7 @@ def to_JSON(vect):
     first = True 
     for item in vect:
         import logging
-        logging.info('Adding item: ' + dir(item))
+        logging.info('Adding item: ' + str(dir(item)))
         if not first:
 	    ret += ', '
         else:
