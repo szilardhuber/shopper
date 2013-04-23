@@ -79,12 +79,7 @@ class Product(db.Model):
         ret = memcache.get(str(self.key().id_or_name()), namespace=Product.NAMESPACE)
         if ret is not None:
             return ret
-        ret = dict([(p, unicode(getattr(self, p))) for p in self.properties() if p not in [
-                   'search_terms', 'category', 'manufacturer']])
-        if self.category is not None:
-            ret['category'] = self.category.to_dict()
-        if self.manufacturer is not None:
-            ret['manufacturer'] = self.manufacturer.to_dict()
+        ret = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
         memcache.add(str(self.key().id_or_name()), ret, namespace=Product.NAMESPACE)
         return ret
 
