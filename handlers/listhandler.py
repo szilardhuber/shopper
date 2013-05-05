@@ -8,6 +8,7 @@ from handlers.decorators import authenticate, viewneeded
 from google.net.proto.ProtocolBuffer import ProtocolBufferEncodeError
 from google.appengine.api.datastore_errors import BadKeyError
 from google.appengine.ext.db import BadValueError
+from google.appengine.api import memcache
 
 
 class ListHandler(BaseHandler):
@@ -103,6 +104,13 @@ class ListHandler(BaseHandler):
             all_lists = query.run()
             self._api_list_lists_(all_lists)
         else:
+            template = self.jinja2_env.get_template('ang-base.html')
+            template_values = {
+                'user_email': self.user_email
+            }
+            self.response.out.write(template.render(template_values))
+            return
+
             # get first list
             first_list = query.get()
             if first_list is None:
@@ -140,8 +148,8 @@ class ListHandler(BaseHandler):
     def _api_display_list_(self, list_to_display):
         """ Displays list with the given id in JSON format """
         self.response.headers['Content-Type'] = 'application/json'
-        response_json = to_JSON(list_to_display.get_items())
-        self.response.out.write(response_json)
+        response = to_JSON(list_to_display.get_items())
+        self.response.out.write(response)
 
     def _web_display_list_(self, list_to_display):
         """ Renders the website containing the list items

@@ -3,10 +3,8 @@ import json
 def to_JSON(vect):
     ret = ''
     ret += '['
-    first = True 
+    first = True
     for item in vect:
-        import logging
-        logging.info('Adding item: ' + str(dir(item)))
         if not first:
 	    ret += ', '
         else:

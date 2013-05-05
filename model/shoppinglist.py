@@ -31,7 +31,7 @@ class ShoppingList(db.Model):
         query.ancestor(self)
         item = None
         if product is not None:
-            query.filter('product = ', product)
+            query.filter('product_barcode = ', product.barcode)
             item = query.get()
             logging.info('Product: ' + str(product))
             logging.info('Item: ' + str(item))
@@ -43,7 +43,8 @@ class ShoppingList(db.Model):
             item = ListItem(parent=self)
             item.description = description
             item.quantity = quantity
-            item.product = product
+            if product:
+                item.product_barcode = product.barcode
             item.put()
         else:
             item.quantity += quantity
@@ -52,13 +53,9 @@ class ShoppingList(db.Model):
 
     def get_items(self):
         """ Get all items """
-        list_items = memcache.get(str(self.key().id_or_name()), namespace=ShoppingList.NAMESPACE)
-        if list_items is not None:
-            return list_items
         query = ListItem.all()
         query.ancestor(self)
         list_items = query.fetch(1000)
-        memcache.add(str(self.key().id_or_name()), list_items, namespace=ShoppingList.NAMESPACE)
         return list_items
 
     def delete_item(self, item_id):

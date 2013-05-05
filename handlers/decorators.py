@@ -56,6 +56,8 @@ def authenticate(func):
         """ The decorator itself """
         session = get_current_session()
         sessionid = session.get(constants.SESSION_ID)
+        import logging
+        logging.info('SessionID: ' + str(sessionid))
         session_data = SessionData.get_session(sessionid)
         if not session_data or not session_data.is_valid():
             # if persistent id is given:
@@ -76,7 +78,7 @@ def authenticate(func):
                                                 cookie_value,
                                                 expires=expiration,
                                                 path="/",
-                                                httponly=True,
+                                                httponly=False,
                                                 secure=True)
                     user = User.getUser(token.user)
                     user.login(handler.request.remote_addr)
