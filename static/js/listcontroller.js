@@ -59,6 +59,7 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
     $('#modal-form-submit').on('click', function(e){
         e.preventDefault();
         $('#modal-form').submit();
+        $('#modal-list-item').modal('hide');
     });
 
     $("#product-query").typeahead({
