@@ -134,11 +134,7 @@ class ListHandler(BaseHandler):
             current_list = ShoppingList.get_by_id(int(list_id), current_user)
             if current_list is None:
                 raise ValueError
-
-            if api is not None:
-                self._api_display_list_(current_list)
-            else:
-                self._web_display_list_(current_list)
+            self._api_display_list_(current_list)
         except (TypeError, ValueError, ProtocolBufferEncodeError) as exc:
             logging.error(str(exc))
             error_message = self.gettext("There's not such list, sorry.")
@@ -150,17 +146,3 @@ class ListHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'application/json'
         response = to_JSON(list_to_display.get_items())
         self.response.out.write(response)
-
-    def _web_display_list_(self, list_to_display):
-        """ Renders the website containing the list items
-            of the list with the given id """
-        list_items = list_to_display.get_items()
-        list_id = list_to_display.key().id_or_name()
-        template = self.jinja2_env.get_template('shoppinglist.html')
-        template_values = {
-            'user_email': self.user_email,
-            'shopping_list': list_to_display,
-            'list_id': list_id,
-            'list_items': list_items
-        }
-        self.response.out.write(template.render(template_values))
