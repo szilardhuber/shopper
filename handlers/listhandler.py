@@ -8,7 +8,6 @@ from handlers.decorators import authenticate, viewneeded
 from google.net.proto.ProtocolBuffer import ProtocolBufferEncodeError
 from google.appengine.api.datastore_errors import BadKeyError
 from google.appengine.ext.db import BadValueError
-from google.appengine.api import memcache
 
 
 class ListHandler(BaseHandler):
@@ -21,7 +20,7 @@ class ListHandler(BaseHandler):
         if list_id is None:
             self._list_lists(api)
         else:
-            self._display_list(list_id, api)
+            self._display_list(list_id)
 
     @viewneeded
     @authenticate
@@ -109,16 +108,6 @@ class ListHandler(BaseHandler):
                 'user_email': self.user_email
             }
             self.response.out.write(template.render(template_values))
-            return
-
-            # get first list
-            first_list = query.get()
-            if first_list is None:
-                first_list = self._create_list_('Shopping list')
-
-            # navigate to it
-            newurl = '/Lists/' + str(first_list.key().id_or_name())
-            self.redirect(newurl)
 
     def _api_list_lists_(self, all_lists):
         """ Lists all shopping lists as JSON """
@@ -126,7 +115,7 @@ class ListHandler(BaseHandler):
         response_json = to_JSON(all_lists)
         self.response.out.write(response_json)
 
-    def _display_list(self, list_id, api):
+    def _display_list(self, list_id):
         """ Displays the list with the given id
             if it belongs to the current user """
         try:
@@ -144,5 +133,6 @@ class ListHandler(BaseHandler):
     def _api_display_list_(self, list_to_display):
         """ Displays list with the given id in JSON format """
         self.response.headers['Content-Type'] = 'application/json'
-        response = to_JSON(list_to_display.get_items())
+        items = list_to_display.get_items()
+        response = to_JSON(items)
         self.response.out.write(response)

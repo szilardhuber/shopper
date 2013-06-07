@@ -1,7 +1,7 @@
 var serverUrl = '';
 var currentListId = 0;
 
-var myModule = angular.module('shopper', ['ngCookies']);
+var myModule = angular.module('shopper', ['ngCookies', 'ui.sortable']);
 
 /* 
  * Config routes

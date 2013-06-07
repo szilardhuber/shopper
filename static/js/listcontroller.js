@@ -1,10 +1,14 @@
 function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
- var headers = {}
+ var headers = {};
  headers['Cookie'] = $scope.sessionCookie;
  currentListId = $routeParams.listId;
  $http({method: 'GET', url: serverUrl+'/api/v1/Lists/'+currentListId, headers: headers}).
     success(function(data, status, headers, config) {
         $scope.items = data;
+        if (localStorage && localStorage[currentListId]) {
+            var jsonItems = localStorage[currentListId];
+            $scope.items = JSON.parse(jsonItems);
+        }
         var listItems = document.getElementById('sortable').getElementsByTagName('li');
         for (var i = 0; i < listItems.length; ++i) {
             Hammer(listItems[i], {
@@ -30,6 +34,26 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
         }
     };
 
+    $scope.itemsJSON = JSON.stringify($scope.itmes);
+
+    window.setInterval(function(){
+        newItemsJSON = JSON.stringify($scope.items);
+        if (newItemsJSON != $scope.itemsJSON) {
+            if (localStorage)
+            {
+                localStorage[currentListId] = newItemsJSON;
+                $scope.itemsJSON = newItemsJSON;
+            }
+        }
+    },1000);
+
+    $scope.sortableOptions = {
+        tolerance: 'pointer',
+        handle: '.icon-align-justify',
+            axis: 'y',
+            delay: 100,
+            distance: 10
+    };
 
     var modalShown = false;
     var results = {};
@@ -111,16 +135,6 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
         }
     });
 
-$(function() {
-    $( "#sortable" ).sortable({
-        tolerance: 'pointer',
-        handle: '.icon-align-justify',
-            axis: 'y',
-            delay: 100,
-            distance: 10
-    });
-    $( "#sortable" ).disableSelection();
-});
 } // ListController
 
 
@@ -175,7 +189,7 @@ function swipeRight(e) {
     var button = $(".delete-btn");
     if (button.length === 0) {
         showDeleteButton(currentDiv);
-        button.on("click", function () { alert('deleted internally') });
+        button.on("click", function () { alert('deleted internally'); });
     } else {
         var buttonDiv = button[0].parentNode;
         hideDeleteButton(buttonDiv);

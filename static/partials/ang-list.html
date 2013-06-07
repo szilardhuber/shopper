@@ -28,17 +28,18 @@
 </div>
 
 <div class="container">
-<div class="row">
-    <div class="span3">Filter: <input type="text" ng-model="nameText"/></div>
-    <div class="span1">
-        <a class="btn btn-primary" data-toggle="modal" data-target="#modal-list-item"><i class="icon-plus icon-white"></i> Add</a>
+    <div class="row">
+        <div class="span1">
+            <a class="btn btn-primary" data-toggle="modal" data-target="#modal-list-item"><i class="icon-plus icon-white"></i> Add</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+            <ul ui-sortable="sortableOptions" ng-model="items" id="sortable">
+                <li class="ui-state-default" ng-repeat="item in items"><div style="position:relative" id="{{item.id}}" swipeable><i class="icon-align-justify icon-2x pull-left"></i>{{item.description}} - {{item.quantity}}</div></li>
+            </ul>
+        </div>
     </div>
 </div>
-
-<div class="row">
-    <div class="span12">
-        <ul id="sortable" class="unstyled">
-            <li class="ui-state-default" ng-repeat="item in items | filter:nameText"><div style="position:relative" id="{{item.id}}" swipeable><i class="icon-align-justify icon-2x pull-left"></i>{{item.description}} - {{item.quantity}}</div></li>
-        </ul>
-    </div>
-</div> <!-- /container -->
+ <!-- /container -->

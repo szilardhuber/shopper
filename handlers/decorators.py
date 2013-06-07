@@ -6,7 +6,6 @@ from handlers.apiview import APIView
 from handlers.webview import WebView
 from utilities import constants
 
-import logging
 from datetime import datetime, timedelta
 from model.logintoken import LoginToken
 
@@ -28,7 +27,7 @@ def viewneeded(func):
 
 def usercallable(func):
     """ Sets the email of the current user to a member of the handler """
-    def custom_call(*args, **kwargs): # TODO SET BASED ON SESSIONID
+    def custom_call(*args, **kwargs):  # TODO SET BASED ON SESSIONID
         """ The decorator itself """
         session = get_current_session()
         args[0].user_email = session.get(constants.VAR_NAME_EMAIL)
