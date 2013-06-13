@@ -19,19 +19,24 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
     error(function(data, status, headers, config) {
   });
 
-    addItem = function(description, quantity) {
+    addItem = function(description, id, quantity) {
         var found = false;
         for (var item in $scope.items)
         {
             if ($scope.items[item].description === description) {
-                $scope.items[item].quantity = parseInt($scope.items[item].quantity, 10) + parseInt(quantity, 10);
+                $scope.items[item].quantity = parseInt(quantity, 10);
+                if (!$scope.items[item].id)
+                {
+                    $scope.items[item].id = id;
+                }
                 found  = true;
                 break;
             }
         }
         if (!found) {
-            $scope.items.push({description: description, quantity: quantity});
+            $scope.items.push({description: description, id: id, quantity: quantity});
         }
+        console.log(JSON.stringify($scope.items));
     };
 
     $scope.itemsJSON = JSON.stringify($scope.itmes);
@@ -72,9 +77,10 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
             url: '/api/v1/Lists/'+currentListId,
             type: 'POST',
             data: {'description': name, 'quantity': quantity, 'key': results[name]},
-            success: function() {
+            success: function(data) {
+                console.log(data);
                 $scope.$apply(function () {
-                    addItem(name, quantity);
+                    addItem(data.description, data.id, data.quantity);
                 });
             }
         });

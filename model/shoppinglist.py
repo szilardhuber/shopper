@@ -50,6 +50,7 @@ class ShoppingList(db.Model):
             item.quantity += quantity
             item.put()
         memcache.delete(str(self.key().id_or_name()), namespace=ShoppingList.NAMESPACE)
+        return item
 
     def get_items(self):
         """ Get all items """

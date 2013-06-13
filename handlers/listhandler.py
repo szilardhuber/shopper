@@ -1,5 +1,6 @@
 """ Contains ListHandler Class """
 import logging
+import json
 
 from handlers.basehandler import BaseHandler
 from model import ShoppingList, User
@@ -47,9 +48,11 @@ class ListHandler(BaseHandler):
                 if current_list is None:
                     raise ValueError
 
-                current_list.add_item(self.request.get('description', None),
+                item = current_list.add_item(self.request.get('description', None),
                                       self.request.get('key', None),
                                       int(self.request.get('quantity', 1)))
+                self.response.out.write(json.dumps(item.to_dict()))
+                self.response.headers['Content-Type'] = 'application/json'
                 self.ok('/Lists/'+str(list_id))
 
             except (TypeError,
