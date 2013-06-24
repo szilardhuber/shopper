@@ -33,7 +33,7 @@ class LoginToken(db.Model):
         Deletes expired tokens from datastore
         '''
         query = db.Query(LoginToken)
-        query.filter('startdate <', datetime.now() - timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS))
+        query.filter('startdate <', datetime.utcnow() - timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS))
         db.delete(query)
 
     @staticmethod

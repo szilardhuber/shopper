@@ -72,7 +72,7 @@ def authenticate(func):
                     token.put()
                     cookie_value = token.get_cookie_value()
                     days = constants.PERSISTENT_LOGIN_LIFETIME_DAYS
-                    expiration = datetime.now() + timedelta(days=days)
+                    expiration = datetime.utcnow() + timedelta(days=days)
                     handler.response.set_cookie(constants.PERSISTENT_LOGIN_NAME,
                                                 cookie_value,
                                                 expires=expiration,

@@ -64,18 +64,18 @@ class SessionData(db.Model):
         Delete old sessions from datastore
         '''
         query = db.Query(SessionData)
-        query.filter('startdate <', datetime.now() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES))
+        query.filter('startdate <', datetime.utcnow() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES))
         db.delete(query)
 
     def is_valid(self):
         '''
-        Returns False is a session is too old
+        Returns False if a session is too old
         '''
-        return self.startdate > datetime.now() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES)
+        return self.startdate > datetime.utcnow() - timedelta(minutes=constants.SESSION_LIFETIME_MINUTES)
 
     def update_startdate(self):
         '''
         We should update the startdate every time the user does something on the site
         '''
-        self.startdate = datetime.now()
+        self.startdate = datetime.utcnow()
         memcache.set(self.sessionid, self, time=36000, namespace=SessionData.NAMESPACE)

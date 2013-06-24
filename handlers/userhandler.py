@@ -135,7 +135,7 @@ class UserHandler(BaseHandler):
             delta = timedelta(days=constants.PERSISTENT_LOGIN_LIFETIME_DAYS)
             self.response.set_cookie(constants.PERSISTENT_LOGIN_NAME,
                                      cookie_value,
-                                     expires=datetime.now() + delta,
+                                     expires=datetime.utcnow() + delta,
                                      path="/", httponly=True, secure=True)
 
         # Log in user

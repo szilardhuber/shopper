@@ -18,7 +18,7 @@ class LoginInfo(db.Model):
 #        login_info = query.get()
 #        if login_info is None:
 #            login_info = LoginInfo(parent=user)
-#        login_info.lastlogindate = datetime.now()
+#        login_info.lastlogindate = datetime.utcnow()
 #        if login_info.logincount is not None:
 #            login_info.logincount += 1
 #        else:
