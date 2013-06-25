@@ -137,5 +137,7 @@ class ListHandler(BaseHandler):
         """ Displays list with the given id in JSON format """
         self.response.headers['Content-Type'] = 'application/json'
         items = list_to_display.get_items()
-        response = to_JSON(items)
+        if len(items) > 0:
+            list_to_display.items = to_JSON(items)
+        response = json.dumps(list_to_display.to_dict())
         self.response.out.write(response)

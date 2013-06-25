@@ -1,16 +1,14 @@
-# own modules
+""" Unit and functional tests for list handler """
 from handlers import ListHandler
-from handlers import UserHandler
 from utilities import constants
-from user_util import UserUtil
+from test.user_util import UserUtil
 
 # libraries, builtins
-from google.appengine.api import mail
 from google.appengine.ext import testbed
 import unittest
 import webapp2
+import json
 import webtest
-from gaesessions import get_current_session
 from webapp2 import Route
 from gaesessions import Session, set_current_session
 
@@ -114,7 +112,7 @@ class WebTest_List(unittest.TestCase):
         # Check if shopping list is empty
         response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Getting shopping list items failed: '+str(response.status_int))
-        self.assertEqual(len(response.json), 0, 'Shopping list is not empty: ' + str(response.json))
+        self.assertIsNone(response.json['items'], 'Shopping list is not empty: ' + str(response.json))
 
         # Add product
 
@@ -149,24 +147,26 @@ class WebTest_List(unittest.TestCase):
 
         # Check if shopping list contains added item(s)
         response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
+        items = json.loads(response.json['items'])
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Getting shopping list items failed: '+str(response.status_int))
-        self.assertEqual(len(response.json), 2, 'Shopping list should contain added item: ' + str(response.json))
-        self.assertEqual(response.json[0]['description'], first_desc, 'Description of added item does not match: ' + str(response.json[0]['description']))
-        self.assertEqual(int(response.json[0]['quantity']), 2, 'Quantity of added item does not match: ' + str(response.json[0]['quantity']))
-        self.assertEqual(response.json[1]['description'], second_desc, 'Description of added item does not match: ' + str(response.json[1]['description']))
-        self.assertEqual(int(response.json[1]['quantity']), 3, 'Quantity of added item does not match: ' + str(response.json[1]['quantity']))
-        first_item_id = str(response.json[0]['id'])
-        second_item_id = str(response.json[1]['id'])
+        self.assertEqual(len(items), 2, 'Shopping list should contain added item: ' + str(items))
+        self.assertEqual(items[0]['description'], first_desc, 'Description of added item does not match: ' + str(items[0]['description']))
+        self.assertEqual(int(items[0]['quantity']), 2, 'Quantity of added item does not match: ' + str(items[0]['quantity']))
+        self.assertEqual(items[1]['description'], second_desc, 'Description of added item does not match: ' + str(items[1]['description']))
+        self.assertEqual(int(items[1]['quantity']), 3, 'Quantity of added item does not match: ' + str(items[1]['quantity']))
+        first_item_id = str(items[0]['id'])
+        second_item_id = str(items[1]['id'])
 
         # Delete an existing item
         response = self.testapp.delete(self.listURL+'/'+first_list_id+'/'+second_item_id)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Deleting existing item failed: '+str(response.status_int))
         response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
+        items = json.loads(response.json['items'])
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Getting shopping list items failed: '+str(response.status_int))
-        self.assertEqual(len(response.json), 1, 'Shopping list should contain added item: ' + str(response.json))
-        self.assertEqual(response.json[0]['description'], first_desc, 'Description of added item does not match: ' + str(response.json[0]['description']))
-        self.assertEqual(int(response.json[0]['quantity']), 2, 'Quantity of added item does not match: ' + str(response.json[0]['quantity']))
-        self.assertEqual(str(response.json[0]['id']), first_item_id, 'Id of item does not match: ' + str(response.json[0]['quantity']))
+        self.assertEqual(len(items), 1, 'Shopping list should contain added item: ' + str(items))
+        self.assertEqual(items[0]['description'], first_desc, 'Description of added item does not match: ' + str(items[0]['description']))
+        self.assertEqual(int(items[0]['quantity']), 2, 'Quantity of added item does not match: ' + str(items[0]['quantity']))
+        self.assertEqual(str(items[0]['id']), first_item_id, 'Id of item does not match: ' + str(items[0]['quantity']))
 
         # Try to delete non-existing items
         wrong_id = '0'
@@ -201,6 +201,30 @@ class WebTest_List(unittest.TestCase):
                          'Bad request response should arrive with invalid list id: ' + str(response.status_int))
 
         self.__logout__()
+
+    def test_order_change(self):
+        """ Test changing item orders """
+        self.__login__()
+
+        # Create list
+        list_name = 'Test_list_api'
+        response = self.testapp.post(self.listURL, {'name': list_name}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK,
+                         'Creating shopping list failed: ' + str(response.status_int))
+        first_list_id = str(response.json['id'])
+
+        # Add some items
+        first_desc = 'Tej'
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': first_desc}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': first_desc}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
+        second_desc = 'Kenyer'
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': second_desc, 'quantity': 3}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
+
+        self.__logout__()
+
 
     def __login__(self):
         email = 'james@bond.com'

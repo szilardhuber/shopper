@@ -11,6 +11,7 @@ import logging
 class ShoppingList(db.Model):
     """ Model class for ShoppingList """
     name = db.StringProperty()
+    items = None
 
     NAMESPACE = 'ShoppingList'
 
@@ -18,6 +19,7 @@ class ShoppingList(db.Model):
         """ For JSON serialization """
         ret = dict([(p, unicode(getattr(self, p))) for p in self.properties()])
         ret['id'] = self.key().id_or_name()
+        ret['items'] = self.items
         return ret
 
     def add_item(self, description, key, quantity):
