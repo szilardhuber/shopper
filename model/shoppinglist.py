@@ -71,12 +71,14 @@ class ShoppingList(db.Model):
     @staticmethod
     def create_list(user, list_name):
         """ Create a new list """
+        if list_name is None or list_name == "":
+            raise  ValueError("list_name must not be empty error")
         query = ShoppingList.all()
         query.ancestor(user)
         query.filter('name = ', list_name)
         count = query.count()
         if count > 0:
-            return None
+            raise ValueError("a list with the same name already exists: " + str(list_name))
         new_list = ShoppingList(parent=user)
         new_list.name = list_name
         new_list.put()

@@ -29,16 +29,13 @@ class ListHandler(BaseHandler):
         """ POST request handler """
         current_user = User.getUser(self.user_email)
         if api is not None:
-            if list_id is None:
-                list_name = self.request.get('name', None)
-                if list_name is None or list_name == '':
-                    self.set_error(constants.STATUS_BAD_REQUEST)
-                    return
-                new_list = ShoppingList.create_list(current_user, list_name)
-                if new_list is None:
-                    self.set_error(constants.STATUS_BAD_REQUEST)
-                    return
-                self._api_display_list_(new_list)
+            try:
+                if list_id is None:
+                    list_name = self.request.get('name', None)
+                    new_list = ShoppingList.create_list(current_user, list_name)
+                    self._api_display_list_(new_list)
+            except (ValueError) as exc:
+                self.set_error(constants.STATUS_BAD_REQUEST)
 
         if list_id is not None:
             # Add item to list
