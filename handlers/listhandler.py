@@ -67,7 +67,7 @@ class ListHandler(BaseHandler):
     @authenticate
     def delete(self, api=None, list_id=None, item_id=None):
         """ DELETE request handler """
-        if api is not None and list_id is not None and item_id is not None:
+        if api is not None:
             try:
                 current_user = User.getUser(self.user_email)
                 current_list = ShoppingList.get_by_id(int(list_id),
@@ -79,20 +79,12 @@ class ListHandler(BaseHandler):
                     BadValueError,
                     ProtocolBufferEncodeError) as exc:
                 logging.error('Exception: ' + str(exc))
-                error_message = self.gettext("There's not such item, sorry.")
+                error_message = self.gettext("There's no such item, sorry.")
                 self.set_error(constants.STATUS_BAD_REQUEST,
                                message=error_message,
                                url="/")
 
 #Private methods
-    def _create_list_(self, list_name):
-        """ Creates a new list with the given name """
-        current_user = User.getUser(self.user_email)
-        new_list = ShoppingList(parent=current_user)
-        new_list.name = list_name
-        new_list.put()
-        return new_list
-
     def _list_lists(self, api):
         """ Lists all shopping lists of current user """
         current_user = User.getUser(self.user_email)
