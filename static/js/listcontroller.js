@@ -4,7 +4,8 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
  currentListId = $routeParams.listId;
  $http({method: 'GET', url: serverUrl+'/api/v1/Lists/'+currentListId, headers: headers}).
     success(function(data, status, headers, config) {
-        $scope.items = data;
+        console.log('Data: '+data.items);
+        $scope.items = JSON.parse(data.items);
         if (localStorage && localStorage[currentListId]) {
             var jsonItems = localStorage[currentListId];
             $scope.items = JSON.parse(jsonItems);
@@ -39,16 +40,19 @@ function ListController($scope, $routeParams, $http, $cookieStore, $cookies) {
         console.log(JSON.stringify($scope.items));
     };
 
-    $scope.itemsJSON = JSON.stringify($scope.itmes);
+    $scope.itemsJSON = JSON.stringify($scope.items);
 
     window.setInterval(function(){
-        newItemsJSON = JSON.stringify($scope.items);
+        newItemsJSON = JSON.stringify($scope.items, ['id']);
         if (newItemsJSON != $scope.itemsJSON) {
-            if (localStorage)
-            {
-                localStorage[currentListId] = newItemsJSON;
-                $scope.itemsJSON = newItemsJSON;
-            }
+            $.ajax({
+                url: '/api/v1/Lists/'+currentListId,
+                type: 'PUT',
+                data: {'items': newItemsJSON},
+                success: function(data) {
+                    $scope.itemsJSON = newItemsJSON;
+                }
+            });
         }
     },1000);
 

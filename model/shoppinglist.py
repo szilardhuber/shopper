@@ -6,12 +6,13 @@ from model.listitem import ListItem
 from model.product import Product
 
 import logging
+import json
 
 
 class ShoppingList(db.Model):
     """ Model class for ShoppingList """
     name = db.StringProperty()
-    items = None
+    items = db.StringProperty()
 
     NAMESPACE = 'ShoppingList'
 
@@ -59,7 +60,25 @@ class ShoppingList(db.Model):
         query = ListItem.all()
         query.ancestor(self)
         list_items = query.fetch(1000)
-        return list_items
+        ret = []
+        if not self.items:
+            return list_items
+        else:
+            ranked_items = json.loads(self.items)
+            logging.info('Len: ' + str(len(ranked_items)))
+            for ranked_item in ranked_items:
+                logging.info('Item: ' + str(ranked_item['id']))
+                for real_item in list_items:
+                    if ranked_item['id'] == real_item.key().id_or_name():
+                        ret.append(real_item)
+            for real_item in list_items:
+                for ranked_item in ranked_items:
+                    if ranked_item['id'] == real_item.key().id_or_name():
+                        break
+                else:
+                    ret.append(real_item)
+
+        return ret
 
     def delete_item(self, item_id):
         """ Delete given item """

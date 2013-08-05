@@ -223,6 +223,42 @@ class WebTest_List(unittest.TestCase):
         response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': second_desc, 'quantity': 3}, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
 
+        # Get item list and change the order
+        response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
+        items = json.loads(response.json['items'])
+        self.assertEqual(items[0]['description'], first_desc, 'New item order is incorrect.')
+        self.assertEqual(items[1]['description'], second_desc, 'New item order is incorrect.')
+        temp = items[0]
+        items[0] = items[1]
+        items[1] = temp
+        self.assertEqual(items[0]['description'], second_desc, 'New item order is incorrect before storing to server.')
+        self.assertEqual(items[1]['description'], first_desc, 'New item order is incorrect before storing to server.')
+
+        # Update item order on server
+        items_json = json.dumps(items)
+        response = self.testapp.put(self.listURL+'/'+first_list_id, {'items': items_json}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Changing order failed: '+str(response.status_int))
+
+        # Check new order
+        response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
+        items = json.loads(response.json['items'])
+        self.assertEqual(items[0]['description'], second_desc, 'New item order is incorrect after retrieved from server: ' + str(items[0]['description']))
+        self.assertEqual(items[1]['description'], first_desc, 'New item order is incorrect after retrieved from server.')
+
+        # Add new item (will not appear in ranked list)
+        third_desc = 'Vaj'
+        response = self.testapp.post(self.listURL+'/'+first_list_id, {'description': third_desc, 'quantity': 1}, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_OK, 'Adding items failed: '+str(response.status_int))
+
+        # Check new items (in order)
+        response = self.testapp.get(self.listURL+'/'+first_list_id, expect_errors=True)
+        items = json.loads(response.json['items'])
+        self.assertEqual(len(items), 3, "Should have returned 3 items. Returned: " + str(len(items)))
+        self.assertEqual(items[0]['description'], second_desc, 'New item order is incorrect after retrieved from server: ' + str(items[0]['description']))
+        self.assertEqual(items[1]['description'], first_desc, 'New item order is incorrect after retrieved from server: ' + str(items[1]['description']))
+        self.assertEqual(items[2]['description'], third_desc, 'New item order is incorrect after retrieved from server: ' + str(items[2]['description']))
+
+
         self.__logout__()
 
 

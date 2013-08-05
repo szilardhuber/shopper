@@ -84,6 +84,28 @@ class ListHandler(BaseHandler):
                                message=error_message,
                                url="/")
 
+    @authenticate
+    def put(self, api, list_id):
+        """ PUT method is used to change item rankings """
+        try:
+            logging.info('Put called')
+            current_user = User.getUser(self.user_email)
+            current_list = ShoppingList.get_by_id(int(list_id), current_user)
+            items_json = self.request.get('items')
+            self.response.out.write('Items json: ' + str(items_json)+ '\n')
+            logging.info('Items: ' + items_json)
+            items_check = json.loads(items_json)
+            current_list.items = items_json
+            current_list.put()
+            self.response.out.write('Ran with success')
+        except (BadValueError, AttributeError) as exc:
+            logging.error('Exception: ' + str(exc))
+            error_message = self.gettext('Error while storing new order.')
+            self.set_error(constants.STATUS_BAD_REQUEST,
+                            message=error_message,
+                            url="/")
+
+
 #Private methods
     def _list_lists(self, api):
         """ Lists all shopping lists of current user """
