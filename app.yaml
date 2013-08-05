@@ -22,30 +22,27 @@ handlers:
   upload: robots.txt
 
 - url: /[uU]ser/.*
-  script: userApp.app
+  script: apps.users.app
   secure: always
 
 - url: .*/[lL]ists.*
-  script: listApp.app
+  script: apps.lists.app
   secure: always
 
 - url: .*/[pP]roducts.*
-  script: productsApp.app
+  script: apps.products.app
   secure: always
 
 - url: /admin
-  script: adminApp.app
+  script: apps.admin.app
   login: admin
 
 - url: /admin/worker
-  script: adminApp.app
+  script: apps.admin.app
   login: admin
 
-- url: /test.*
-  script: gaeunitApp.app
-
 - url: /.*
-  script: mainApp.app
+  script: apps.main.app
   secure: always
 
 libraries:

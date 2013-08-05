@@ -1,7 +1,5 @@
 # folder handling
-import fix_path
 from errorhandlers import set_handlers
-from handlers.decorators import authenticate, viewneeded
 from handlers import BaseHandler
 
 # own files
