@@ -12,6 +12,9 @@ class ProductHandler(BaseHandler):
     def get(self, api=None, product_id=None):
         """ GET request handler """
         self.response.headers['Content-Type'] = 'application/json'
+        # TODO !!!!!! REMOVE ON RELEASE !!!!!!!!!!
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        # TODO !!!!!! REMOVE ON RELEASE !!!!!!!!!!
 
         if api is not None:
             return
