@@ -33,7 +33,7 @@ $(function() {
       group.removeClass('success');
       return group.addClass('error');
     },
-    error: function(label) {
+    success: function(label) {
       var group;
       group = $(label).closest('.control-group');
       group.removeClass('error');

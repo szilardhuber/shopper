@@ -23,7 +23,7 @@ $ ->
 			group = $(label).closest('.control-group')
 			group.removeClass 'success'
 			group.addClass 'error'
-		error: (label) ->
+		success: (label) ->
 			group = $(label).closest('.control-group')
 			group.removeClass 'error'
 			group.addClass 'success'
