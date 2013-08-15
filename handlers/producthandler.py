@@ -16,7 +16,7 @@ class ProductHandler(BaseHandler):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         # TODO !!!!!! REMOVE ON RELEASE !!!!!!!!!!
 
-        if api is not None:
+        if api is None:
             return
 
         if product_id is None:
