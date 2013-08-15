@@ -2,7 +2,7 @@
 {% block content %}
 <div class="row">
 <div class="span12">
-	<form id="resend-form" action="/User/Verify" method="post" name="Verfy">
+<form id="resend-form" action="/User/Verify" method="post" name="Verify">
 		<legend>
 			{% if error %}
 				{% trans %}INVALID_VERIFICATION_CODE{% endtrans %}
@@ -20,11 +20,11 @@
 		<input type="submit" id="submit" name="submit" class="btn" value="{% trans %}SEND_BUTTON{% endtrans %}"/>
 		<br><br>
 		<div id = "alert_placeholder"></div>
-	</form>
+</form>
 </div>
 </div>
-{% endblock %}
 
+{% endblock %}
 {% block javascript %}
     <script src="/stylesheets/bootstrap/js/dist/jquery.validate.min.js"></script>
     <script src="/stylesheets/bootstrap/js/localization/{% trans %}MESSAGES_JS{% endtrans %}"></script>
