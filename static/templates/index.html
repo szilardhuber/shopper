@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html data-ng-app='shopzenion'>
+	<head>
+		<meta charset="UTF-8">
+		<title data-translate="app.title"></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- jQuery -->
+		<script src="../../lib/bower_components/jquery/jquery.min.js"></script>
+		<!-- Boostrap -->
+		<link rel="stylesheet" href="../../lib/bower_components/twitter/dist/css/bootstrap.min.css"/>
+		<script src="../../lib/bower_components/twitter/dist/js/bootstrap.min.js"></script>
+		<!-- AngularJS -->
+		<script src="../../lib/bower_components/angular/angular.js"></script>
+		<script src="../../lib/bower_components/angular-translate/angular-translate.min.js"></script>
+		<!-- Own -->
+		<script type="text/javascript" src="../js/constants.js"></script>
+		<script type="text/javascript" src="../js/app.js"></script>
+		<script type="text/javascript" src="../js/test.js"></script>
+  	</head>
+  	<body>
+
+		 <!-- Modal -->
+  		<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-include src="'../partials/login.html'" onload="init();" ng-controller="LoginController"></div>
+
+  		<!-- Navigation bar -->
+  		<nav class="navbar" role="navigation">
+  			<div class="navbar-header">
+  				<!-- Mobile UI menu-toggle -->
+  				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+  					<span class="sr-only">Toggle navigation</span>
+  					<span class="icon-bar">^</span>
+  				</button>
+  				<!-- Brand name -->
+  				<a class="navbar-brand" href="/" data-translate="app.name"></a>
+  			</div>
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="#" data-translate="menu.what_is_it"></a></li>
+					<li><a href="#" data-translate="menu.talk_back"></a></li>
+					<li><a href="#" data-translate="menu.blog"></a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+					<!-- <a href="login" data-translate="menu.login"></a> -->
+					<a data-toggle="modal" class="btn btn-sm btn-primary" data-target="#loginModal" data-translate="menu.login"></a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+
+		<div class="container" ng-view></div>
+
+<!--		<p data-ng-repeat="item in products">
+			{{item.name}}
+			</p>
+-->
+  </body>
+</html>

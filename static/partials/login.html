@@ -1,0 +1,23 @@
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title" data-translate="login.title"></h4>
+		</div>
+		<div class="modal-body">
+			<form name="form" role="form" id="emailForm2" data-ng-submit="sendEmail(form)" novalidate>
+				<div class="form-group" id="emailGroup">
+	        		<label for="email" data-translate="login.form.email.caption"></label>
+	        		<div class="controls">
+	            		<input type="email" class="form-control" placeholder="{{ 'login.form.email.placeholder' | translate }}" name="email" data-ng-model="text" data-ng-change="emailChange(form.email)" required />
+	        		</div>
+    			</div>
+				<div class="form-group" data-ng-show="loginSent">
+					<label for="code" data-translate="login.form.code.caption"></label>
+					<input type="text" class="form-control" id="code" placeholder="{{ 'login.form.code.placeholder' | translate }}">
+				</div>
+			    <button type="submit" class="btn btn-primary btn-large" data-ng-disabled="!form.email.$valid">Submit</button>
+			</form>
+		</div>
+	</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
