@@ -19,7 +19,7 @@ myApp.config([
 #			templateUrl: '/login.html'
 #			controller: LoginController
 		$routeProvider.when '/',
-			templateUrl: '/main.html'
+			templateUrl: 'partials/main.html'
 			controller: TestController
 		.otherwise 
 			redirectTo: '/'

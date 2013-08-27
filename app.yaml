@@ -14,7 +14,7 @@ handlers:
 - url: /js
   static_dir: static/js
 
-- url: /partial
+- url: /partials
   static_dir: static/partials
 
 - url: /robots.txt
@@ -40,6 +40,9 @@ handlers:
 - url: /admin/worker
   script: apps.admin.app
   login: admin
+
+- url: /lib/web
+  static_dir: lib/bower_components
 
 - url: /.*
   script: apps.main.app

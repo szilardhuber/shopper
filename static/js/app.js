@@ -19,10 +19,10 @@ myApp.config([
 myApp.config([
   '$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: '../partials/main.html',
+      templateUrl: 'partials/main.html',
       controller: TestController
     }).otherwise({
-      redirectTo: '/static/templates/index.html'
+      redirectTo: '/'
     });
     return true;
   }
