@@ -20,8 +20,6 @@ class User(db.Model):
     salt = db.ByteStringProperty()
     password = db.ByteStringProperty()
     registrationdate = db.DateTimeProperty(auto_now_add=True)
-    verified = db.BooleanProperty()
-    verificationCode = db.ByteStringProperty()
 
     NAMESPACE = 'User'
 
@@ -68,26 +66,6 @@ class User(db.Model):
         if re.search(r'[;\'"<>]', password) is not None:
             return False
         return True
-
-    @staticmethod
-    def verify(code, ip):
-        '''
-        Makes the user verified and logs him in.
-        :param code: The verification code he received in email
-        :param ip: The ip address of the user
-        '''
-        q = db.Query(User)
-        q.filter('verificationCode =', code)
-        if q.count() == 1:
-            verifiedUser = q.get()
-            verifiedUser.verified = True
-            verifiedUser.verificationCode = None
-            verifiedUser.put()
-            verifiedUser.login(ip)
-            logging.info('User verified: ' + verifiedUser.email)
-            return verifiedUser.email
-        else:
-            return None
 
     def login(self, ip):
         sessionid = SessionData.generate_id()

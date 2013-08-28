@@ -270,9 +270,9 @@ class WebTest_List(unittest.TestCase):
         self.assertEqual(response.status_int, constants.STATUS_OK,
                          'Register failed with correct credentials: ' + str(response.status_int))
 
-        # 2. Verify
-        response = UserUtil.verify_user(self.testapp, self.mail_stub, email)
-        self.assertEqual(response.status_int, constants.STATUS_OK, 'Verification failed: ' + str(response.status_int))
+        response = UserUtil.login_user(self.testapp, email, password)
+        self.assertEqual(response.status_int, constants.STATUS_OK,
+                         'Login failed with correct credentials: ' + str(response.status_int))
 
     def __logout__(self):
         response = UserUtil.logout(self.testapp)

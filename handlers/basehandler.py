@@ -1,11 +1,10 @@
 """ Base class for all handlers for making easier
     of separate display to web and api """
 from handlers.apiview import APIView
-from i18n_utils import LocalizedHandler
 from gettext import gettext
+import webapp2
 
-
-class BaseHandler(LocalizedHandler):
+class BaseHandler(webapp2.RequestHandler):
     """ The base class itself """
     user_email = ""
     view = APIView()

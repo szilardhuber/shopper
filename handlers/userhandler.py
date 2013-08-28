@@ -41,10 +41,6 @@ class UserHandler(BaseHandler):
                 self.__display_form(command.lower() + '.html', message)
             return
 
-        if command.lower() == 'verify':
-            self.__verify()
-            return
-
         self.set_error(constants.STATUS_NOT_FOUND)
         return
 
@@ -63,36 +59,10 @@ class UserHandler(BaseHandler):
             self.__register(api)
             return
 
-        if command.lower() == 'verify' and api == '':
-            email = self.request.get(constants.VAR_NAME_EMAIL)
-            self.__send_verification(email)
-            return
-
         self.set_error(constants.STATUS_NOT_FOUND)
         return
 
 # Private methods
-    def __send_verification(self, email):
-        """ Send verification email to recipient """
-        user = User.getUser(email.lower())
-        if user is None or user.verified:
-            self.set_error(constants.STATUS_BAD_REQUEST, message=None, url="/")
-            return
-        user.verificationCode = b64encode(CryptoUtil.get_verify_code(), "*$")
-        template_values = {
-            'user_email': self.user_email,
-            'code': user.verificationCode,
-            'url': constants.VERIFICATION_URL
-        }
-        template = self.jinja2_env.get_template('verificationemail.jinja')
-        message = mail.EmailMessage()
-        message.sender = constants.SENDER_ADDRESS
-        message.to = user.email
-        message.subject = 'Please verify your address'
-        message.body = template.render(template_values)
-        message.send()
-        user.put()
-
     def __login(self):
         """ Validate incoming parameters and log in user if all is ok """
         # Validate email and get user from db
@@ -138,24 +108,12 @@ class UserHandler(BaseHandler):
                                      expires=datetime.utcnow() + delta,
                                      path="/", httponly=True, secure=True)
 
-        # Log in user
-        if user.verified:
-            user.login(self.request.remote_addr)
-            session = get_current_session()
-            url = session.pop(constants.VAR_NAME_REDIRECT)
-            if url is None:
-                url = "/"
-            self.ok(url)
-        else:
-            logging.error('User unverified')
-            self.set_error(constants.STATUS_FORBIDDEN,
-                           self.gettext('UNVERIFIED_PRE') +
-                           ' <a href=\"/User/Verify">' +
-                           self.gettext('UNVERIFIED_HERE') +
-                           '</a> ' +
-                           self.gettext('UNVERIFIED_POST'),
-                           url=self.request.url)
-            return
+        user.login(self.request.remote_addr)
+        session = get_current_session()
+        url = session.pop(constants.VAR_NAME_REDIRECT)
+        if url is None:
+            url = "/"
+        self.ok(url)
 
     def __logout(self):
         """ Do logout """
@@ -205,9 +163,6 @@ class UserHandler(BaseHandler):
         user.verified = False
         user.put()
 
-        # Send email for verification
-        self.__send_verification(email)
-
         if api == '':
             # Display message
             template_values = {
@@ -217,33 +172,6 @@ class UserHandler(BaseHandler):
             self.response.out.write(template.render(template_values))
 
         self.ok()
-
-    def __verify(self):
-        """ Verify user who was assigned the code to """
-        code = self.request.get('code')
-        email = None
-        error = False
-        # resend if code is not given or in case of some error
-        if code is not None and code != '':
-            email = User.verify(code, self.request.remote_addr)
-            if email is None:
-                error = True
-
-        if email is None:
-            template_values = {
-                'user_email': self.user_email,
-                'error': error
-            }
-            template = self.jinja2_env.get_template('verification.html')
-            self.response.out.write(template.render(template_values))
-
-        # message
-        template_values = {
-            'user_email': self.user_email,
-            'message': self.gettext('THANK_YOU')
-        }
-        template = self.jinja2_env.get_template('staticmessage.html')
-        self.response.out.write(template.render(template_values))
 
     def __display_form(self, template, message=None):
         """ Display a the template """
