@@ -12,6 +12,7 @@ class CryptoVariables:
 	VERIFICATION_CODE_SIZE = 32
 	SESSIONID_SIZE = 32
 	PERSISTENT_TOKEN_SIZE = 32
+	REQUEST_TOKEN_SIZE = 64
 	KEY_LENGTH = 64
 	ITERATIONS = 1000
 
@@ -56,3 +57,7 @@ class CryptoUtil():
 	def getPersistentId():
 		return CryptoUtil.__get_random_bytes(CryptoVariables.PERSISTENT_TOKEN_SIZE)
 		
+	@staticmethod
+	def getAccessToken():
+		binary = CryptoUtil.__get_random_bytes(CryptoVariables.REQUEST_TOKEN_SIZE)
+		return ''.join('%02x' % ord(byte) for byte in binary)

@@ -25,6 +25,10 @@ handlers:
   script: apps.users.app
   secure: always
 
+- url: .*/sessions.*
+  script: apps.sessions.app
+  secure: always
+
 - url: .*/[lL]ists.*
   script: apps.lists.app
   secure: always
