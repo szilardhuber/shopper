@@ -8,6 +8,12 @@ def handle_404(_, response, exception):
     response.write('Oops! I could swear this page was here!')
     response.set_status(404)
 
+def handle_405(_, response, exception):
+    """ Handle METHOD NOT ALLOWED error """
+    logging.exception(exception)
+    response.write('Awww! Why would you do that?')
+    response.set_status(405)
+
 
 def handle_500(_, response, exception):
     """ Handle SERVER ERROR """
@@ -20,3 +26,4 @@ def set_handlers(app):
     """ Set the error handlers """
     app.error_handlers[404] = handle_404
     app.error_handlers[500] = handle_500
+    app.error_handlers[405] = handle_405

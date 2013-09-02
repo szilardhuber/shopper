@@ -1,6 +1,7 @@
 """ Unit and functional tests for list handler """
 from handlers import SessionHandler
 from utilities import constants
+from handlers import set_handlers
 
 # libraries, builtins
 from google.appengine.ext import testbed
@@ -13,6 +14,7 @@ from gaesessions import Session, set_current_session, get_current_session
 
 class WebTest_List(unittest.TestCase):
     request_token_url = '/api/v2/sessions/new'
+    login_url = '/api/v2/sessions'
 
     def setUp(self):
         self.testbed = testbed.Testbed()
@@ -23,14 +25,17 @@ class WebTest_List(unittest.TestCase):
         self.testbed.init_memcache_stub()
         self.mail_stub = self.testbed.get_stub(testbed.MAIL_SERVICE_NAME)
         app = webapp2.WSGIApplication([
-            Route('/api/v<api_version>/sessions<:/?>', handler=SessionHandler),
-            Route('/api/v<api_version>/sessions/<new:new>', handler=SessionHandler)
+            Route('/api/v<api_version>/sessions<:/?>', handler=SessionHandler, methods='POST'),
+            Route('/api/v<api_version>/sessions/<new:new><:/?>', handler=SessionHandler, methods='GET')
         ],
             debug=True)
+
+        set_handlers(app)
         self.testapp = webtest.TestApp(app)
 
     def test_request_token_bad_url(self):
-        """ Tests REQUEST TOKEN API METHOD with bad calling """
+        """ Tests REQUEST TOKEN API METHOD with bad calling and methods"""
+        email = 'james@bond.com'
         response = self.testapp.get('/api/v1/sessions/new', expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
                          'Request should fail with api version "1": ' + str(response.status_int))
@@ -46,7 +51,10 @@ class WebTest_List(unittest.TestCase):
         response = self.testapp.get('/api/v2/sessions/now', expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_NOT_FOUND,
                          'Request should fail with "now" as "new" value: ' + str(response.status_int))
-        
+        response = self.testapp.post(self.request_token_url+ '?email=' + email, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_NOT_ALLOWED,
+                        'This URL should not be accessible with PUT method: ' + str(response.status_int))
+
     def test_request_token_bad_params(self):
         """ Tests REQUEST TOKEN API METHOD with bad parameters """
         response = self.testapp.get(self.request_token_url, expect_errors=True)
@@ -98,3 +106,20 @@ class WebTest_List(unittest.TestCase):
         self.assertIsNotNone(token2)
         self.assertNotEqual(token, token2)
 
+    def test_login_bad_url(self):
+        """ Tests LOGIN API METHOD with bad calling """
+        response = self.testapp.post('/api/v1/sessions', expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
+                         'Request should fail with api version "1": ' + str(response.status_int))
+        response = self.testapp.post('/api/va/sessions', expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
+                         'Request should fail with api version "a": ' + str(response.status_int))
+        response = self.testapp.post('/api/v2.5/sessions', expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_BAD_REQUEST,
+                         'Request should fail with api version "2.5": ' + str(response.status_int))
+        response = self.testapp.post('/api/v/sessions', expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_NOT_FOUND,
+                         'Request should fail with api version "": ' + str(response.status_int))
+        response = self.testapp.get(self.login_url, expect_errors=True)
+        self.assertEqual(response.status_int, constants.STATUS_NOT_ALLOWED,
+                        'This URL should not be accessible with PUT method: ' + str(response.status_int))

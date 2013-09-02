@@ -31,5 +31,12 @@ class SessionHandler(BaseHandler):
             logging.error(exc.message)
             return
 
-
+    def post(self,api_version):
+        try:
+            if int(api_version) < 2:
+                raise ValueError('This method is only supported from api version 2.')
+        except (ValueError) as exc:
+            self.set_error(constants.STATUS_BAD_REQUEST)
+            logging.error(exc.message)
+            return
 

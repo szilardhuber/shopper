@@ -30,3 +30,4 @@ STATUS_BAD_REQUEST = 400 # The request could not be understood by the server due
 STATUS_UNAUTHORIZED = 401 # The request requires user authentication.
 STATUS_FORBIDDEN = 403 # The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated
 STATUS_NOT_FOUND = 404 # The server has not found anything matching the Request-URI.
+STATUS_NOT_ALLOWED = 405 # The method specified in the Request-Line is not allowed for the resource identified by the Request-URI.
