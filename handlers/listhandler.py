@@ -10,7 +10,6 @@ from google.net.proto.ProtocolBuffer import ProtocolBufferEncodeError
 from google.appengine.api.datastore_errors import BadKeyError
 from google.appengine.ext.db import BadValueError
 
-
 class ListHandler(BaseHandler):
     """ Handling requests for dealing with shopping lists """
 #Public methods

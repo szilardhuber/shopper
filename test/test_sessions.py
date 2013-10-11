@@ -15,6 +15,7 @@ from gaesessions import Session, set_current_session, get_current_session
 class WebTest_List(unittest.TestCase):
     request_token_url = '/api/v2/sessions/new'
     login_url = '/api/v2/sessions'
+    token_prefix = 'Here is your code: '
 
     def setUp(self):
         self.testbed = testbed.Testbed()
@@ -88,11 +89,16 @@ class WebTest_List(unittest.TestCase):
         response = self.testapp.get(self.request_token_url + '?email=' + email, expect_errors=True)
         self.assertEqual(response.status_int, constants.STATUS_OK,
                         'Request should succeed with good calling and parameters: ' + str(response.status_int))
+        messages = self.mail_stub.get_sent_messages(to=email)
+        self.assertEqual(1, len(messages))
+        self.assertEqual(email, messages[0].to)
         session = get_current_session()
-        token = session.get(email)
+        token = session.get(email, None)
+        self.assertIsNone(token)
+        token_line = [line for line in messages[0].body.decode().split('\n') if self.token_prefix in line]
+        self.assertEqual(1, len(token_line))
+        token = token_line[0][len(self.token_prefix):]
         self.assertNotEqual('', token)
-        self.assertNotEqual(0, token)
-        self.assertIsNotNone(token)
 
         # 2. Check for an other email address, also valid but different token should come back
         email2 = 'james2@bond.com'
@@ -101,10 +107,15 @@ class WebTest_List(unittest.TestCase):
                         'Request should succeed with good calling and parameters: ' + str(response.status_int))
         session = get_current_session()
         token2 = session.get(email2)
+        self.assertIsNone(token2)
+        messages = self.mail_stub.get_sent_messages(to=email2)
+        self.assertEqual(1, len(messages))
+        self.assertEqual(email2, messages[0].to)
+        token_line = [line for line in messages[0].body.decode().split('\n') if self.token_prefix in line]
+        self.assertEqual(1, len(token_line))
+        token2 = token_line[0][len(self.token_prefix):]
         self.assertNotEqual('', token2)
-        self.assertNotEqual(0, token2)
-        self.assertIsNotNone(token2)
-        self.assertNotEqual(token, token2)
+        self.assertNotEqual(token, token2, 'Got two identical tokens. Tokens should differ: ({0})'.format(token))
 
     def test_login_bad_url(self):
         """ Tests LOGIN API METHOD with bad calling """

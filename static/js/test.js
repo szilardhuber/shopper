@@ -6,7 +6,7 @@ TestController = function($rootScope, $scope, $window) {
   return true;
 };
 
-LoginController = function($scope, $window) {
+LoginController = function($scope, $window, $http) {
   var reset;
   $scope.loginSent = false;
   reset = function() {
@@ -20,6 +20,17 @@ LoginController = function($scope, $window) {
     email = form.email.$modelValue;
     $scope.loginSent = true;
     $window.setInterval(reset, Constants.login_timeout);
+    $http({
+      url: "/api/v2/sessions/new",
+      method: "GET",
+      params: {
+        email: email
+      }
+    }).success(function(response) {
+      return alert(response);
+    }).error(function(data, status, headers, config) {
+      return alert(status);
+    });
     return true;
   };
   $scope.emailChange = function(loginEmail) {

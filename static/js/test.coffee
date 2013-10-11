@@ -13,7 +13,7 @@ TestController = ($rootScope, $scope, $window) ->
 	true
 
 
-LoginController = ($scope, $window) ->
+LoginController = ($scope, $window, $http) ->
 	$scope.loginSent = false
 
 	reset = () ->
@@ -25,6 +25,16 @@ LoginController = ($scope, $window) ->
 		email = form.email.$modelValue
 		$scope.loginSent = true
 		$window.setInterval reset, Constants.login_timeout
+		$http(
+			url: "/api/v2/sessions/new"
+			method: "GET"
+			params:
+				email: email
+		).success((response) ->
+				alert(response)
+		).error((data, status, headers, config) ->
+			alert(status)
+		)
 		true
 
 	$scope.emailChange = (loginEmail) ->	
